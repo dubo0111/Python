@@ -13,7 +13,7 @@ import random
 #import pandas as pd
 #from pandas import ExcelWriter
 #from pandas import ExcelFile
-# read .mat file
+#read .mat file
 mat = scipy.io.loadmat('city_250.mat')
 a = mat['city_250']
 # coordinate of each city
@@ -58,12 +58,13 @@ def ins_small(nk=0):
     p = 1
     C = np.matrix([[0,20,50],[30,0,40],[30,50,0]])
     D = np.matrix([100,200,150])
-    CD = np.zeros(3,3)
+    cd = np.zeros((3,3))
     for i in range(3):
         for j in range(3):
-            CD[i,j] = C[i,j]*D[i,0]
+            cd[i,j] = C[i,j]*D[0,i]
     if nk != 0:
         print('nk = ',nk)
-    return p,CD
-
+    cd = cd.tolist()
+    return p,cd
+p,cd = ins_small()
 #experiment instances ...to be continue
