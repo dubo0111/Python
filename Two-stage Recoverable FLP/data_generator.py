@@ -9,6 +9,10 @@ Instance Generator + US-250city dataset
 import scipy.io
 import numpy as np
 import math
+import random
+#import pandas as pd
+#from pandas import ExcelWriter
+#from pandas import ExcelFile
 # read .mat file
 mat = scipy.io.loadmat('city_250.mat')
 a = mat['city_250']
@@ -32,17 +36,34 @@ def cal_cost(coor,d):
 #total_cost = cal_cost(cxy,demand)
 
 #benchmark instance generation
-#number of nodes, scenarios and maximum disrupted facilities
-def ins_generator(ni,nk,sumk): 
-    np.arrange
-    
-#small instance
+#ni, nk, sumk: number of nodes, scenarios and maximum disrupted facilities
+def ins_generator(cxy,demand,ni=3,nk=0,sumk=0):
+    list250 = list(range(0,251))
+    random.seed()
+    city = random.sample(list250,ni)
+    city.sort()
+    newcost = np.zeros((ni,2))
+    newdemand = np.zeros((ni,1))
+    for x in range(ni):
+        x1 = city[x]
+        newcost[x,:]=cxy[x1,:]
+        newdemand[x,0]=cxy[x1,0]
+    if nk != 0:
+        print('Generating',nk,'senarios......')
+    return newcost,newdemand
+#aa,bb = ins_generator(cxy,demand,5)
 
-#experiment instances
-    
-    
-    
-    
-    
-    
-    
+#small instance
+def ins_small(nk=0):
+    p = 1
+    C = np.matrix([[0,20,50],[30,0,40],[30,50,0]])
+    D = np.matrix([100,200,150])
+    CD = np.zeros(3,3)
+    for i in range(3):
+        for j in range(3):
+            CD[i,j] = C[i,j]*D[i,0]
+    if nk != 0:
+        print('nk = ',nk)
+    return p,CD
+
+#experiment instances ...to be continue
