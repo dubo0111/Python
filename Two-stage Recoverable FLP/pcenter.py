@@ -7,7 +7,8 @@ Created on Tue Jul 25 2018
 p-center model
 """
 import data_generator as dg
-p,cd = dg.ins_small() #INPUT Parameters:p, cost matrix
+#INPUT Parameters:p, cost matrix
+p,cd = dg.ins_small()
 from gurobipy import *
 
 try:
@@ -27,28 +28,37 @@ try:
     # Set objective to minimize
     m.modelSense = GRB.MINIMIZE
 
-    # Maximum cost constraints (objective): L>sum(cdx) forall i
-#    m.addConstrs(
-#        (x.sum(i,'*') <= L for i in range(ni)),
-#        "Capacity")
-    cdx=[]
-    for j in range(ni):
-        cdx.append(x[])
-#    m.addConstrs(
-#        (sum(x['*',j]*cd['*',j] for j in range(ni)) <= L for i in range(ni)),
-#        "objective")
-    
+    # (1) Maximum cost constraints (objective): L>sum(cdx) forall i
+    cdx = x.copy()
+    for i in range(ni):
+        for j in range(ni):
+           cdx[i,j]=cd[i][j]
+    m.addConstrs(
+            (x.prod(cdx,i,'*') <= L for i in range(ni)),
+            "epigraph")
+    # (2) Constraints sum(y)=p
+    m.addConstr(
+            (y.sum() == p),
+            "p")
+    # (3) x<=y forall i,j
+    m.addConstrs(
+            (x[i,j] <= y[j] for i in range(ni) for j in range(ni)),
+            "x<y")
+    # (4) sum(x)=1 forall i
+    m.addConstrs(
+            (x.sum(i,'*') == 1 for i in range(ni)),
+            "sumx")
+
     m.write('pcenter.lp')
 
     m.optimize()
-#
-#     for v in m.getVars():
-#         print('%s %g' % (v.varName, v.x))
-#
-#     print('Obj: %g' % m.objVal)
-#
+
+    for v in m.getVars():
+         print('%s %g' % (v.varName, v.x))
+
+    print('Obj: %g' % m.objVal)
+
 except GurobiError as e:
-     print('Error code ' + str(e.errno) + ": " + str(e))
-#
+    print('Error code ' + str(e.errno) + ": " + str(e))
 except AttributeError:
-     print('Encountered an attribute error')
+    print('Encountered an attribute error')
