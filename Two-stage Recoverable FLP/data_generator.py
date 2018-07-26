@@ -13,6 +13,7 @@ import random
 #import pandas as pd
 #from pandas import ExcelWriter
 #from pandas import ExcelFile
+
 #read .mat file
 mat = scipy.io.loadmat('city_250.mat')
 a = mat['city_250']
@@ -37,7 +38,7 @@ def cal_cost(coor,d):
 
 #benchmark instance generation
 #ni, nk, sumk: number of nodes, scenarios and maximum disrupted facilities
-def ins_generator(cxy,demand,ni=3,nk=0,sumk=0):
+def ins_generator(cxy,demand,ni=3,p=1,nk=0,sumk=0):
     list250 = list(range(0,251))
     random.seed()
     city = random.sample(list250,ni)
@@ -66,5 +67,6 @@ def ins_small(nk=0):
         print('nk = ',nk)
     cd = cd.tolist()
     return p,cd
-p,cd = ins_small()
+#p,cd = ins_small()
+
 #experiment instances ...to be continue
