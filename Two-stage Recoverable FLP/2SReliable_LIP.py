@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Created on Tue Jul 25 2018
+Created on Tue Jul 26 2018
 
 @author: DUBO
 
@@ -9,7 +9,7 @@ p-center model
 import data_generator1 as dg
 #INPUT Parameters:p, cost matrix
 #p,cd = dg.ins_small()
-p,cd = dg.ins_big(5)
+#p,cd = dg.ins_big(5)
 from gurobipy import *
 
 try:

@@ -23,7 +23,7 @@ cxy = np.vstack(coordinate).astype(np.float)
 #demand of each city
 demand = a[:,3]
 demand = np.vstack(demand).astype(np.float)
-#function for calculating distance and total cost
+#function for calculating distance and total cost(CD)
 def cal_cost(coor,d):
     ni = coor.shape[0]
     cost = np.zeros((ni,ni))
@@ -38,7 +38,7 @@ def cal_cost(coor,d):
 
 #benchmark instance generation
 #ni, nk, sumk: number of nodes, scenarios and maximum disrupted facilities
-def ins_generator(cxy,demand,ni=3,p=1,nk=0,sumk=0):
+def ins_generator(cxy,demand,ni=3,nk=0,sumk=0):
     list250 = list(range(0,251))
     random.seed()
     city = random.sample(list250,ni)
@@ -54,8 +54,13 @@ def ins_generator(cxy,demand,ni=3,p=1,nk=0,sumk=0):
     return newcost,newdemand
 #aa,bb = ins_generator(cxy,demand,5)
 
-#small instance
+# big instances
+def ins_big(ni):
+    return
+
+# small instance
 def ins_small(nk=0):
+    cxy0=cxy[0,0]
     p = 1
     C = np.matrix([[0,20,50],[30,0,40],[30,50,0]])
     D = np.matrix([100,200,150])
@@ -66,7 +71,7 @@ def ins_small(nk=0):
     if nk != 0:
         print('nk = ',nk)
     cd = cd.tolist()
-    return p,cd
-#p,cd = ins_small()
+    return p,cd,cxy0
+p,cd,c00 = ins_small()
 
 #experiment instances ...to be continue
