@@ -10,7 +10,7 @@ import data_generator1 as dg
 #INPUT Parameters:p, cost matrix
 #p,cd = dg.ins_small()
 #p,cd = dg.ins_big(5)
-p,cd,cdk,sk = dg.ins_k(30,50) #(ni,nk,sumk)
+p,cd,cdk,sk = dg.ins_k(6,5) #(ni,nk,sumk)
 # !!!!! Make sure index match: cdk VS. v_ij(k) [k][i][j]
 from gurobipy import *
 
@@ -101,16 +101,15 @@ try:
             "u+ak<1")
     #(12) sum(u(k)) + sum(y) - sum(a_j(k)*y) = p forall k (or <=)
     m.addConstrs(
-            (u.sum(k,'*') + y.sum() - sk[k][j] == p for k in range(k)),
+            (u.sum(k,'*') + y.sum() - LinExpr(sk[k],y.select()) == p for k in range(nk)),
             "2S-p")
-    # save model and optimizefor j in range
+    # save model and optimize
     m.write('2S_Recovarable_pcenter.lp')
     m.optimize()
 
-
     #Output
-    for v in m.getVars():
-         print('%s %g' % (v.varName, v.x))
+#    for v in m.getVars():
+#         print('%s %g' % (v.varName, v.x))
     print('Obj: %g' % m.objVal)
 
 except GurobiError as e:
