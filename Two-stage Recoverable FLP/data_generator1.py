@@ -42,7 +42,7 @@ def ins_small(nk=0):
 def cal_cost(coor,d):
     ni = coor.shape[0]
     cost = np.zeros((ni,ni))
-    total_cost = cost
+    total_cost = cost.copy()
     for i in range(ni):
         for j in range(ni):
            cost[i,j] = math.sqrt((cxy[i,0]-cxy[j,0])**2 + (cxy[i,1]-cxy[j,1])**2)
@@ -53,7 +53,7 @@ def cal_cost(coor,d):
 
 # instance random generation from 250 city
 #ni, nk, sumk: number of nodes, scenarios and maximum disrupted facilities
-def ins_generator(ni=3,nk=0,sumk=0):
+def ins_generator(ni,nk=0,sumk=0):
     list250 = list(range(0,250))
     random.seed()
     city = random.sample(list250,ni)
@@ -76,15 +76,22 @@ def ins_big(ni):
     p = round(ni*1/3)
     return p,cd
 
-# scenarios: disrupted facilities
+# scenarios: disrupted facilities (assumption: sumk = p-1)
 def ins_kdisrupt(ni,nk,sumk):
-    
-
+    random.seed()
+    b = [[0 for i in range(ni)] for k in range(nk)]
+    for k in range(nk):
+        a = random.sample(range(ni),sumk)
+        a.sort()
+        for i in a:
+            b[k][i] = 1
+    return b
+#sk = ins_kdisrupt(5,3,2)
 # instance with |k| scenarios
-def ins_k(ni,nk,sumk=1):
+def ins_k(ni,nk):
     co,d = ins_generator(ni)
-    c = cal_cost(co,d)[0]
-    cdk = [[[0 for k in range(nk)] for i in range(ni)] for j in range(ni)]
+    c,cd = cal_cost(co,d)
+    cdk = [[[0 for j in range(ni)] for i in range(ni)] for k in range(nk)]
     random.seed()
     for k in range(nk):
         randc2 = np.random.rand(ni,ni)+0.5
@@ -96,9 +103,13 @@ def ins_k(ni,nk,sumk=1):
             for j in range(ni):
                 cd2[i,j] = c2[i,j]*d2[i,0]
         cd2.tolist()
-        cdk[k]=cd2
+        cdk[k] = cd2
         cdk[k] = cdk[k].tolist()
-    return cdk
-cdk = ins_k(3,3)
-
-#experiment instances ...to be continue
+        p = round(ni*1/3)
+        if p == 1:
+            sumk = 1
+        else:
+            sumk = p - 1
+        sk = ins_kdisrupt(ni,nk,sumk)
+    return p,cd,cdk,sk
+#ins_k(5,3)
