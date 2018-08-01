@@ -2,9 +2,10 @@
 """
 Created on Tue Jul 26 2018
 
-@author: DUBO
+2-stage recoverable p-center model:
+    Linear Reformulation
 
-p-center model
+@author: DUBO
 """
 import data_generator1 as dg
 #INPUT Parameters:p, cost matrix
@@ -104,7 +105,8 @@ try:
             (u.sum(k,'*') + y.sum() - LinExpr(sk[k],y.select()) == p for k in range(nk)),
             "2S-p")
     # save model and optimize
-    m.write('2S_Recovarable_pcenter.lp')
+    m.write("C:/Users/DUBO/Documents/GitHub/Python/Two-stage Recoverable FLP/model/2S_Recovarable_pcenter.lp")
+    #shutil.move("2S_Recovarable_pcenter.lp",r"C:\Users\DUBO\Documents\GitHub\Python\Two-stage Recoverable FLP\model","copy")
     m.optimize()
 
     #Output
