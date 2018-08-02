@@ -34,3 +34,4 @@ Solution count 2: 302.755 309.094
 
 Optimal solution found (tolerance 1.00e-04)
 Best objective 3.027546403604e+02, best bound 3.027546403604e+02, gap 0.0000%
+Freed default Gurobi environment
