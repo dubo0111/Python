@@ -9,7 +9,7 @@ p-center model
 import data_generator1 as dg
 #INPUT Parameters:p, cost matrix
 #p,cd = dg.ins_small()
-p,cd = dg.ins_big(5)
+p,cd = dg.ins_big(10)
 from gurobipy import *
 
 try:
@@ -50,12 +50,12 @@ try:
             (x.sum(i,'*') == 1 for i in range(ni)),
             "sumx")
     # save model and optimize
-    m.write('pcenter.lp')
+    m.write('.\model\pcenter.lp')
     m.optimize()
 
     # Output
-    #for v in m.getVars():
-         #print('%s %g' % (v.varName, v.x))
+    for v in m.getVars():
+         print('%s %g' % (v.varName, v.x))
     print('Obj: %g' % m.objVal)
 
 except GurobiError as e:

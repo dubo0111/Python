@@ -55,7 +55,7 @@ def cal_cost(coor,d):
 #ni, nk, sumk: number of nodes, scenarios and maximum disrupted facilities
 def ins_generator(ni,nk=0,sumk=0):
     list250 = list(range(0,250))
-    random.seed()
+    random.seed(1)
     city = random.sample(list250,ni)
     city.sort()
     newco = np.zeros((ni,2))
@@ -78,7 +78,7 @@ def ins_big(ni):
 
 # scenarios: disrupted facilities (assumption: sumk = p-1)
 def ins_kdisrupt(ni,nk,sumk):
-    random.seed()
+    random.seed(1)
     b = [[0 for i in range(ni)] for k in range(nk)]
     for k in range(nk):
         a = random.sample(range(ni),sumk)
@@ -92,7 +92,7 @@ def ins_k(ni,nk):
     co,d = ins_generator(ni)
     c,cd = cal_cost(co,d)
     cdk = [[[0 for j in range(ni)] for i in range(ni)] for k in range(nk)]
-    random.seed()
+    np.random.seed(1)
     for k in range(nk):
         randc2 = np.random.rand(ni,ni)+0.5
         randd2 = np.random.rand(ni,1)+0.5
@@ -112,4 +112,5 @@ def ins_k(ni,nk):
             sumk = p - 1
         sk = ins_kdisrupt(ni,nk,sumk)
     return p,cd,cdk,sk
+
 #ins_k(5,3)

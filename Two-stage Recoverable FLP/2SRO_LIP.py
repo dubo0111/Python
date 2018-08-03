@@ -11,7 +11,7 @@ import data_generator1 as dg
 #INPUT Parameters:p, cost matrix
 #p,cd = dg.ins_small()
 #p,cd = dg.ins_big(5)
-p,cd,cdk,sk = dg.ins_k(6,5) #(ni,nk,sumk)
+p,cd,cdk,sk = dg.ins_k(3,2) #(ni,nk,sumk)
 # !!!!! Make sure index match: cdk VS. v_ij(k) [k][i][j]
 from gurobipy import *
 
@@ -62,8 +62,8 @@ try:
             "sumx")
     # ---------- Sub problem ----------
     # v:allocations u:location L3,eta: auxiliary variable
-    v = m.addVars(nk,ni,ni,vtype=GRB.BINARY, name="v")
-    u = m.addVars(nk,ni,vtype=GRB.BINARY, name="u")
+    v = m.addVars(nk,ni,ni,vtype=GRB.CONTINUOUS, name="v")
+    u = m.addVars(nk,ni,vtype=GRB.CONTINUOUS, name="u")
     L3 = m.addVars(nk,vtype=GRB.CONTINUOUS, name="L3")
     eta = m.addVar(vtype=GRB.CONTINUOUS, obj=a2, name="eta")
 
@@ -105,7 +105,7 @@ try:
             (u.sum(k,'*') + y.sum() - LinExpr(sk[k],y.select()) == p for k in range(nk)),
             "2S-p")
     # save model and optimize
-    m.write("C:/Users/DUBO/Documents/GitHub/Python/Two-stage Recoverable FLP/model/2S_Recovarable_pcenter.lp")
+    m.write(".\model\LIP.lp")
     #shutil.move("2S_Recovarable_pcenter.lp",r"C:\Users\DUBO\Documents\GitHub\Python\Two-stage Recoverable FLP\model","copy")
     m.optimize()
 
