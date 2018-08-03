@@ -113,10 +113,13 @@ try:
     m1.addConstrs(
             (-beta.sum(k,'*') <= 1 for k in range(nk)),
             "L3")
-            
+
     # save model and optimize
     m1.write('sub.lp')
-    #m.optimize()
+
+    #Benders' Decompisition
+    m.optimize()
+    
 
     #Output
 #    for v in m.getVars():
