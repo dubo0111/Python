@@ -1,11 +1,8 @@
 # -*- coding: utf-8 -*-
 """
-Created on Wed Aug  1 08:24:56 2018
-
-2-stage recoverable p-center model:
-    Benders' decomposition (relaxed model)
-
-@author: DUBO
+TEST TEST
+CHECKING dual subproblem
+similiar to C&CG
 """
 
 import data_generator1 as dg
@@ -61,41 +58,54 @@ try:
     # ---------- Sub problem ----------
     def sub_model(value_y):
         # Create sub model
-        m1 = Model('sub model')
-        # beta gamma delta epsilon lamda mu nu
-        beta = m1.addVars(nk,ni,ub = 0,lb = -float('inf'), vtype=GRB.CONTINUOUS, name="beta")
-        gamma = m1.addVars(nk,ni,ni,ub = 0,lb = -float('inf'), vtype=GRB.CONTINUOUS, name="gamma")
-        delta = m1.addVars(nk,ni,ni,ub = 0,lb = -float('inf'), vtype=GRB.CONTINUOUS, name="delta")
-        epsilon = m1.addVars(nk,ni,vtype=GRB.CONTINUOUS, name="epsilon")
-        lamda = m1.addVars(nk,ni,ub = 0,lb = -float('inf'), vtype=GRB.CONTINUOUS, name="lambda")
-        mu = m1.addVars(nk,ni,ub = 0,lb = -float('inf'), vtype=GRB.CONTINUOUS, name="mu")
-        nu = m1.addVars(nk,vtype=GRB.CONTINUOUS, name="nu")
-        # Qk are auxiliary variables, minimizing every subproblem
-        Qk = m1.addVars(nk,vtype=GRB.CONTINUOUS,obj = 1, name="Qk")
-        # Set sub model objective to minimize
-        m1.modelSense = GRB.MAXIMIZE
-        #(1) Q(k) = sum_i(sum_j(y_j*gamma_kij))+sumsum_ij((1-a_kj)*delta_kij
-        #           + sum_i(epsilon_ki) + sum_j((1-y_j)*lambda_kj) +
-        #           + sum_j((1-a_kj)*mu_kj) + (p+sum_j(a_kj*y_j)-sum(y_j))*nu_k   forall k
-        c_delta,c_lamda,c_mu,c_nu = c_constr1(value_y) # update coeff
+        m1 = Model('Sub model')
+        # ---------- Sub problem ----------
+        # v:allocations u:location L3,eta: auxiliary variable
+        v = m1.addVars(nk,ni,ni,vtype=GRB.CONTINUOUS, name="v")
+        u = m1.addVars(nk,ni,vtype=GRB.CONTINUOUS, name="u")
+        L3 = m1.addVars(nk,vtype=GRB.CONTINUOUS, name="L3")
+        eta = m1.addVar(vtype=GRB.CONTINUOUS, obj=a2, name="eta")
+        m1.modelSense = GRB.MINIMIZE
+        #(5) eta == sum(L3(k)) forall k
         m1.addConstrs(
-                 (Qk[k] == LinExpr(value_y*ni,gamma.select(k,'*','*')) + \
-                 LinExpr(c_delta[k],delta.select(k,'*','*')) + \
-                 epsilon.sum(k,'*') + LinExpr(c_lamda,lamda.select(k,'*')) + \
-                 LinExpr(c_mu[k],mu.select(k,'*')) + c_nu[k]*nu[k] for k in range(nk)),
-                 "Q(k)")
-        #(2) -gamma_kij+lambda_kj+mu_kj+nu_k<=0  forall k,j
+                (eta == L3.sum() for k in range(nk)),
+                "eta>k")
+        #(6) L3(k) >= c'd'v(k) forall i,k
+        cdv = v.copy()
+        for k in range(nk):
+            for i in range(ni):
+                for j in range(ni):
+                   cdv[k,i,j]=cdk[k][i][j]
         m1.addConstrs(
-                (-gamma.sum(k,'*',j)+lamda[k,j]+mu[k,j]+nu[k] <= 0 for k in range(nk) for j in range (ni)),
-                "u")
-        #(3) c_kij*d_ki*beta_ki+gamma_kij+delta_kij+epsilon_ki<=0  forall k,i,j
+                (v.prod(cdv,k,i,'*') <= L3[k] for k in range(nk) for i in range(ni)),
+                "sumcdv<L3k")
+        #(7) v(k) <= y + u(k) forall k,i,j
         m1.addConstrs(
-                (cdk[k][i][j]*beta[k,i] + gamma[k,i,j] + delta[k,i,j] +epsilon[k,i] <=0 for k in range(nk) for i in range(ni) for j in range(ni)),
-                "v")
-        #(4) -sum_i(beta_i)<=1 forall k
+                (v[k,i,j] <= value_y[j] + u[k,j] for k in range(nk) for i in range(ni) for j in range(ni)),
+                "v<y+u")
+        #(8) v(k) <= 1 - a_j(k) forall k,i,j
         m1.addConstrs(
-                (-beta.sum(k,'*') <= 1 for k in range(nk)),
-                "L3")
+                (v[k,i,j] <= 1 - sk[k][j] for k in range(nk) for i in range(ni) for j in range(ni)),
+                "v<1-ak")
+        #(9) sum(v) = 1 forall i,k
+        m1.addConstrs(
+                (v.sum(k,i,'*') == 1 for k in range(nk) for i in range(ni)),
+                "sumv")
+        #(10) u(k) + y <= 1 forall k,j
+        m1.addConstrs(
+                (u[k,j] + value_y[j] <= 1 for k in range(nk) for j in range(ni)),
+                "u+y<1")
+        #(11) u(k) + a_j(k) <= 1 forall k,j
+        m1.addConstrs(
+                (u[k,j] + sk[k][j] <= 1 for k in range(nk) for j in range(ni)),
+                "u+ak<1")
+        #(12) sum(u(k)) + sum(y) - sum(a_j(k)*y) = p forall k (or <=)
+        ky = [0 for k in range(nk)]
+        for k in range(nk):
+            ky[k] = sum([sk[k][j]*value_y[j] for j in range(ni)])
+        m1.addConstrs(
+                (u.sum(k,'*') + sum(value_y) - ky[k] == p for k in range(nk)),
+                "2S-p")
         return(m1)
     def update_master(m,subx):
         m=1
