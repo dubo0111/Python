@@ -11,7 +11,7 @@ import data_generator1 as dg
 #INPUT Parameters:p, cost matrix
 #p,cd = dg.ins_small()
 #p,cd = dg.ins_big(5)
-p,cd,cdk,sk = dg.ins_k(3,1,5) #(ni,nk,sumk)
+p,cd,cdk,sk = dg.ins_k(10,5,53) #(ni,nk,sumk)
 # !!!!! Make sure index match: cdk VS. v_ij(k) [k][i][j]
 from gurobipy import *
 

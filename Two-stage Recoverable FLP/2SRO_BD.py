@@ -3,8 +3,8 @@
 Created on Wed Aug  1 08:24:56 2018
 
 2-stage recoverable p-center model:
-    Benders' decomposition (relaxed model)
-
+    Benders' decomposition (relaxed dual sub model)
+    failed: dual sub model cannot be solved to optimal by gurobi. constraints violated 1e-13
 @author: DUBO
 """
 
@@ -12,7 +12,7 @@ import data_generator1 as dg
 #INPUT Parameters:p, cost matrix, cost matrix of each scenarios, disruption scenarios
 #p,cd = dg.ins_small()
 #p,cd = dg.ins_big(5)
-p,cd,cdk,sk = dg.ins_k(3,1,5) #(ni,nk,randomseed)
+p,cd,cdk,sk = dg.ins_k(3,2,3) #(ni,nk,randomseed)
 # !!!!! Make sure index match: cdk V.S. v_ij(k) [k][i][j]
 from gurobipy import *
 
@@ -66,13 +66,13 @@ try:
         beta = m1.addVars(nk,ni,ub = 0,lb = -float('inf'), vtype=GRB.CONTINUOUS, name="beta")
         gamma = m1.addVars(nk,ni,ni,ub = 0,lb = -float('inf'), vtype=GRB.CONTINUOUS, name="gamma")
         delta = m1.addVars(nk,ni,ni,ub = 0,lb = -float('inf'), vtype=GRB.CONTINUOUS, name="delta")
-        epsilon = m1.addVars(nk,ni,vtype=GRB.CONTINUOUS, name="epsilon")
+        epsilon = m1.addVars(nk,ni,lb = 0,vtype=GRB.CONTINUOUS, name="epsilon")
         lamda = m1.addVars(nk,ni,ub = 0,lb = -float('inf'), vtype=GRB.CONTINUOUS, name="lambda")
         mu = m1.addVars(nk,ni,ub = 0,lb = -float('inf'), vtype=GRB.CONTINUOUS, name="mu")
         nu = m1.addVars(nk,vtype=GRB.CONTINUOUS, name="nu")
-        # Qk are auxiliary variables, minimizing every subproblem
+        # Qk are auxiliary variables, maximize every subproblem
         Qk = m1.addVars(nk,vtype=GRB.CONTINUOUS,obj = 1, name="Qk")
-        # Set sub model objective to minimize
+        # Set sub model objective to maximize
         m1.modelSense = GRB.MAXIMIZE
         #(1) Q(k) = sum_i(sum_j(y_j*gamma_kij))+sumsum_ij((1-a_kj)*delta_kij
         #           + sum_i(epsilon_ki) + sum_j((1-y_j)*lambda_kj) +
@@ -90,12 +90,22 @@ try:
                 "u")
         #(3) c_kij*d_ki*beta_ki+gamma_kij+delta_kij+epsilon_ki<=0  forall k,i,j
         m1.addConstrs(
-                (cdk[k][i][j]*beta[k,i] + gamma[k,i,j] + delta[k,i,j] + epsilon[k,i] <= 0 for k in range(nk) for i in range(ni) for j in range(ni)),
+                (cdk[k][i][j]*beta[k,i] + gamma[k,i,j] + delta[k,i,j] + epsilon[k,i] <= 0 \
+                for k in range(nk) for i in range(ni) for j in range(ni)),
                 "v")
         #(4) -sum_i(beta_i)<=1 forall k
         m1.addConstrs(
                 (-beta.sum(k,'*') <= 1 for k in range(nk)),
                 "L3")
+        # m1.addConstr((beta[0,0] == -0.40801750478276144))
+        # m1.addConstr((beta[0,2] == -0.5919824952172386))
+        # m1.addConstr((gamma[0,0,0] == -927.3994470233015))
+        # m1.addConstr((gamma[0,2,1] == -927.3994470233015))
+        # m1.addConstr((delta[0,0,2] == -574.579597469973))
+        # m1.addConstr((delta[0,2,2] == -1836.2115594007862))
+        # m1.addConstr((epsilon[0,0] == 927.3994470233015))
+        # m1.addConstr((epsilon[0,2] == 1836.2115594007862))
+        # m1.addConstr((nu[0] == -927.3994470233015))
         return(m1)
     def update_master(m,subx):
         m=1
@@ -163,7 +173,14 @@ try:
         else:
             m1 = update_sub(m1,value_y)
         filename = ''.join(['.\model\sub(',str(iteration),').lp'])
-        m1.write(filename)
+#        m1.write(filename)
+#        m1.params.FeasibilityTol = 1e-6
+#        m1.params.OptimalityTol = 1e-6
+        #m1.params.MarkowitzTol = 0.0001
+        #m1.params.Method = -1
+        #m1.params.Aggregate = 0
+#        m1.params.ScaleFlag = 3
+#        m1.params.ObjScale = 100
         m1.optimize()
         #
         value_Q = []
@@ -172,6 +189,16 @@ try:
             temp = m1.getVarByName(name)
             value_Q.append(temp.x)
         print(max(value_Q)*0.5+LB)
+
+        # print dual variable value
+        cm1 = m1.getConstrs()
+        num_c = len(cm1)
+        dual_value = []
+        constrname = []
+        for i in range(num_c):
+            dual_value.append(cm1[i].getAttr('Pi'))
+            constrname.append(cm1[i].getAttr('ConstrName'))
+        dual = dict(zip(constrname,dual_value))
         # extract subproblem variables: subx
         subx = m1.getVars()
         # update UB = ;

@@ -9,7 +9,7 @@ import data_generator1 as dg
 #INPUT Parameters:p, cost matrix, cost matrix of each scenarios, disruption scenarios
 #p,cd = dg.ins_small()
 #p,cd = dg.ins_big(5)
-p,cd,cdk,sk = dg.ins_k(3,1,5) #(ni,nk,randomseed)
+p,cd,cdk,sk = dg.ins_k(3,2,3) #(ni,nk,randomseed)
 # !!!!! Make sure index match: cdk VS. v_ij(k) [k][i][j]
 from gurobipy import *
 
@@ -57,19 +57,19 @@ try:
             "sumx")
     # ---------- Sub problem ----------
     def sub_model(value_y):
-        # Create sub model
+        # Create relaxed sub model
         m1 = Model('Sub model')
         # ---------- Sub problem ----------
         # v:allocations u:location L3,eta: auxiliary variable
         v = m1.addVars(nk,ni,ni,lb=0,ub=float('inf'), vtype=GRB.CONTINUOUS, name="v")
         u = m1.addVars(nk,ni,lb=0,ub=float('inf'),vtype=GRB.CONTINUOUS, name="u")
         L3 = m1.addVars(nk,vtype=GRB.CONTINUOUS, name="L3")
-        eta = m1.addVar(vtype=GRB.CONTINUOUS, obj=a2, name="eta")
+        eta = m1.addVar(vtype=GRB.CONTINUOUS, obj=1, name="eta")
         m1.modelSense = GRB.MINIMIZE
         #(5) eta == sum(L3(k)) forall k
         m1.addConstr(
                 (eta == L3.sum()),
-                "eta=sumk")
+                "eta=sumL")
         #(6) L3(k) >= c'd'v(k) forall i,k
         cdv = v.copy()
         for k in range(nk):
@@ -78,65 +78,82 @@ try:
                    cdv[k,i,j]=cdk[k][i][j]
         m1.addConstrs(
                 (v.prod(cdv,k,i,'*') <= L3[k] for k in range(nk) for i in range(ni)),
-                "sumcdv<L3k")
+                "beta")
         #(7) v(k) <= y + u(k) forall k,i,j
         m1.addConstrs(
                 (v[k,i,j] <= value_y[j] + u[k,j] for k in range(nk) for i in range(ni) for j in range(ni)),
-                "v<y+u")
+                "gamma")
         #(8) v(k) <= 1 - a_j(k) forall k,i,j
         m1.addConstrs(
                 (v[k,i,j] <= 1 - sk[k][j] for k in range(nk) for i in range(ni) for j in range(ni)),
-                "v<1-ak")
+                "delta")
         #(9) sum(v) = 1 forall i,k
         m1.addConstrs(
                 (v.sum(k,i,'*') == 1 for k in range(nk) for i in range(ni)),
-                "sumv")
+                "epsilon")
         #(10) u(k) + y <= 1 forall k,j
         m1.addConstrs(
                 (u[k,j] + value_y[j] <= 1 for k in range(nk) for j in range(ni)),
-                "u+y<1")
+                "lamda")
         #(11) u(k) + a_j(k) <= 1 forall k,j
         m1.addConstrs(
                 (u[k,j] + sk[k][j] <= 1 for k in range(nk) for j in range(ni)),
-                "u+ak<1")
+                "mu")
         #(12) sum(u(k)) + sum(y) - sum(a_j(k)*y) = p forall k (or <=)
         ky = [0 for k in range(nk)]
         for k in range(nk):
             ky[k] = sum([sk[k][j]*value_y[j] for j in range(ni)])
         m1.addConstrs(
                 (u.sum(k,'*') + sum(value_y) - ky[k] == p for k in range(nk)),
-                "2S-p")
+                "nu")
         return(m1)
-    def update_master(m,subx):
-        m = 1
+    def update_master(m,m1):
+        if iteration == 1:
+            omega = m1.addVar(vtype=GRB.CONTINUOUS, obj=1, name="omega")
+        ''' Benders' cut
+         omega >= sumsum(gamma_k'ij*y) + sum_j(-lamda*y) +  nu*sum_j((aj(k')-1)*y)
+         + sumsum((1-aj(k'))*delta_ij)+sum_i(epsilon)+sum_j(lamda)
+         + sum_j(1-aj(k'))*mu_j + p*nu
+        '''
+        # extract maximum L3
+        value_L3 = []
+        for k in range(nk):
+            L3_name = ''.join(['L3[',str(k),']'])
+            L3_temp = m.getVarByName(L3_name)
+            value_L3.append(y_temp.x)
+        # maximum L3 and its index (worst k)
+        max_k = max([[v,i] for i,v in enumerate(value_L3)])[1]
+        # get dual variable value for gerating Benders cut
+        cm1 = m1.getConstrs()
+        num_c = len(cm1)
+        dual_value = []
+        constrname = []
+        for i in range(num_c):
+            dual_value.append(cm1[i].getAttr('Pi'))
+            constrname.append(cm1[i].getAttr('ConstrName'))
+        dual = dict(zip(constrname,dual_value))
+        gamma = [[0 for j in range(ni)] for i in range(ni)]
+        delta = gamma.copy()
+        epsilon = [0 for j in range(ni)]
+        lamda = epsilon.copy()
+        mu = epsilon.copy()
+        for i in range(ni):
+            for j in range(ni):
+                gamma_name = ''.join(['gamma[',str(max_k),'][',str(i),'][',str(j),']'])
+                delta_name = ''.join(['delta[',str(max_k),'][',str(i),'][',str(j),']'])
+                gamma[i][j] = dual[gamma_name]
+                delta[i][j] = dual[delta_name]
+        for n in range(ni):
+            epsilon_name = ''.join(['epsilon[',str(max_k),'][',str(n),']'])
+            lamda_name = ''.join(['lamda[',str(max_k),'][',str(n),']'])
+            mu_name = ''.join(['mu[',str(max_k),'][',str(n),']'])
+        nu_name = ''.join(['nu[',str(max_k),']'])
+        nu = dual[delta_name]
+        
         return m
     def update_sub(m1,value_y):
-        # remove old constraints
-        for k in range(nk):
-            constr_name = ''.join(['Q(k)[',str(k),']'])
-            m1.remove(m1.getConstrByName(constr_name))
-        # add new constraints
-        c_delta,c_lamda,c_mu,c_nu = c_constr1(value_y)
-        m1.addConstrs(
-                 (Qk[k] == LinExpr(value_y*ni,gamma.select(k,'*','*')) + \
-                 LinExpr(c_delta[k],delta.select(k,'*','*')) + \
-                 epsilon.sum(k,'*') + LinExpr(c_lamda,lamda.select(k,'*')) + \
-                 LinExpr(c_mu[k],mu.select(k,'*')) + c_nu[k]*nu[k] for k in range(nk)),
-                 "Q(k)")
+        m1=1
         return m1
-    # update coeff
-    def c_constr1(value_y):
-        c_delta = [[0 for i in range(ni*ni)] for k in range(nk)]
-        for k in range(nk):
-            c_delta[k] = [1-sk[k][j] for j in range(ni)]*ni
-        c_lamda = [1-value_y[j] for j in range(ni)]
-        c_mu = [[0 for i in range(ni)] for k in range(nk)]
-        for k in range(nk):
-            c_mu[k] = [1-sk[k][j] for j in range(ni)]
-        c_nu=[]
-        for k in range(nk):
-            c_nu.append(p + sum([sk[k][j]*value_y[j] for j in range(ni)]) - sum(value_y))
-        return c_delta,c_lamda,c_mu,c_nu
     # ----------Benders' Decompisition----------
     iteration = 0
     # Set upperbound: UB and lowerbound: LB
@@ -175,16 +192,16 @@ try:
         filename = ''.join(['.\model\_testsub(',str(iteration),').lp'])
         m1.write(filename)
         m1.optimize()
-        #
-        value_Q = []
-        for k in range(nk):
-            name = ''.join(['L3[',str(k),']'])
-            temp = m1.getVarByName(name)
-            value_Q.append(temp.x)
-        print(max(value_Q)*0.5+LB)
+        # get dual variable value for gerating Benders cut
+        cm1 = m1.getConstrs()
+        num_c = len(cm1)
+        dual_value = []
+        constrname = []
+        for i in range(num_c):
+            dual_value.append(cm1[i].getAttr('Pi'))
+            constrname.append(cm1[i].getAttr('ConstrName'))
+        dual = dict(zip(constrname,dual_value))
 
-        # extract subproblem variables: subx
-        subx = m1.getVars()
         # update UB = ;
 
         iteration += 1 #

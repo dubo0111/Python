@@ -113,6 +113,15 @@ def ins_k(ni,nk,rnd=2):
         else:
             sumk = p - 1
         sk = ins_kdisrupt(ni,nk,sumk,rnd)
+        #cd,cdk = roundlist(cd,cdk,nk,ni)
     return p,cd,cdk,sk
-
+def roundlist(cd,cdk,nk,ni):
+    for k in range(nk):
+        for i in range(ni):
+            for j in range(ni):
+                cdk[k][i][j] = round(cdk[k][i][j],2)
+    for i in range(ni):
+        for j in range(ni):
+            cd[i][j] = round(cd[i][j],2)
+    return cd,cdk
 #ins_k(5,3)
