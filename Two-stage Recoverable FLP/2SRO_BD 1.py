@@ -2,14 +2,14 @@
 """
 TEST TEST
 CHECKING dual subproblem
-similiar to C&CG
+Similiar to C&CG
 """
 
 import data_generator1 as dg
 #INPUT Parameters:p, cost matrix, cost matrix of each scenarios, disruption scenarios
 #p,cd = dg.ins_small()
 #p,cd = dg.ins_big(5)
-p,cd,cdk,sk = dg.ins_k(3,2) #(ni,nk,sumk)
+p,cd,cdk,sk = dg.ins_k(3,1,5) #(ni,nk,randomseed)
 # !!!!! Make sure index match: cdk VS. v_ij(k) [k][i][j]
 from gurobipy import *
 
@@ -61,15 +61,15 @@ try:
         m1 = Model('Sub model')
         # ---------- Sub problem ----------
         # v:allocations u:location L3,eta: auxiliary variable
-        v = m1.addVars(nk,ni,ni,vtype=GRB.CONTINUOUS, name="v")
-        u = m1.addVars(nk,ni,vtype=GRB.CONTINUOUS, name="u")
+        v = m1.addVars(nk,ni,ni,lb=0,ub=float('inf'), vtype=GRB.CONTINUOUS, name="v")
+        u = m1.addVars(nk,ni,lb=0,ub=float('inf'),vtype=GRB.CONTINUOUS, name="u")
         L3 = m1.addVars(nk,vtype=GRB.CONTINUOUS, name="L3")
         eta = m1.addVar(vtype=GRB.CONTINUOUS, obj=a2, name="eta")
         m1.modelSense = GRB.MINIMIZE
         #(5) eta == sum(L3(k)) forall k
-        m1.addConstrs(
-                (eta == L3.sum() for k in range(nk)),
-                "eta>k")
+        m1.addConstr(
+                (eta == L3.sum()),
+                "eta=sumk")
         #(6) L3(k) >= c'd'v(k) forall i,k
         cdv = v.copy()
         for k in range(nk):
@@ -108,7 +108,7 @@ try:
                 "2S-p")
         return(m1)
     def update_master(m,subx):
-        m=1
+        m = 1
         return m
     def update_sub(m1,value_y):
         # remove old constraints
@@ -148,7 +148,7 @@ try:
         # update master model m. Adding a new constraint in each iteration.
         if iteration != 0:
             m = update_master(m,subx)
-        filename= ''.join(['.\model\master(',str(iteration),').lp'])
+        filename= ''.join(['.\model\_testmaster(',str(iteration),').lp'])
         m.write(filename)
         m.optimize()
         print('........................................\
@@ -172,9 +172,17 @@ try:
             m1 = sub_model(value_y)
         else:
             m1 = update_sub(m1,value_y)
-        filename = ''.join(['.\model\sub(',str(iteration),').lp'])
+        filename = ''.join(['.\model\_testsub(',str(iteration),').lp'])
         m1.write(filename)
         m1.optimize()
+        #
+        value_Q = []
+        for k in range(nk):
+            name = ''.join(['L3[',str(k),']'])
+            temp = m1.getVarByName(name)
+            value_Q.append(temp.x)
+        print(max(value_Q)*0.5+LB)
+
         # extract subproblem variables: subx
         subx = m1.getVars()
         # update UB = ;

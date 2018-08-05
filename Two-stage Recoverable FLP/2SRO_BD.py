@@ -12,8 +12,8 @@ import data_generator1 as dg
 #INPUT Parameters:p, cost matrix, cost matrix of each scenarios, disruption scenarios
 #p,cd = dg.ins_small()
 #p,cd = dg.ins_big(5)
-p,cd,cdk,sk = dg.ins_k(3,2) #(ni,nk,sumk)
-# !!!!! Make sure index match: cdk VS. v_ij(k) [k][i][j]
+p,cd,cdk,sk = dg.ins_k(3,1,5) #(ni,nk,randomseed)
+# !!!!! Make sure index match: cdk V.S. v_ij(k) [k][i][j]
 from gurobipy import *
 
 try:
@@ -84,13 +84,13 @@ try:
                  epsilon.sum(k,'*') + LinExpr(c_lamda,lamda.select(k,'*')) + \
                  LinExpr(c_mu[k],mu.select(k,'*')) + c_nu[k]*nu[k] for k in range(nk)),
                  "Q(k)")
-        #(2) -gamma_kij+lambda_kj+mu_kj+nu_k<=0  forall k,j
+        #(2) -sum_i(gamma_kij)+lambda_kj+mu_kj+nu_k<=0  forall k,j
         m1.addConstrs(
                 (-gamma.sum(k,'*',j)+lamda[k,j]+mu[k,j]+nu[k] <= 0 for k in range(nk) for j in range (ni)),
                 "u")
         #(3) c_kij*d_ki*beta_ki+gamma_kij+delta_kij+epsilon_ki<=0  forall k,i,j
         m1.addConstrs(
-                (cdk[k][i][j]*beta[k,i] + gamma[k,i,j] + delta[k,i,j] +epsilon[k,i] <=0 for k in range(nk) for i in range(ni) for j in range(ni)),
+                (cdk[k][i][j]*beta[k,i] + gamma[k,i,j] + delta[k,i,j] + epsilon[k,i] <= 0 for k in range(nk) for i in range(ni) for j in range(ni)),
                 "v")
         #(4) -sum_i(beta_i)<=1 forall k
         m1.addConstrs(
@@ -165,6 +165,13 @@ try:
         filename = ''.join(['.\model\sub(',str(iteration),').lp'])
         m1.write(filename)
         m1.optimize()
+        #
+        value_Q = []
+        for k in range(nk):
+            name = ''.join(['Qk[',str(k),']'])
+            temp = m1.getVarByName(name)
+            value_Q.append(temp.x)
+        print(max(value_Q)*0.5+LB)
         # extract subproblem variables: subx
         subx = m1.getVars()
         # update UB = ;

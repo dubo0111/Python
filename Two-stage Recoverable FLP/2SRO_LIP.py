@@ -11,7 +11,7 @@ import data_generator1 as dg
 #INPUT Parameters:p, cost matrix
 #p,cd = dg.ins_small()
 #p,cd = dg.ins_big(5)
-p,cd,cdk,sk = dg.ins_k(3,2) #(ni,nk,sumk)
+p,cd,cdk,sk = dg.ins_k(3,1,5) #(ni,nk,sumk)
 # !!!!! Make sure index match: cdk VS. v_ij(k) [k][i][j]
 from gurobipy import *
 
@@ -106,7 +106,6 @@ try:
             "2S-p")
     # save model and optimize
     m.write(".\model\LIP.lp")
-    #shutil.move("2S_Recovarable_pcenter.lp",r"C:\Users\DUBO\Documents\GitHub\Python\Two-stage Recoverable FLP\model","copy")
     m.optimize()
 
     #Output
