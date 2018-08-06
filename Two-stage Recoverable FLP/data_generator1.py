@@ -88,7 +88,7 @@ def ins_kdisrupt(ni,nk,sumk,rnd=None):
     return b
 #sk = ins_kdisrupt(5,3,2)
 # instance with |k| scenarios
-def ins_k(ni,nk,rnd=2):
+def ins_k(ni,nk,rnd=None):
     co,d = ins_generator(ni,rnd)
     c,cd = cal_cost(co,d)
     cdk = [[[0 for j in range(ni)] for i in range(ni)] for k in range(nk)]

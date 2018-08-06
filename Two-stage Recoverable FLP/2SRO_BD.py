@@ -12,7 +12,7 @@ import data_generator1 as dg
 #INPUT Parameters:p, cost matrix, cost matrix of each scenarios, disruption scenarios
 #p,cd = dg.ins_small()
 #p,cd = dg.ins_big(5)
-p,cd,cdk,sk = dg.ins_k(3,2,3) #(ni,nk,randomseed)
+p,cd,cdk,sk = dg.ins_k(3,2,11) #(ni,nk,randomseed)
 # !!!!! Make sure index match: cdk V.S. v_ij(k) [k][i][j]
 from gurobipy import *
 
@@ -139,7 +139,7 @@ try:
         return c_delta,c_lamda,c_mu,c_nu
     # ----------Benders' Decompisition----------
     iteration = 0
-    # Set upperbound: UB and lowerbound: LB
+        # Set upperbound: UB and lowerbound: LB
     LB = -float('inf')
     UB = float('inf')
     gap = 1
@@ -181,6 +181,7 @@ try:
         #m1.params.Aggregate = 0
 #        m1.params.ScaleFlag = 3
 #        m1.params.ObjScale = 100
+#        m1.params.NumericFocus = 0
         m1.optimize()
         #
         value_Q = []

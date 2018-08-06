@@ -1,15 +1,15 @@
 # -*- coding: utf-8 -*-
 """
-TEST TEST
-CHECKING dual subproblem
-Similiar to C&CG
-"""
+2-stage recoverable p-center model:
 
+DU BO
+
+"""
 import data_generator1 as dg
 #INPUT Parameters:p, cost matrix, cost matrix of each scenarios, disruption scenarios
 #p,cd = dg.ins_small()
 #p,cd = dg.ins_big(5)
-p,cd,cdk,sk = dg.ins_k(3,2,3) #(ni,nk,randomseed)
+p,cd,cdk,sk = dg.ins_k(3,5) #(ni,nk,randomseed)
 # !!!!! Make sure index match: cdk VS. v_ij(k) [k][i][j]
 from gurobipy import *
 
@@ -31,6 +31,7 @@ try:
     x = m.addVars(ni,ni,vtype=GRB.BINARY, name="x")
     y = m.addVars(ni,vtype=GRB.BINARY, name="y")
     L = m.addVar(vtype=GRB.CONTINUOUS,obj = a1, name="L")
+    omega = m.addVar(vtype=GRB.CONTINUOUS, name="omega")
 
     # Set objective to minimize
     m.modelSense = GRB.MINIMIZE
@@ -107,15 +108,7 @@ try:
                 (u.sum(k,'*') + sum(value_y) - ky[k] == p for k in range(nk)),
                 "nu")
         return(m1)
-    def update_master(m,m1):
-        # extract maximum L3
-        value_L3 = []
-        for k in range(nk):
-            L3_name = ''.join(['L3[',str(k),']'])
-            L3_temp = m.getVarByName(L3_name)
-            value_L3.append(y_temp.x)
-        # maximum L3 and its index (worst k)
-        max_k = max([[v,i] for i,v in enumerate(value_L3)])[1]
+    def update_master(m,m1,max_k):
         # get dual variable value for gerating Benders cut
         cm1 = m1.getConstrs()
         num_c = len(cm1)
@@ -145,8 +138,8 @@ try:
             mu[n] = dual[mu_name]
         nu_name = ''.join(['nu[',str(max_k),']'])
         nu = dual[nu_name]
-        if iteration == 1:
-            omega = m1.addVar(vtype=GRB.CONTINUOUS, obj=1, name="omega")
+        # if iteration == 1:
+        #     omega = m.addVar(vtype=GRB.CONTINUOUS, obj=a2, name="omega")
         ''' Benders' cut
          omega >= sumsum(gamma_k'ij*y) + sum_j(-lamda*y) +  nu*sum_j((aj(k')-1)*y)
          + sumsum((1-aj(k'))*delta_ij)+sum_i(epsilon)+sum_j(lamda)
@@ -159,18 +152,34 @@ try:
         ajk_y = []
         for j in range(ni):
             ajk_y.append(sk[max_k][j]-1)
-        aaa=0
         c_y = LinExpr(gamma_y,y.select()*ni) - LinExpr(lamda,y.select()) \
         + nu*LinExpr(ajk_y,y.select())
         constant_delta = 0
         for i in range(ni):
             constant_delta += quicksum([(1-sk[max_k][j])*delta[i][j] for j in range(ni)])
         constant = quicksum(epsilon) + quicksum(lamda) + constant_delta +\
-        quicksum([(1-sk[max_k][j])*mu[j] for j in range(ni)])
+        quicksum([(1-sk[max_k][j])*mu[j] for j in range(ni)])+p*nu
+        m.getVarByName('omega').Obj = a2
         m.addConstr(omega >= c_y + constant)
+        m.update()
         return m
     def update_sub(m1,value_y):
-        m1=1
+        for k in range(nk):
+            for i in range(ni):
+                for j in range(ni):
+                    gamma_name = ''.join(['gamma[',str(k),',',str(i),',',str(j),']'])
+                    m1.getConstrByName(gamma_name).rhs = value_y[j]
+        for k in range(nk):
+            for j in range(ni):
+                lamda_name = ''.join(['lamda[',str(k),',',str(j),']'])
+                m1.getConstrByName(lamda_name).rhs = 1 - value_y[j]
+        ky = [0 for k in range(nk)]
+        for k in range(nk):
+            ky[k] = sum([sk[k][j]*value_y[j] for j in range(ni)])
+        for k in range(nk):
+            nu_name = ''.join(['nu[',str(k),']'])
+            m1.getConstrByName(nu_name).rhs = p + ky[k] - sum(value_y)
+        m1.update()
         return m1
     # ----------Benders' Decompisition----------
     iteration = 0
@@ -178,16 +187,17 @@ try:
     LB = -float('inf')
     UB = float('inf')
     gap = 1
-    while gap >= 1e-5: # stop criteria
+    stop = 1e-5
+    add_cut_scen = []
+    while gap >= stop: # stop criteria
         # --- Solve master problem ---
         # update master model m. Adding a new constraint in each iteration.
         if iteration != 0:
-            m = update_master(m,m1)
+            m = update_master(m,m1,max_k)
         filename= ''.join(['.\model\master(',str(iteration),').lp'])
         m.write(filename)
         m.optimize()
-        print('........................................\
-              ........................................')
+        #print('........................................')
         # extract value_y
         value_y = []
         for j in range(ni):
@@ -202,7 +212,6 @@ try:
         LB = obj_master.getValue()
         # --- Solve sub problem ---
         # Input: value_y; Output value: variable values of the worst scenarios to construct a new cut
-        # update sub model m1
         if iteration == 0:
             m1 = sub_model(value_y)
         else:
@@ -210,25 +219,30 @@ try:
         filename = ''.join(['.\model\sub(',str(iteration),').lp'])
         m1.write(filename)
         m1.optimize()
-        # get dual variable value for gerating Benders cut
-        cm1 = m1.getConstrs()
-        num_c = len(cm1)
-        dual_value = []
-        constrname = []
-        for i in range(num_c):
-            dual_value.append(cm1[i].getAttr('Pi'))
-            constrname.append(cm1[i].getAttr('ConstrName'))
-        dual = dict(zip(constrname,dual_value))
-
-        # update UB = ;
-
-        iteration += 1 #
-        #
+        # extract maximum L3
+        value_L3 = []
+        for k in range(nk):
+            L3_name = ''.join(['L3[',str(k),']'])
+            L3_temp = m1.getVarByName(L3_name)
+            value_L3.append(L3_temp.x)
+        # maximum L3 and its index (worst k)
+        max_L3 = max([[v,i] for i,v in enumerate(value_L3)])
+        max_k = max_L3[1]
+        # update UB
+        UB = min([UB,value_L+max_L3[0]])
         gap = (UB-LB)/LB
-        #Output
-        # for v in m.getVars():
-        #      print('%s %g' % (v.varName, v.x))
-        # print('Obj: %g' % m.objVal)
+        #
+        add_cut_scen.append(max_k)
+        print('==========================================')
+        print('Current iteration:',str(iteration))
+        print('gap = ',str(gap))
+        print('Cuts added form scenario:',str(add_cut_scen))
+        if gap <= stop:
+            print('OPTIMAL SOLUTION FOUND !')
+        # update iteration
+        iteration += 1
+        if iteration >= 20:
+            break
 except GurobiError as e:
     print('Error code ' + str(e.errno) + ": " + str(e))
 except AttributeError:
