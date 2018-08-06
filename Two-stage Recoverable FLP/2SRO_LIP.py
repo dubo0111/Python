@@ -7,13 +7,15 @@ Created on Tue Jul 26 2018
 
 @author: DUBO
 """
+import time
 import data_generator1 as dg
 #INPUT Parameters:p, cost matrix
 #p,cd = dg.ins_small()
 #p,cd = dg.ins_big(5)
-p,cd,cdk,sk = dg.ins_k(3,2,11) #(ni,nk,sumk)
+p,cd,cdk,sk = dg.ins_k(10,50,10) #(ni,nk,sumk)
 # !!!!! Make sure index match: cdk VS. v_ij(k) [k][i][j]
 from gurobipy import *
+start_time = time.time()
 
 try:
 
@@ -111,9 +113,12 @@ try:
     #Output
 #    for v in m.getVars():
 #         print('%s %g' % (v.varName, v.x))
+    value_L = m.getVarByName('L')
+    value_eta = m.getVarByName('eta')
     print('Obj: %g' % m.objVal)
 
 except GurobiError as e:
     print('Error code ' + str(e.errno) + ": " + str(e))
 except AttributeError:
     print('Encountered an attribute error')
+print("--- %s seconds ---" % round((time.time() - start_time),2))

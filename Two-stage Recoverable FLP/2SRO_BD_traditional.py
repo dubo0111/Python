@@ -5,17 +5,21 @@
 DU BO
 
 """
+import time
 import data_generator1 as dg
 #INPUT Parameters:p, cost matrix, cost matrix of each scenarios, disruption scenarios
 #p,cd = dg.ins_small()
 #p,cd = dg.ins_big(5)
-p,cd,cdk,sk = dg.ins_k(3,5) #(ni,nk,randomseed)
+p,cd,cdk,sk = dg.ins_k(10,50,10) #(ni,nk,randomseed)
 # !!!!! Make sure index match: cdk VS. v_ij(k) [k][i][j]
 from gurobipy import *
+start_time = time.time()
 
 try:
     # Create master model
     m = Model("master model")
+    outputflag = 0
+    m.params.OutputFlag = outputflag
 
     # Number of nodes
     ni = len(cd)
@@ -59,11 +63,12 @@ try:
     # ---------- Sub problem ----------
     def sub_model(value_y):
         # Create relaxed sub model
-        m1 = Model('Sub model')
+        m1 = Model('sub model')
+        m1.params.OutputFlag = outputflag
         # ---------- Sub problem ----------
         # v:allocations u:location L3,eta: auxiliary variable
-        v = m1.addVars(nk,ni,ni,lb=0,ub=float('inf'), vtype=GRB.CONTINUOUS, name="v")
-        u = m1.addVars(nk,ni,lb=0,ub=float('inf'),vtype=GRB.CONTINUOUS, name="u")
+        v = m1.addVars(nk,ni,ni,lb=0,ub=1, vtype=GRB.CONTINUOUS, name="v")
+        u = m1.addVars(nk,ni,lb=0,ub=1,vtype=GRB.CONTINUOUS, name="u")
         L3 = m1.addVars(nk,vtype=GRB.CONTINUOUS, name="L3")
         eta = m1.addVar(vtype=GRB.CONTINUOUS, obj=1, name="eta")
         m1.modelSense = GRB.MINIMIZE
@@ -108,6 +113,24 @@ try:
                 (u.sum(k,'*') + sum(value_y) - ky[k] == p for k in range(nk)),
                 "nu")
         return(m1)
+    def update_sub(m1,value_y):
+        for k in range(nk):
+            for i in range(ni):
+                for j in range(ni):
+                    gamma_name = ''.join(['gamma[',str(k),',',str(i),',',str(j),']'])
+                    m1.getConstrByName(gamma_name).rhs = value_y[j]
+        for k in range(nk):
+            for j in range(ni):
+                lamda_name = ''.join(['lamda[',str(k),',',str(j),']'])
+                m1.getConstrByName(lamda_name).rhs = 1 - value_y[j]
+        ky = [0 for k in range(nk)]
+        for k in range(nk):
+            ky[k] = sum([sk[k][j]*value_y[j] for j in range(ni)])
+        for k in range(nk):
+            nu_name = ''.join(['nu[',str(k),']'])
+            m1.getConstrByName(nu_name).rhs = p + ky[k] - sum(value_y)
+        m1.update()
+        return m1
     def update_master(m,m1,max_k):
         # get dual variable value for gerating Benders cut
         cm1 = m1.getConstrs()
@@ -119,10 +142,10 @@ try:
             constrname.append(cm1[i].getAttr('ConstrName'))
         dual = dict(zip(constrname,dual_value))
         gamma = [[0 for j in range(ni)] for i in range(ni)]
-        delta = gamma.copy()
+        delta = [[0 for j in range(ni)] for i in range(ni)]
         epsilon = [0 for j in range(ni)]
-        lamda = epsilon.copy()
-        mu = epsilon.copy()
+        lamda = [0 for j in range(ni)]
+        mu = [0 for j in range(ni)]
         for i in range(ni):
             for j in range(ni):
                 gamma_name = ''.join(['gamma[',str(max_k),',',str(i),',',str(j),']'])
@@ -143,8 +166,7 @@ try:
         ''' Benders' cut
          omega >= sumsum(gamma_k'ij*y) + sum_j(-lamda*y) +  nu*sum_j((aj(k')-1)*y)
          + sumsum((1-aj(k'))*delta_ij)+sum_i(epsilon)+sum_j(lamda)
-         + sum_j(1-aj(k'))*mu_j + p*nu
-        '''
+         + sum_j(1-aj(k'))*mu_j + p*nu'''
         gamma_y = []
         for i in range(ni):
             for j in range(ni):
@@ -158,29 +180,11 @@ try:
         for i in range(ni):
             constant_delta += quicksum([(1-sk[max_k][j])*delta[i][j] for j in range(ni)])
         constant = quicksum(epsilon) + quicksum(lamda) + constant_delta +\
-        quicksum([(1-sk[max_k][j])*mu[j] for j in range(ni)])+p*nu
+        quicksum([(1-sk[max_k][j])*mu[j] for j in range(ni)]) + p*nu
         m.getVarByName('omega').Obj = a2
         m.addConstr(omega >= c_y + constant)
         m.update()
         return m
-    def update_sub(m1,value_y):
-        for k in range(nk):
-            for i in range(ni):
-                for j in range(ni):
-                    gamma_name = ''.join(['gamma[',str(k),',',str(i),',',str(j),']'])
-                    m1.getConstrByName(gamma_name).rhs = value_y[j]
-        for k in range(nk):
-            for j in range(ni):
-                lamda_name = ''.join(['lamda[',str(k),',',str(j),']'])
-                m1.getConstrByName(lamda_name).rhs = 1 - value_y[j]
-        ky = [0 for k in range(nk)]
-        for k in range(nk):
-            ky[k] = sum([sk[k][j]*value_y[j] for j in range(ni)])
-        for k in range(nk):
-            nu_name = ''.join(['nu[',str(k),']'])
-            m1.getConstrByName(nu_name).rhs = p + ky[k] - sum(value_y)
-        m1.update()
-        return m1
     # ----------Benders' Decompisition----------
     iteration = 0
     # Set upperbound: UB and lowerbound: LB
@@ -194,10 +198,9 @@ try:
         # update master model m. Adding a new constraint in each iteration.
         if iteration != 0:
             m = update_master(m,m1,max_k)
-        filename= ''.join(['.\model\master(',str(iteration),').lp'])
-        m.write(filename)
+        #filename= ''.join(['.\model\master(',str(iteration),').lp'])
+        #m.write(filename)
         m.optimize()
-        #print('........................................')
         # extract value_y
         value_y = []
         for j in range(ni):
@@ -216,8 +219,8 @@ try:
             m1 = sub_model(value_y)
         else:
             m1 = update_sub(m1,value_y)
-        filename = ''.join(['.\model\sub(',str(iteration),').lp'])
-        m1.write(filename)
+        #filename = ''.join(['.\model\sub(',str(iteration),').lp'])
+        #m1.write(filename)
         m1.optimize()
         # extract maximum L3
         value_L3 = []
@@ -229,16 +232,17 @@ try:
         max_L3 = max([[v,i] for i,v in enumerate(value_L3)])
         max_k = max_L3[1]
         # update UB
-        UB = min([UB,value_L+max_L3[0]])
+        UB = min([UB,0.5*value_L + 0.5*max_L3[0]])
         gap = (UB-LB)/LB
         #
         add_cut_scen.append(max_k)
         print('==========================================')
         print('Current iteration:',str(iteration))
         print('gap = ',str(gap))
-        print('Cuts added form scenario:',str(add_cut_scen))
+        print('Cuts added form scenario:',str(add_cut_scen[0:-1]))
         if gap <= stop:
             print('OPTIMAL SOLUTION FOUND !')
+            print('Optimal Objective Value = ',str(UB))
         # update iteration
         iteration += 1
         if iteration >= 20:
@@ -247,3 +251,4 @@ except GurobiError as e:
     print('Error code ' + str(e.errno) + ": " + str(e))
 except AttributeError:
     print('Encountered an attribute error')
+print("--- %s seconds ---" % round((time.time() - start_time),2))
