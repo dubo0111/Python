@@ -108,13 +108,6 @@ try:
                 "nu")
         return(m1)
     def update_master(m,m1):
-        if iteration == 1:
-            omega = m1.addVar(vtype=GRB.CONTINUOUS, obj=1, name="omega")
-        ''' Benders' cut
-         omega >= sumsum(gamma_k'ij*y) + sum_j(-lamda*y) +  nu*sum_j((aj(k')-1)*y)
-         + sumsum((1-aj(k'))*delta_ij)+sum_i(epsilon)+sum_j(lamda)
-         + sum_j(1-aj(k'))*mu_j + p*nu
-        '''
         # extract maximum L3
         value_L3 = []
         for k in range(nk):
@@ -139,17 +132,42 @@ try:
         mu = epsilon.copy()
         for i in range(ni):
             for j in range(ni):
-                gamma_name = ''.join(['gamma[',str(max_k),'][',str(i),'][',str(j),']'])
-                delta_name = ''.join(['delta[',str(max_k),'][',str(i),'][',str(j),']'])
+                gamma_name = ''.join(['gamma[',str(max_k),',',str(i),',',str(j),']'])
+                delta_name = ''.join(['delta[',str(max_k),',',str(i),',',str(j),']'])
                 gamma[i][j] = dual[gamma_name]
                 delta[i][j] = dual[delta_name]
         for n in range(ni):
-            epsilon_name = ''.join(['epsilon[',str(max_k),'][',str(n),']'])
-            lamda_name = ''.join(['lamda[',str(max_k),'][',str(n),']'])
-            mu_name = ''.join(['mu[',str(max_k),'][',str(n),']'])
+            epsilon_name = ''.join(['epsilon[',str(max_k),',',str(n),']'])
+            lamda_name = ''.join(['lamda[',str(max_k),',',str(n),']'])
+            mu_name = ''.join(['mu[',str(max_k),',',str(n),']'])
+            epsilon[n] = dual[epsilon_name]
+            lamda[n] = dual[lamda_name]
+            mu[n] = dual[mu_name]
         nu_name = ''.join(['nu[',str(max_k),']'])
-        nu = dual[delta_name]
-        
+        nu = dual[nu_name]
+        if iteration == 1:
+            omega = m1.addVar(vtype=GRB.CONTINUOUS, obj=1, name="omega")
+        ''' Benders' cut
+         omega >= sumsum(gamma_k'ij*y) + sum_j(-lamda*y) +  nu*sum_j((aj(k')-1)*y)
+         + sumsum((1-aj(k'))*delta_ij)+sum_i(epsilon)+sum_j(lamda)
+         + sum_j(1-aj(k'))*mu_j + p*nu
+        '''
+        gamma_y = []
+        for i in range(ni):
+            for j in range(ni):
+                gamma_y.append(gamma[i][j])
+        ajk_y = []
+        for j in range(ni):
+            ajk_y.append(sk[max_k][j]-1)
+        aaa=0
+        c_y = LinExpr(gamma_y,y.select()*ni) - LinExpr(lamda,y.select()) \
+        + nu*LinExpr(ajk_y,y.select())
+        constant_delta = 0
+        for i in range(ni):
+            constant_delta += quicksum([(1-sk[max_k][j])*delta[i][j] for j in range(ni)])
+        constant = quicksum(epsilon) + quicksum(lamda) + constant_delta +\
+        quicksum([(1-sk[max_k][j])*mu[j] for j in range(ni)])
+        m.addConstr(omega >= c_y + constant)
         return m
     def update_sub(m1,value_y):
         m1=1
@@ -164,8 +182,8 @@ try:
         # --- Solve master problem ---
         # update master model m. Adding a new constraint in each iteration.
         if iteration != 0:
-            m = update_master(m,subx)
-        filename= ''.join(['.\model\_testmaster(',str(iteration),').lp'])
+            m = update_master(m,m1)
+        filename= ''.join(['.\model\master(',str(iteration),').lp'])
         m.write(filename)
         m.optimize()
         print('........................................\
@@ -189,7 +207,7 @@ try:
             m1 = sub_model(value_y)
         else:
             m1 = update_sub(m1,value_y)
-        filename = ''.join(['.\model\_testsub(',str(iteration),').lp'])
+        filename = ''.join(['.\model\sub(',str(iteration),').lp'])
         m1.write(filename)
         m1.optimize()
         # get dual variable value for gerating Benders cut
@@ -206,7 +224,7 @@ try:
 
         iteration += 1 #
         #
-        gap = -(UB-LB)/LB
+        gap = (UB-LB)/LB
         #Output
         # for v in m.getVars():
         #      print('%s %g' % (v.varName, v.x))
