@@ -12,7 +12,7 @@ import data_generator1 as dg
 #INPUT Parameters:p, cost matrix, cost matrix of each scenarios, disruption scenarios
 #p,cd = dg.ins_small()
 #p,cd = dg.ins_big(5)
-p,cd,cdk,sk = dg.ins_k(10,200,1) #(ni,nk,randomseed)
+p,cd,cdk,sk = dg.ins_k(50,100) #(ni,nk,randomseed)
 # !!!!! Make sure index match: cdk VS. v_ij(k) [k][i][j]
 from gurobipy import *
 start_time = time.time()
@@ -241,7 +241,7 @@ try:
         print('==========================================')
         print('Current iteration:',str(iteration))
         print('gap = ',str(gap))
-        print('Cuts added from scenario:',str(add_cut_scen[0:-1]))
+        print('Cuts added form scenario:',str(add_cut_scen[0:-1]))
         if gap <= stop:
             print('OPTIMAL SOLUTION FOUND !')
             print('Optimal Objective Value = ',str(UB))

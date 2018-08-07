@@ -9,8 +9,12 @@ p-center model
 import data_generator1 as dg
 #INPUT Parameters:p, cost matrix
 #p,cd = dg.ins_small()
-p,cd = dg.ins_big(10)
+p,cd = dg.ins_big(100)
 from gurobipy import *
+def mycallback(model, where):
+    if where == GRB.Callback.MIPSOL:
+        print('-----------------------')
+        print(model.cbGetSolution(model._vars))
 
 try:
 
@@ -51,11 +55,13 @@ try:
             "sumx")
     # save model and optimize
     m.write('.\model\pcenter.lp')
-    m.optimize()
+    m.params.OutputFlag = 0
+    m._vars = m.getVars()
+    m.optimize(mycallback)
 
     # Output
-    for v in m.getVars():
-         print('%s %g' % (v.varName, v.x))
+#    for v in m.getVars():
+#         print('%s %g' % (v.varName, v.x))
     print('Obj: %g' % m.objVal)
 
 except GurobiError as e:
