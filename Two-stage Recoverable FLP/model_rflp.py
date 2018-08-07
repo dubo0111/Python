@@ -13,6 +13,9 @@ class rflp:
     LB = -float('inf')
     y = []
     omega = []
+    add_cut_scen = []
+    iteration = 0
+    gap = 0
     # Input
     p = 0
     ni = 0
@@ -31,13 +34,14 @@ class rflp:
         self.cd = cd
         self.cdk = cdk
         self.sk = sk
+        self.value_y = [0 for i in range(ni)]
     def master(self):
         # Create variables
         # x:allocations y:location L:auxiliary variable
         x = self.master_model.addVars(self.ni,self.ni,vtype=GRB.BINARY, name="x")
         self.y = self.master_model.addVars(self.ni,vtype=GRB.BINARY, name="y")
         L = self.master_model.addVar(vtype=GRB.CONTINUOUS,obj = self.a1, name="L")
-        self.omega = self.master_model.addVar(vtype=GRB.CONTINUOUS, name="omega")
+        self.omega = self.master_model.addVar(lb=0,ub=float('inf'),vtype=GRB.CONTINUOUS,obj=self.a2, name="omega")
         # Set objective to minimize
         self.master_model.modelSense = GRB.MINIMIZE
         # (1) Maximum cost constraints (objective): L>sum(cdx) forall i
@@ -63,9 +67,10 @@ class rflp:
         self.master_model.update()
         #return self.master_model
 
-    def sub(self):
+    def sub(self,callback = 0):
         # ---------- Sub problem ----------
-        self.update_y()
+        if callback == 0:
+            self.update_y()
         # v:allocations u:location L3,eta: auxiliary variable
         v = self.sub_model.addVars(self.nk,self.ni,self.ni,lb=0,ub=1, vtype=GRB.CONTINUOUS, name="v")
         u = self.sub_model.addVars(self.nk,self.ni,lb=0,ub=1,vtype=GRB.CONTINUOUS, name="u")
@@ -117,12 +122,13 @@ class rflp:
 
     def update_master(self):
         self.update_cut()
-        self.master_model.getVarByName('omega').Obj = self.a2
+        #self.master_model.getVarByName('omega').Obj = self.a2
         self.master_model.addConstr(self.omega >= self.constr_y)
         self.master_model.update()
 
-    def update_sub(self):
-        self.update_y()
+    def update_sub(self,callback = 0):
+        if callback == 0:
+            self.update_y()
         for k in range(self.nk):
             for i in range(self.ni):
                 for j in range(self.ni):
@@ -204,7 +210,13 @@ class rflp:
         # update LB = objective value of master problem
         obj_master = self.master_model.getObjective()
         self.LB = obj_master.getValue()
-        # L3
+        max_L3 = self.worst_scenario()
+        # update UB
+        self.UB = min([self.UB,0.5*value_L + 0.5*max_L3[0]])
+        self.gap = (self.UB-self.LB)/self.LB
+        return self.gap
+
+    def worst_scenario(self):
         value_L3 = []
         for k in range(self.nk):
             L3_name = ''.join(['L3[',str(k),']'])
@@ -213,7 +225,12 @@ class rflp:
         # maximum L3 and its index (worst k)
         max_L3 = max([[v,i] for i,v in enumerate(value_L3)])
         self.max_k = max_L3[1]
-        # update UB
-        self.UB = min([self.UB,0.5*value_L + 0.5*max_L3[0]])
-        gap = (self.UB-self.LB)/self.LB
-        return gap
+        return max_L3
+
+    def update_status(self):
+        self.add_cut_scen.append(self.max_k)
+        self.iteration += 1
+        print('==========================================')
+        print('Current iteration:',str(self.iteration))
+        print('gap = ',str(self.gap))
+        print('Cuts added form scenario:',str(self.add_cut_scen[0:-1]))

@@ -1,7 +1,7 @@
 # test class
 import model_rflp as mr
 import data_generator1 as dg
-p,cd,cdk,sk = dg.ins_k(10,100,1) #(ni,nk,randomseed)
+p,cd,cdk,sk = dg.ins_k(10,10,3) #(ni,nk,randomseed*)
 from gurobipy import *
 import time
 # Number of nodes
@@ -21,7 +21,7 @@ add_cut_scen = []
 TSRFLP.master()
 TSRFLP.master_model.params.OutputFlag = 0
 TSRFLP.sub_model.params.OutputFlag = 0
-while gap >= stop: # stop criteria
+while abs(gap) >= stop:
     if iteration != 0:
         TSRFLP.update_master()
     TSRFLP.master_model.optimize()
@@ -30,18 +30,11 @@ while gap >= stop: # stop criteria
     else:
         TSRFLP.update_sub()
     TSRFLP.sub_model.optimize()
-
     gap = TSRFLP.gap_calculation()
-    #
-    add_cut_scen.append(TSRFLP.max_k)
-    print('==========================================')
-    print('Current iteration:',str(iteration))
-    print('gap = ',str(gap))
-    print('Cuts added form scenario:',str(add_cut_scen[0:-1]))
-    if gap <= stop:
+    TSRFLP.update_status()
+    if abs(gap) <= stop:
         print('OPTIMAL SOLUTION FOUND !')
         print('Optimal Objective Value = ',str(TSRFLP.UB))
-    # update iteration
     iteration += 1
     if iteration >= 20:
         break
