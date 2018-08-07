@@ -1,8 +1,9 @@
 # test class
 import model_rflp as mr
 import data_generator1 as dg
-p,cd,cdk,sk = dg.ins_k(5,100) #(ni,nk,randomseed)
+p,cd,cdk,sk = dg.ins_k(10,100,1) #(ni,nk,randomseed)
 from gurobipy import *
+import time
 # Number of nodes
 ni = len(cd)
 nk = len(cdk)
@@ -10,6 +11,7 @@ nk = len(cdk)
 a1 = 0.5
 a2 = 1 - a1
 
+start_time = time.time()
 TSRFLP = mr.rflp(p,ni,nk,a1,a2,cd,cdk,sk)
 # ----------Benders' Decompisition----------
 iteration = 0
@@ -43,3 +45,4 @@ while gap >= stop: # stop criteria
     iteration += 1
     if iteration >= 20:
         break
+print("--- %s seconds ---" % round((time.time() - start_time),2))
