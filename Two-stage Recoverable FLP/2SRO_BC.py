@@ -1,7 +1,7 @@
-# test class
+# Branch and cut
 import model_rflp as mr
 import data_generator1 as dg
-p,cd,cdk,sk = dg.ins_k(10,10,3) #(ni,nk,randomseed*)
+p,cd,cdk,sk = dg.ins_k(3,1,2) #(ni,nk,randomseed*)
 from gurobipy import *
 import time
 # Number of nodes
@@ -31,30 +31,13 @@ try:
     add_cut_scen = []
     TSRFLP.master()
     TSRFLP.sub(callback =1)
+#    TSRFLP.master_model.optimize()
+#    TSRFLP.master()
     TSRFLP.master_model.params.OutputFlag = 1
     TSRFLP.sub_model.params.OutputFlag = 0
     TSRFLP.master_model._vars = TSRFLP.master_model.getVars()
     TSRFLP.master_model.Params.lazyConstraints = 1
     TSRFLP.master_model.optimize(mycallback)
-
-    # while gap >= stop:
-    #     if iteration != 0:
-    #         TSRFLP.update_master()
-    #     TSRFLP.master_model._vars = TSRFLP.master_model.getVars()
-    #     TSRFLP.master_model.optimize(mycallback)
-    #     if iteration == 0:
-    #         TSRFLP.sub()
-    #     else:
-    #         TSRFLP.update_sub()
-    #     TSRFLP.sub_model.optimize()
-    #     gap = TSRFLP.gap_calculation()
-    #     TSRFLP.update_status()
-    #     if gap <= stop:
-    #         print('OPTIMAL SOLUTION FOUND !')
-    #         print('Optimal Objective Value = ',str(TSRFLP.UB))
-    #     iteration += 1
-    #     if iteration >= 20:
-    #         break
 except GurobiError as e:
     print('Error code ' + str(e.errno) + ": " + str(e))
 except AttributeError:

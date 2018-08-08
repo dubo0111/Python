@@ -12,7 +12,7 @@ import data_generator1 as dg
 #INPUT Parameters:p, cost matrix
 #p,cd = dg.ins_small()
 #p,cd = dg.ins_big(5)
-p,cd,cdk,sk = dg.ins_k(10,10,3) #(ni,nk,randomseed)
+p,cd,cdk,sk = dg.ins_k(10,20,99) #(ni,nk,randomseed)
 # !!!!! Make sure index match: cdk VS. v_ij(k) [k][i][j]
 from gurobipy import *
 start_time = time.time()
@@ -41,6 +41,7 @@ try:
 
     # Set objective to minimize
     m.modelSense = GRB.MINIMIZE
+    m.params.OutputFlag = 0
 
     # (1) Maximum cost constraints (objective): L>sum(cdx) forall i
     cdx = x.copy()
@@ -122,3 +123,7 @@ except GurobiError as e:
 except AttributeError:
     print('Encountered an attribute error')
 print("--- %s seconds ---" % round((time.time() - start_time),2))
+print('=================LIP SOLUTION==================')
+print('1st stage:',L.x)
+print('2nd stage:',eta.x)
+print('obj:',a1*L.x+a2*eta.x)

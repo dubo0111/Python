@@ -123,7 +123,7 @@ class rflp:
     def update_master(self):
         self.update_cut()
         #self.master_model.getVarByName('omega').Obj = self.a2
-        self.master_model.addConstr(self.omega >= self.constr_y)
+        self.master_model.addConstr(self.omega >= self.constr_y)#2054.9917037337914)#
         self.master_model.update()
 
     def update_sub(self,callback = 0):
