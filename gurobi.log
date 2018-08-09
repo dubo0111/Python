@@ -35,3 +35,12 @@ Solution count 2: 302.755 309.094
 Optimal solution found (tolerance 1.00e-04)
 Best objective 3.027546403604e+02, best bound 3.027546403604e+02, gap 0.0000%
 Freed default Gurobi environment
+
+Gurobi 8.0.1 (win64, Python) logging started 08/09/18 21:21:19
+
+
+Gurobi 8.0.1 (win64, Python) logging started 08/09/18 21:38:34
+
+
+Gurobi 8.0.1 (win64, Python) logging started 08/09/18 22:08:01
+

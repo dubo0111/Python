@@ -6,6 +6,7 @@ class rflp:
     # Attributes
     master_model = Model()
     sub_model = Model()
+    sub_dual = Model()
     value_y = []
     max_k = 0
     constr_y = LinExpr()
@@ -120,6 +121,64 @@ class rflp:
         self.sub_model.update()
         #return(self.sub_model)
 
+    def sub_dual(self,callback = 0):
+        if callback == 0:
+            self.update_y()
+        # Create dual sub model
+        self.sub_dual = Model('dual sub model')
+        # beta gamma delta epsilon lamda mu nu
+        beta = self.sub_dual.addVars(self.nk,self.ni,ub = 0,lb = -float('inf'), vtype=GRB.CONTINUOUS, name="beta")
+        gamma = self.sub_dual.addVars(self.nk,self.ni,self.ni,ub = 0,lb = -float('inf'), vtype=GRB.CONTINUOUS, name="gamma")
+        delta = self.sub_dual.addVars(self.nk,self.ni,self.ni,ub = 0,lb = -float('inf'), vtype=GRB.CONTINUOUS, name="delta")
+        epsilon = self.sub_dual.addVars(self.nk,self.ni,lb = 0,vtype=GRB.CONTINUOUS, name="epsilon")
+        lamda = self.sub_dual.addVars(self.nk,self.ni,ub = 0,lb = -float('inf'), vtype=GRB.CONTINUOUS, name="lambda")
+        mu = self.sub_dual.addVars(self.nk,self.ni,ub = 0,lb = -float('inf'), vtype=GRB.CONTINUOUS, name="mu")
+        nu = self.sub_dual.addVars(self.nk,vtype=GRB.CONTINUOUS, name="nu")
+        # Qk are auxiliary variables, maximize every subproblem
+        Qk = self.sub_dual.addVars(self.nk,vtype=GRB.CONTINUOUS,obj = 1, name="Qk")
+        # Set sub model objective to maximize
+        self.sub_dual.modelSense = GRB.MAXIMIZE
+        #(1)
+        self.sub_dual_obj()
+        #(2) -sum_i(gamma_kij)+lambda_kj+mu_kj+nu_k<=0  forall k,j
+        self.sub_dual.addConstrs(
+                (-gamma.sum(k,'*',j)+lamda[k,j]+mu[k,j]+nu[k] <= 0 for k in range(self.nk) for j in range (self.ni)),
+                "u")
+        #(3) c_kij*d_ki*beta_ki+gamma_kij+delta_kij+epsilon_ki<=0  forall k,i,j
+        self.sub_dual.addConstrs(
+                (cdk[k][i][j]*beta[k,i] + gamma[k,i,j] + delta[k,i,j] + epsilon[k,i] <= 0 \
+                for k in range(self.nk) for i in range(self.ni) for j in range(self.ni)),
+                "v")
+        #(4) -sum_i(beta_i)<=1 forall k
+        self.sub_dual.addConstrs(
+                (-beta.sum(k,'*') <= 1 for k in range(self.nk)),
+                "L3")
+        self.sub_dual.update()
+
+    def sub_dual_obj(self):
+        def c_constr1():
+            c_delta = [[0 for i in range(self.ni*self.ni)] for k in range(self.nk)]
+            for k in range(self.nk):
+                c_delta[k] = [1-sk[k][j] for j in range(self.ni)]*self.ni
+            c_lamda = [1-self.value_y[j] for j in range(self.ni)]
+            c_mu = [[0 for i in range(self.ni)] for k in range(self.nk)]
+            for k in range(self.nk):
+                c_mu[k] = [1-sk[k][j] for j in range(self.ni)]
+            c_nu=[]
+            for k in range(self.nk):
+                c_nu.append(p + sum([sk[k][j]*self.value_y[j] for j in range(self.ni)]) - sum(self.value_y))
+            return c_delta,c_lamda,c_mu,c_nu
+        #(1) Q(k) = sum_i(sum_j(y_j*gamma_kij))+sumsum_ij((1-a_kj)*delta_kij
+        #           + sum_i(epsilon_ki) + sum_j((1-y_j)*lambda_kj) +
+        #           + sum_j((1-a_kj)*mu_kj) + (p+sum_j(a_kj*y_j)-sum(y_j))*nu_k   forall k
+        c_delta,c_lamda,c_mu,c_nu = c_constr1(self.value_y) # update coeff
+        self.sub_dual.addConstrs(
+                 (Qk[k] == LinExpr(self.value_y*self.ni,gamma.select(k,'*','*')) + \
+                 LinExpr(c_delta[k],delta.select(k,'*','*')) + \
+                 epsilon.sum(k,'*') + LinExpr(c_lamda,lamda.select(k,'*')) + \
+                 LinExpr(c_mu[k],mu.select(k,'*')) + c_nu[k]*nu[k] for k in range(self.nk)),
+                 "Q(k)")
+
     def update_master(self):
         self.update_cut()
         #self.master_model.getVarByName('omega').Obj = self.a2
@@ -146,6 +205,15 @@ class rflp:
             self.sub_model.getConstrByName(nu_name).rhs = self.p + ky[k] - sum(self.value_y)
         self.sub_model.update()
         #return self.sub_model
+
+    def update_sub_dual(self,callback = 0):
+        if callback == 0:
+            self.update_y()
+        for k in range(nk, stop=None, step=1):
+            constr_name = ''.join(['Q(k)[',str(k),']'])
+            self.sub_dual.remove(self.sub_dual.getConstrByName(constr_name))
+        self.sub_dual_obj(self)
+        self.sub_dual.update()
 
     def update_y(self):
         self.value_y = []

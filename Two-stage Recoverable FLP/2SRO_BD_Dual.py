@@ -3,16 +3,14 @@
 Created on Wed Aug  1 08:24:56 2018
 
 2-stage recoverable p-center model:
-    Benders' decomposition (relaxed dual sub model)
-    failed: dual sub model cannot be solved to optimal by gurobi. constraints violated 1e-13
+   Test if primal == dual
 @author: DUBO
 """
 
 import data_generator1 as dg
 # debug:(3,1,3):primal dual value error;
 # debug:(3,1,2):dual problem error
-p,cd,cdk,sk = dg.ins_k(10,10,1) #(ni,nk,randomseed)
-
+p,cd,cdk,sk = dg.ins_k(30,100) #(ni,nk,randomseed)
 from gurobipy import *
 ni = len(cd)
 nk = len(cdk)
@@ -90,7 +88,7 @@ m.addConstrs(
 def sub_dual(value_y):
     # Create sub model
     m1 = Model('sub model')
-    
+
     # beta gamma delta epsilon lamda mu nu
     beta = m1.addVars(nk,ni,ub = 0,lb = -float('inf'), vtype=GRB.CONTINUOUS, name="beta")
     gamma = m1.addVars(nk,ni,ni,ub = 0,lb = -float('inf'), vtype=GRB.CONTINUOUS, name="gamma")
@@ -135,7 +133,7 @@ def sub_dual(value_y):
 def sub_model(value_y):
     # Create relaxed sub model
     m2 = Model('sub model')
-    
+
     # ---------- Sub problem ----------
     # v:allocations u:location L3,eta: auxiliary variable
     v = m2.addVars(nk,ni,ni,lb=0,ub=1, vtype=GRB.CONTINUOUS, name="v")
@@ -214,19 +212,19 @@ m1.params.Quad = -1 #1
 #m1.params.DualReductions = 1 #0
 #m1.params.PreDual = 2 #2
 m1.params.Presolve = 0 #2
-m1.write('dual.lp')
+#m1.write('dual.lp')
 m1.params.OutputFlag = 0
 m1.optimize()
 m2=sub_model(value_y)
-m2.write('primal.lp')
+#m2.write('primal.lp')
 m2.params.FeasibilityTol = 1e-9
 m2.params.OptimalityTol = 1e-9
 #m2.params.MarkowitzTol = 0.0001
 #m2.params.IntFeasTol = 1e-5
 
-m2.params.ScaleFlag = 3
+m2.params.ScaleFlag = 0
 #m2.params.ObjScale = 0
-m2.params.NumericFocus = 3
+m2.params.NumericFocus = 0
 #m2.params.NormAdjust = -1
 #m2.params.InfUnbdInfo = 0 #1
 #m2.params.Quad = -1 #1
@@ -239,7 +237,7 @@ m2.params.NumericFocus = 3
 #m2.params.Aggregate = 1 #1
 #m2.params.DualReductions = 0 #0
 #m2.params.PreDual = -1 #2
-m2.params.Presolve = 0 #2
+#m2.params.Presolve = 0 #2
 m2.params.OutputFlag = 0
 m2.optimize()
 

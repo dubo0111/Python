@@ -1,7 +1,7 @@
 # test class
 import model_rflp as mr
 import data_generator1 as dg
-p,cd,cdk,sk = dg.ins_k(3,1,2) #(ni,nk,randomseed*)
+p,cd,cdk,sk = dg.ins_k(10,100) #(ni,nk,randomseed*)
 from gurobipy import *
 import time
 # Number of nodes
@@ -24,15 +24,15 @@ TSRFLP.sub_model.params.OutputFlag = 0
 while abs(gap) >= stop:
     if iteration != 0:
         TSRFLP.update_master()
-    filename = ''.join(['.\model\master(',str(iteration),').lp'])
-    TSRFLP.master_model.write(filename)
+    #filename = ''.join(['.\model\master(',str(iteration),').lp'])
+    #TSRFLP.master_model.write(filename)
     TSRFLP.master_model.optimize()
     if iteration == 0:
         TSRFLP.sub()
     else:
         TSRFLP.update_sub()
-    filename = ''.join(['.\model\sub(',str(iteration),').lp'])
-    TSRFLP.sub_model.write(filename)
+    #filename = ''.join(['.\model\sub(',str(iteration),').lp'])
+    #TSRFLP.sub_model.write(filename)
     TSRFLP.sub_model.optimize()
     gap = TSRFLP.gap_calculation()
     TSRFLP.update_status()
@@ -40,6 +40,6 @@ while abs(gap) >= stop:
         print('OPTIMAL SOLUTION FOUND !')
         print('Optimal Objective Value = ',str(TSRFLP.UB))
     iteration += 1
-    if iteration >= 20:
+    if iteration >= 10:
         break
 print("--- %s seconds ---" % round((time.time() - start_time),2))
