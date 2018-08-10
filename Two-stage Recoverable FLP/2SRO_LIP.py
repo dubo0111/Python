@@ -67,8 +67,8 @@ try:
             "sumx")
     # ---------- Sub problem ----------
     # v:allocations u:location L3,eta: auxiliary variable
-    v = m.addVars(nk,ni,ni,vtype=GRB.CONTINUOUS, name="v")
-    u = m.addVars(nk,ni,vtype=GRB.CONTINUOUS, name="u")
+    v = m.addVars(nk,ni,ni,vtype=GRB.BINARY, name="v")
+    u = m.addVars(nk,ni,vtype=GRB.BINARY, name="u")
     L3 = m.addVars(nk,vtype=GRB.CONTINUOUS, name="L3")
     eta = m.addVar(vtype=GRB.CONTINUOUS, obj=a2, name="eta")
 
