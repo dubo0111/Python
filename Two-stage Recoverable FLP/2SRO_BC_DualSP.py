@@ -18,7 +18,13 @@ try:
             TSRFLP.update_sub_dual(callback=1)
             TSRFLP.sub_dual.optimize()
             TSRFLP.worst_scenario()
-            print('++++++++++++++++++++++++++++++')
+            # status
+            nodecnt = model.cbGet(GRB.Callback.MIPSOL_NODCNT)
+            obj = model.cbGet(GRB.Callback.MIPSOL_OBJ)
+            solcnt = model.cbGet(GRB.Callback.MIPSOL_SOLCNT)
+            x = model.cbGetSolution(model._vars)
+            print('**** New solution at node %d, obj %g, sol %d, ' \
+                  'x[0] = %g ****' % (nodecnt, obj, solcnt, x[0]))
             TSRFLP.update_cut()
             model.cbLazy(TSRFLP.omega >= TSRFLP.constr_y)
 
@@ -42,4 +48,5 @@ except GurobiError as e:
     print('Error code ' + str(e.errno) + ": " + str(e))
 except AttributeError:
     print('Encountered an attribute error')
+    #TSRFLP.error_check()
 print("--- %s seconds ---" % round((time.time() - start_time), 2))

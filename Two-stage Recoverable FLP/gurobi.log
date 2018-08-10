@@ -85109,3 +85109,48 @@ Changed value of parameter ScaleFlag to 3
    Prev: -1  Min: -1  Max: 3  Default: -1
 Changed value of parameter NumericFocus to 3
    Prev: 0  Min: 0  Max: 3  Default: 0
+
+Gurobi 8.0.1 (win64, Python) logging started 08/10/18 13:59:31
+
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+
+Gurobi 8.0.1 (win64, Python) logging started 08/10/18 13:59:50
+
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Parameter Presolve unchanged
+   Value: 0  Min: -1  Max: 2  Default: -1
+Parameter ScaleFlag unchanged
+   Value: 3  Min: -1  Max: 3  Default: -1
+Parameter NumericFocus unchanged
+   Value: 3  Min: 0  Max: 3  Default: 0
+
+Gurobi 8.0.1 (win64, Python) logging started 08/10/18 14:03:02
+
+
+Gurobi 8.0.1 (win64, Python) logging started 08/10/18 14:03:34
+
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+
+Gurobi 8.0.1 (win64, Python) logging started 08/10/18 14:03:46
+
+
+Gurobi 8.0.1 (win64, Python) logging started 08/10/18 14:05:34
+
+
+Gurobi 8.0.1 (win64, Python) logging started 08/10/18 14:06:33
+

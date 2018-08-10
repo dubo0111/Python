@@ -36,6 +36,7 @@ while abs(gap) >= stop:
     TSRFLP.sub_dual.optimize()
     gap = TSRFLP.gap_calculation()
     TSRFLP.update_status()
+    TSRFLP.error_check()
     if abs(gap) <= stop:
         print('OPTIMAL SOLUTION FOUND !')
         print('Optimal Objective Value = ', str(TSRFLP.UB))

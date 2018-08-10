@@ -13,6 +13,7 @@ a2 = 1 - a1
 try:
     def mycallback(model, where):
         if where == GRB.Callback.MIPSOL:
+            TSRFLP.error_check()
             vals = model.cbGetSolution(model._vars)
             TSRFLP.value_y = vals[-2 - ni:-2]
             TSRFLP.update_sub(callback=1)

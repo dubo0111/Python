@@ -28,6 +28,7 @@ class rflp:
     iteration = 0
     gap = 0
     dual = 1
+    error = 0
     # Input
     p = 0
     ni = 0
@@ -409,3 +410,9 @@ class rflp:
         #m1.params.DualReductions = 1 #0
         #m1.params.PreDual = 2 #2
         #m1.params.Presolve = 0
+    def error_check(self):
+        if self.gap <= -0.1:
+            self.error = 1
+            print('# WARNING: gap is a negative value', '\n',
+                   '   Wrong dual problem solution.')
+        return self.error

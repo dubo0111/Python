@@ -37,10 +37,11 @@ while abs(gap) >= stop:
     TSRFLP.sub_model.optimize()
     gap = TSRFLP.gap_calculation()
     TSRFLP.update_status()
+    TSRFLP.error_check()
     if abs(gap) <= stop:
         print('OPTIMAL SOLUTION FOUND !')
         print('Optimal Objective Value = ', str(TSRFLP.UB))
     iteration += 1
-    if iteration >= 20:
+    if iteration >= 200:
         break
 print("--- %s seconds ---" % round((time.time() - start_time), 2))
