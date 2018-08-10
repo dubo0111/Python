@@ -1,7 +1,7 @@
 # Branch and cut
 import model_rflp as mr
 import data_generator1 as dg
-p,cd,cdk,sk = dg.ins_k(3,1,2) #(ni,nk,randomseed*)
+p, cd, cdk, sk = dg.ins_k(20, 50, 2)  # (ni,nk,randomseed*)
 from gurobipy import *
 import time
 # Number of nodes
@@ -14,32 +14,32 @@ try:
     def mycallback(model, where):
         if where == GRB.Callback.MIPSOL:
             vals = model.cbGetSolution(model._vars)
-            TSRFLP.value_y = vals[-2-ni:-2]
-            TSRFLP.update_sub(callback = 1)
-            TSRFLP.sub_model.optimize()
+            TSRFLP.value_y = vals[-2 - ni:-2]
+            TSRFLP.update_sub_dual(callback=1)
+            TSRFLP.sub_dual.optimize()
             TSRFLP.worst_scenario()
             print('++++++++++++++++++++++++++++++')
             TSRFLP.update_cut()
             model.cbLazy(TSRFLP.omega >= TSRFLP.constr_y)
 
     start_time = time.time()
-    TSRFLP = mr.rflp(p,ni,nk,a1,a2,cd,cdk,sk)
+    TSRFLP = mr.rflp(p, ni, nk, a1, a2, cd, cdk, sk)
+    TSRFLP.dual = 1
+    TSRFLP.params_tuneup()
     # ----------Benders' Decompisition----------
     iteration = 0
     gap = 1
     stop = 1e-5
-    add_cut_scen = []
     TSRFLP.master()
-    TSRFLP.sub(callback =1)
-#    TSRFLP.master_model.optimize()
-#    TSRFLP.master()
-    TSRFLP.master_model.params.OutputFlag = 1
-    TSRFLP.sub_model.params.OutputFlag = 0
+    TSRFLP.dual_sub(callback=1)
+    TSRFLP.master_model.params.OutputFlag = 0
+    TSRFLP.sub_dual.params.OutputFlag = 0
     TSRFLP.master_model._vars = TSRFLP.master_model.getVars()
     TSRFLP.master_model.Params.lazyConstraints = 1
     TSRFLP.master_model.optimize(mycallback)
+    print('Optimal solution found: %g' % TSRFLP.master_model.objVal)
 except GurobiError as e:
     print('Error code ' + str(e.errno) + ": " + str(e))
 except AttributeError:
     print('Encountered an attribute error')
-print("--- %s seconds ---" % round((time.time() - start_time),2))
+print("--- %s seconds ---" % round((time.time() - start_time), 2))

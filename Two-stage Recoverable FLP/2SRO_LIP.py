@@ -12,7 +12,7 @@ import data_generator1 as dg
 #INPUT Parameters:p, cost matrix
 #p,cd = dg.ins_small()
 #p,cd = dg.ins_big(5)
-p,cd,cdk,sk = dg.ins_k(10,20,99) #(ni,nk,randomseed)
+p,cd,cdk,sk = dg.ins_k(20, 50, 2) #(ni,nk,randomseed)
 # !!!!! Make sure index match: cdk VS. v_ij(k) [k][i][j]
 from gurobipy import *
 start_time = time.time()
@@ -42,7 +42,9 @@ try:
     # Set objective to minimize
     m.modelSense = GRB.MINIMIZE
     m.params.OutputFlag = 0
-
+    m.params.Presolve = 0
+    m.params.ScaleFlag = 3
+    m.params.NumericFocus = 3
     # (1) Maximum cost constraints (objective): L>sum(cdx) forall i
     cdx = x.copy()
     for i in range(ni):
@@ -108,7 +110,7 @@ try:
             (u.sum(k,'*') + y.sum() - LinExpr(sk[k],y.select()) == p for k in range(nk)),
             "2S-p")
     # save model and optimize
-    m.write(".\model\LIP.lp")
+#    m.write(".\model\LIP.lp")
     m.optimize()
 
     #Output
@@ -116,14 +118,14 @@ try:
 #         print('%s %g' % (v.varName, v.x))
     value_L = m.getVarByName('L')
     value_eta = m.getVarByName('eta')
-    print('Obj: %g' % m.objVal)
+#    print('Obj: %g' % m.objVal)
 
 except GurobiError as e:
     print('Error code ' + str(e.errno) + ": " + str(e))
 except AttributeError:
     print('Encountered an attribute error')
-print("--- %s seconds ---" % round((time.time() - start_time),2))
 print('=================LIP SOLUTION==================')
 print('1st stage:',L.x)
 print('2nd stage:',eta.x)
 print('obj:',a1*L.x+a2*eta.x)
+print("--- %s seconds ---" % round((time.time() - start_time),2))

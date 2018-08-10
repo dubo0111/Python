@@ -10,7 +10,7 @@ Created on Wed Aug  1 08:24:56 2018
 import data_generator1 as dg
 # debug:(3,1,3):primal dual value error;
 # debug:(3,1,2):dual problem error
-p,cd,cdk,sk = dg.ins_k(30,100) #(ni,nk,randomseed)
+p,cd,cdk,sk = dg.ins_k(20,100) #(ni,nk,randomseed)
 from gurobipy import *
 ni = len(cd)
 nk = len(cdk)
@@ -201,7 +201,7 @@ m1.params.ScaleFlag = 3
 m1.params.NumericFocus = 3
 #m1.params.NormAdjust = 3
 m1.params.InfUnbdInfo = 0 #1
-m1.params.Quad = -1 #1
+# m1.params.Quad = -1 #1
 #m1.params.Sifting = -1 #2
 #m1.params.SiftMethod = -1 # 2
 #m1.params.SimplexPricing = -1 #3

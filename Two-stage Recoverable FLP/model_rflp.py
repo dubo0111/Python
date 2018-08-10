@@ -2,6 +2,8 @@
 # bulid or update specific model
 # get variables,dual variables
 from gurobipy import *
+
+
 class rflp:
     # Attributes
     master_model = Model()
@@ -14,19 +16,29 @@ class rflp:
     LB = -float('inf')
     y = []
     omega = []
+    Qk = []
+    beta = 0
+    gamma = 0
+    delta = 0
+    epsilon = 0
+    lamda = 0
+    mu = 0
+    nu = 0
     add_cut_scen = []
     iteration = 0
     gap = 0
+    dual = 1
     # Input
     p = 0
     ni = 0
     nk = 0
-    a1= 0
+    a1 = 0
     a2 = 0
     cd = []
     cdk = []
     sk = []
-    def __init__(self,p,ni,nk,a1,a2,cd,cdk,sk):
+
+    def __init__(self, p, ni, nk, a1, a2, cd, cdk, sk):
         self.p = p
         self.ni = ni
         self.nk = nk
@@ -36,221 +48,275 @@ class rflp:
         self.cdk = cdk
         self.sk = sk
         self.value_y = [0 for i in range(ni)]
+    # build master problem model
     def master(self):
         # Create variables
         # x:allocations y:location L:auxiliary variable
-        x = self.master_model.addVars(self.ni,self.ni,vtype=GRB.BINARY, name="x")
-        self.y = self.master_model.addVars(self.ni,vtype=GRB.BINARY, name="y")
-        L = self.master_model.addVar(vtype=GRB.CONTINUOUS,obj = self.a1, name="L")
-        self.omega = self.master_model.addVar(lb=0,ub=float('inf'),vtype=GRB.CONTINUOUS,obj=self.a2, name="omega")
+        x = self.master_model.addVars(
+            self.ni, self.ni, vtype=GRB.BINARY, name="x")
+        self.y = self.master_model.addVars(self.ni, vtype=GRB.BINARY, name="y")
+        L = self.master_model.addVar(
+            vtype=GRB.CONTINUOUS, obj=self.a1, name="L")
+        self.omega = self.master_model.addVar(lb=0, ub=float(
+            'inf'), vtype=GRB.CONTINUOUS, obj=self.a2, name="omega")
         # Set objective to minimize
         self.master_model.modelSense = GRB.MINIMIZE
         # (1) Maximum cost constraints (objective): L>sum(cdx) forall i
         cdx = x.copy()
         for i in range(self.ni):
             for j in range(self.ni):
-               cdx[i,j]=self.cd[i][j]
+                cdx[i, j] = self.cd[i][j]
         self.master_model.addConstrs(
-                (x.prod(cdx,i,'*') <= L for i in range(self.ni)),
-                "epigraph")
+            (x.prod(cdx, i, '*') <= L for i in range(self.ni)),
+            "epigraph")
         # (2) Constraints sum(y)=p
         self.master_model.addConstr(
-                (self.y.sum() == self.p),
-                "p")
+            (self.y.sum() == self.p),
+            "p")
         # (3) x<=y forall i,j
         self.master_model.addConstrs(
-                (x[i,j] <= self.y[j] for i in range(self.ni) for j in range(self.ni)),
-                "x<y")
+            (x[i, j] <= self.y[j] for i in range(self.ni)
+             for j in range(self.ni)),
+            "x<y")
         # (4) sum(x)=1 forall i
         self.master_model.addConstrs(
-                (x.sum(i,'*') == 1 for i in range(self.ni)),
-                "sumx")
+            (x.sum(i, '*') == 1 for i in range(self.ni)),
+            "sumx")
         self.master_model.update()
-        #return self.master_model
-
-    def sub(self,callback = 0):
+        # return self.master_model
+    # build subproblem model
+    # (get dual variables through Constr.getAttr(Pi))
+    def sub(self, callback=0):
         # ---------- Sub problem ----------
         if callback == 0:
             self.update_y()
         # v:allocations u:location L3,eta: auxiliary variable
-        v = self.sub_model.addVars(self.nk,self.ni,self.ni,lb=0,ub=1, vtype=GRB.CONTINUOUS, name="v")
-        u = self.sub_model.addVars(self.nk,self.ni,lb=0,ub=1,vtype=GRB.CONTINUOUS, name="u")
-        L3 = self.sub_model.addVars(self.nk,vtype=GRB.CONTINUOUS, name="L3")
+        v = self.sub_model.addVars(
+            self.nk, self.ni, self.ni, lb=0, ub=1, vtype=GRB.CONTINUOUS, name="v")
+        u = self.sub_model.addVars(
+            self.nk, self.ni, lb=0, ub=1, vtype=GRB.CONTINUOUS, name="u")
+        L3 = self.sub_model.addVars(self.nk, vtype=GRB.CONTINUOUS, name="L3")
         eta = self.sub_model.addVar(vtype=GRB.CONTINUOUS, obj=1, name="eta")
         self.sub_model.modelSense = GRB.MINIMIZE
-        #(5) eta == sum(L3(k)) forall k
+        # (5) eta == sum(L3(k)) forall k
         self.sub_model.addConstr(
-                (eta == L3.sum()),
-                "eta=sumL")
-        #(6) L3(k) >= c'd'v(k) forall i,k
+            (eta == L3.sum()),
+            "eta=sumL")
+        # (6) L3(k) >= c'd'v(k) forall i,k
         cdv = v.copy()
         for k in range(self.nk):
             for i in range(self.ni):
                 for j in range(self.ni):
-                   cdv[k,i,j]=self.cdk[k][i][j]
+                    cdv[k, i, j] = self.cdk[k][i][j]
         self.sub_model.addConstrs(
-                (v.prod(cdv,k,i,'*') <= L3[k] for k in range(self.nk) for i in range(self.ni)),
-                "beta")
-        #(7) v(k) <= y + u(k) forall k,i,j
+            (v.prod(cdv, k, i, '*') <= L3[k]
+             for k in range(self.nk) for i in range(self.ni)),
+            "beta")
+        # (7) v(k) <= y + u(k) forall k,i,j
         self.sub_model.addConstrs(
-                (v[k,i,j] <= self.value_y[j] + u[k,j] for k in range(self.nk) for i in range(self.ni) for j in range(self.ni)),
-                "gamma")
-        #(8) v(k) <= 1 - a_j(k) forall k,i,j
+            (v[k, i, j] <= self.value_y[j] + u[k, j] for k in range(self.nk)
+             for i in range(self.ni) for j in range(self.ni)),
+            "gamma")
+        # (8) v(k) <= 1 - a_j(k) forall k,i,j
         self.sub_model.addConstrs(
-                (v[k,i,j] <= 1 - self.sk[k][j] for k in range(self.nk) for i in range(self.ni) for j in range(self.ni)),
-                "delta")
-        #(9) sum(v) = 1 forall i,k
+            (v[k, i, j] <= 1 - self.sk[k][j] for k in range(self.nk)
+             for i in range(self.ni) for j in range(self.ni)),
+            "delta")
+        # (9) sum(v) = 1 forall i,k
         self.sub_model.addConstrs(
-                (v.sum(k,i,'*') == 1 for k in range(self.nk) for i in range(self.ni)),
-                "epsilon")
-        #(10) u(k) + y <= 1 forall k,j
+            (v.sum(k, i, '*') == 1 for k in range(self.nk)
+             for i in range(self.ni)),
+            "epsilon")
+        # (10) u(k) + y <= 1 forall k,j
         self.sub_model.addConstrs(
-                (u[k,j] + self.value_y[j] <= 1 for k in range(self.nk) for j in range(self.ni)),
-                "lamda")
-        #(11) u(k) + a_j(k) <= 1 forall k,j
+            (u[k, j] + self.value_y[j] <= 1 for k in range(self.nk)
+             for j in range(self.ni)),
+            "lamda")
+        # (11) u(k) + a_j(k) <= 1 forall k,j
         self.sub_model.addConstrs(
-                (u[k,j] + self.sk[k][j] <= 1 for k in range(self.nk) for j in range(self.ni)),
-                "mu")
-        #(12) sum(u(k)) + sum(y) - sum(a_j(k)*y) = p forall k (or <=)
+            (u[k, j] + self.sk[k][j] <= 1 for k in range(self.nk)
+             for j in range(self.ni)),
+            "mu")
+        # (12) sum(u(k)) + sum(y) - sum(a_j(k)*y) = p forall k (or <=)
         ky = [0 for k in range(self.nk)]
         for k in range(self.nk):
-            ky[k] = sum([self.sk[k][j]*self.value_y[j] for j in range(self.ni)])
+            ky[k] = sum([self.sk[k][j] * self.value_y[j]
+                         for j in range(self.ni)])
         self.sub_model.addConstrs(
-                (u.sum(k,'*') + sum(self.value_y) - ky[k] == self.p for k in range(self.nk)),
-                "nu")
+            (u.sum(k, '*') + sum(self.value_y) -
+             ky[k] == self.p for k in range(self.nk)),
+            "nu")
         self.sub_model.update()
-        #return(self.sub_model)
-
-    def sub_dual(self,callback = 0):
+        # return(self.sub_model)
+    # build dual subproblem model
+    def dual_sub(self, callback=0):
         if callback == 0:
             self.update_y()
         # Create dual sub model
         self.sub_dual = Model('dual sub model')
         # beta gamma delta epsilon lamda mu nu
-        beta = self.sub_dual.addVars(self.nk,self.ni,ub = 0,lb = -float('inf'), vtype=GRB.CONTINUOUS, name="beta")
-        gamma = self.sub_dual.addVars(self.nk,self.ni,self.ni,ub = 0,lb = -float('inf'), vtype=GRB.CONTINUOUS, name="gamma")
-        delta = self.sub_dual.addVars(self.nk,self.ni,self.ni,ub = 0,lb = -float('inf'), vtype=GRB.CONTINUOUS, name="delta")
-        epsilon = self.sub_dual.addVars(self.nk,self.ni,lb = 0,vtype=GRB.CONTINUOUS, name="epsilon")
-        lamda = self.sub_dual.addVars(self.nk,self.ni,ub = 0,lb = -float('inf'), vtype=GRB.CONTINUOUS, name="lambda")
-        mu = self.sub_dual.addVars(self.nk,self.ni,ub = 0,lb = -float('inf'), vtype=GRB.CONTINUOUS, name="mu")
-        nu = self.sub_dual.addVars(self.nk,vtype=GRB.CONTINUOUS, name="nu")
+        self.beta = self.sub_dual.addVars(
+            self.nk, self.ni, ub=0, lb=-float('inf'), vtype=GRB.CONTINUOUS, name="beta")
+        self.gamma = self.sub_dual.addVars(
+            self.nk, self.ni, self.ni, ub=0, lb=-float('inf'), vtype=GRB.CONTINUOUS, name="gamma")
+        self.delta = self.sub_dual.addVars(
+            self.nk, self.ni, self.ni, ub=0, lb=-float('inf'), vtype=GRB.CONTINUOUS, name="delta")
+        self.epsilon = self.sub_dual.addVars(
+            self.nk, self.ni, lb=0, vtype=GRB.CONTINUOUS, name="epsilon")
+        self.lamda = self.sub_dual.addVars(
+            self.nk, self.ni, ub=0, lb=-float('inf'), vtype=GRB.CONTINUOUS, name="lamda")
+        self.mu = self.sub_dual.addVars(
+            self.nk, self.ni, ub=0, lb=-float('inf'), vtype=GRB.CONTINUOUS, name="mu")
+        self.nu = self.sub_dual.addVars(self.nk, vtype=GRB.CONTINUOUS, name="nu")
         # Qk are auxiliary variables, maximize every subproblem
-        Qk = self.sub_dual.addVars(self.nk,vtype=GRB.CONTINUOUS,obj = 1, name="Qk")
+        self.Qk = self.sub_dual.addVars(
+            self.nk, vtype=GRB.CONTINUOUS, obj=1, name="Qk")
         # Set sub model objective to maximize
         self.sub_dual.modelSense = GRB.MAXIMIZE
-        #(1)
+        # (1)
         self.sub_dual_obj()
-        #(2) -sum_i(gamma_kij)+lambda_kj+mu_kj+nu_k<=0  forall k,j
+        # (2) -sum_i(gamma_kij)+lambda_kj+mu_kj+nu_k<=0  forall k,j
         self.sub_dual.addConstrs(
-                (-gamma.sum(k,'*',j)+lamda[k,j]+mu[k,j]+nu[k] <= 0 for k in range(self.nk) for j in range (self.ni)),
-                "u")
-        #(3) c_kij*d_ki*beta_ki+gamma_kij+delta_kij+epsilon_ki<=0  forall k,i,j
+            (-self.gamma.sum(k, '*', j) + self.lamda[k, j] + self.mu[k, j] + self.nu[k]
+             <= 0 for k in range(self.nk) for j in range(self.ni)),
+            "u")
+        # (3) c_kij*d_ki*beta_ki+gamma_kij+delta_kij+epsilon_ki<=0  forall k,i,j
         self.sub_dual.addConstrs(
-                (cdk[k][i][j]*beta[k,i] + gamma[k,i,j] + delta[k,i,j] + epsilon[k,i] <= 0 \
-                for k in range(self.nk) for i in range(self.ni) for j in range(self.ni)),
-                "v")
-        #(4) -sum_i(beta_i)<=1 forall k
+            (self.cdk[k][i][j] * self.beta[k, i] + self.gamma[k, i, j] + self.delta[k, i, j] + self.epsilon[k, i] <= 0
+             for k in range(self.nk) for i in range(self.ni) for j in range(self.ni)),
+            "v")
+        # (4) -sum_i(beta_i)<=1 forall k
         self.sub_dual.addConstrs(
-                (-beta.sum(k,'*') <= 1 for k in range(self.nk)),
-                "L3")
+            (-self.beta.sum(k, '*') <= 1 for k in range(self.nk)),
+            "L3")
         self.sub_dual.update()
-
+    #
     def sub_dual_obj(self):
         def c_constr1():
-            c_delta = [[0 for i in range(self.ni*self.ni)] for k in range(self.nk)]
+            c_delta = [[0 for i in range(self.ni * self.ni)]
+                       for k in range(self.nk)]
             for k in range(self.nk):
-                c_delta[k] = [1-sk[k][j] for j in range(self.ni)]*self.ni
-            c_lamda = [1-self.value_y[j] for j in range(self.ni)]
+                c_delta[k] = [1 - self.sk[k][j]
+                              for j in range(self.ni)] * self.ni
+            c_lamda = [1 - self.value_y[j] for j in range(self.ni)]
             c_mu = [[0 for i in range(self.ni)] for k in range(self.nk)]
             for k in range(self.nk):
-                c_mu[k] = [1-sk[k][j] for j in range(self.ni)]
-            c_nu=[]
+                c_mu[k] = [1 - self.sk[k][j] for j in range(self.ni)]
+            c_nu = []
             for k in range(self.nk):
-                c_nu.append(p + sum([sk[k][j]*self.value_y[j] for j in range(self.ni)]) - sum(self.value_y))
-            return c_delta,c_lamda,c_mu,c_nu
-        #(1) Q(k) = sum_i(sum_j(y_j*gamma_kij))+sumsum_ij((1-a_kj)*delta_kij
+                c_nu.append(self.p + sum([self.sk[k][j] * self.value_y[j]
+                                     for j in range(self.ni)]) - sum(self.value_y))
+            return c_delta, c_lamda, c_mu, c_nu
+        # (1) Q(k) = sum_i(sum_j(y_j*gamma_kij))+sumsum_ij((1-a_kj)*delta_kij
         #           + sum_i(epsilon_ki) + sum_j((1-y_j)*lambda_kj) +
         #           + sum_j((1-a_kj)*mu_kj) + (p+sum_j(a_kj*y_j)-sum(y_j))*nu_k   forall k
-        c_delta,c_lamda,c_mu,c_nu = c_constr1(self.value_y) # update coeff
+        c_delta, c_lamda, c_mu, c_nu = c_constr1()  # update coeff
         self.sub_dual.addConstrs(
-                 (Qk[k] == LinExpr(self.value_y*self.ni,gamma.select(k,'*','*')) + \
-                 LinExpr(c_delta[k],delta.select(k,'*','*')) + \
-                 epsilon.sum(k,'*') + LinExpr(c_lamda,lamda.select(k,'*')) + \
-                 LinExpr(c_mu[k],mu.select(k,'*')) + c_nu[k]*nu[k] for k in range(self.nk)),
-                 "Q(k)")
-
+            (self.Qk[k] == LinExpr(self.value_y * self.ni, self.gamma.select(k, '*', '*')) +
+             LinExpr(c_delta[k], self.delta.select(k, '*', '*')) +
+             self.epsilon.sum(k, '*') + LinExpr(c_lamda, self.lamda.select(k, '*')) +
+             LinExpr(c_mu[k], self.mu.select(k, '*')) + c_nu[k] * self.nu[k] for k in range(self.nk)),
+            "Q(k)")
+    #
     def update_master(self):
         self.update_cut()
-        #self.master_model.getVarByName('omega').Obj = self.a2
-        self.master_model.addConstr(self.omega >= self.constr_y)#2054.9917037337914)#
+        self.master_model.addConstr(self.omega >= self.constr_y)
         self.master_model.update()
-
-    def update_sub(self,callback = 0):
+    #
+    def update_sub(self, callback=0):
         if callback == 0:
             self.update_y()
         for k in range(self.nk):
             for i in range(self.ni):
                 for j in range(self.ni):
-                    gamma_name = ''.join(['gamma[',str(k),',',str(i),',',str(j),']'])
-                    self.sub_model.getConstrByName(gamma_name).rhs = self.value_y[j]
+                    gamma_name = ''.join(
+                        ['gamma[', str(k), ',', str(i), ',', str(j), ']'])
+                    self.sub_model.getConstrByName(
+                        gamma_name).rhs = self.value_y[j]
         for k in range(self.nk):
             for j in range(self.ni):
-                lamda_name = ''.join(['lamda[',str(k),',',str(j),']'])
-                self.sub_model.getConstrByName(lamda_name).rhs = 1 - self.value_y[j]
+                lamda_name = ''.join(['lamda[', str(k), ',', str(j), ']'])
+                self.sub_model.getConstrByName(
+                    lamda_name).rhs = 1 - self.value_y[j]
         ky = [0 for k in range(self.nk)]
         for k in range(self.nk):
-            ky[k] = sum([self.sk[k][j]*self.value_y[j] for j in range(self.ni)])
+            ky[k] = sum([self.sk[k][j] * self.value_y[j]
+                         for j in range(self.ni)])
         for k in range(self.nk):
-            nu_name = ''.join(['nu[',str(k),']'])
-            self.sub_model.getConstrByName(nu_name).rhs = self.p + ky[k] - sum(self.value_y)
+            nu_name = ''.join(['nu[', str(k), ']'])
+            self.sub_model.getConstrByName(
+                nu_name).rhs = self.p + ky[k] - sum(self.value_y)
         self.sub_model.update()
-        #return self.sub_model
-
-    def update_sub_dual(self,callback = 0):
+        # return self.sub_model
+    #
+    def update_sub_dual(self, callback=0):
         if callback == 0:
             self.update_y()
-        for k in range(nk, stop=None, step=1):
-            constr_name = ''.join(['Q(k)[',str(k),']'])
+        for k in range(self.nk):
+            constr_name = ''.join(['Q(k)[', str(k), ']'])
             self.sub_dual.remove(self.sub_dual.getConstrByName(constr_name))
-        self.sub_dual_obj(self)
+        self.sub_dual_obj()
         self.sub_dual.update()
-
+    # update value of y for subproblem in each iteration
     def update_y(self):
         self.value_y = []
         for j in range(self.ni):
-            y_name = ''.join(['y[',str(j),']'])
+            y_name = ''.join(['y[', str(j), ']'])
             y_temp = self.master_model.getVarByName(y_name)
             self.value_y.append(y_temp.x)
-
+    # update cut to be added to master problem in each iteration
     def update_cut(self):
-        cm1 = self.sub_model.getConstrs()
-        num_c = len(cm1)
-        dual_value = []
-        constrname = []
-        for i in range(num_c):
-            dual_value.append(cm1[i].getAttr('Pi'))
-            constrname.append(cm1[i].getAttr('ConstrName'))
-        dual = dict(zip(constrname,dual_value))
         gamma = [[0 for j in range(self.ni)] for i in range(self.ni)]
         delta = [[0 for j in range(self.ni)] for i in range(self.ni)]
         epsilon = [0 for j in range(self.ni)]
         lamda = [0 for j in range(self.ni)]
         mu = [0 for j in range(self.ni)]
-        for i in range(self.ni):
-            for j in range(self.ni):
-                gamma_name = ''.join(['gamma[',str(self.max_k),',',str(i),',',str(j),']'])
-                delta_name = ''.join(['delta[',str(self.max_k),',',str(i),',',str(j),']'])
-                gamma[i][j] = dual[gamma_name]
-                delta[i][j] = dual[delta_name]
-        for n in range(self.ni):
-            epsilon_name = ''.join(['epsilon[',str(self.max_k),',',str(n),']'])
-            lamda_name = ''.join(['lamda[',str(self.max_k),',',str(n),']'])
-            mu_name = ''.join(['mu[',str(self.max_k),',',str(n),']'])
-            epsilon[n] = dual[epsilon_name]
-            lamda[n] = dual[lamda_name]
-            mu[n] = dual[mu_name]
-        nu_name = ''.join(['nu[',str(self.max_k),']'])
-        nu = dual[nu_name]
+        if self.dual == 0:
+            cm1 = self.sub_model.getConstrs()
+            num_c = len(cm1)
+            dual_value = []
+            constrname = []
+            for i in range(num_c):
+                dual_value.append(cm1[i].getAttr('Pi'))
+                constrname.append(cm1[i].getAttr('ConstrName'))
+            dual = dict(zip(constrname, dual_value))
+            for i in range(self.ni):
+                for j in range(self.ni):
+                    gamma_name = ''.join(
+                        ['gamma[', str(self.max_k), ',', str(i), ',', str(j), ']'])
+                    delta_name = ''.join(
+                        ['delta[', str(self.max_k), ',', str(i), ',', str(j), ']'])
+                    gamma[i][j] = dual[gamma_name]
+                    delta[i][j] = dual[delta_name]
+            for n in range(self.ni):
+                epsilon_name = ''.join(
+                    ['epsilon[', str(self.max_k), ',', str(n), ']'])
+                lamda_name = ''.join(['lamda[', str(self.max_k), ',', str(n), ']'])
+                mu_name = ''.join(['mu[', str(self.max_k), ',', str(n), ']'])
+                epsilon[n] = dual[epsilon_name]
+                lamda[n] = dual[lamda_name]
+                mu[n] = dual[mu_name]
+            nu_name = ''.join(['nu[', str(self.max_k), ']'])
+            nu = dual[nu_name]
+        elif self.dual == 1:
+            for i in range(self.ni):
+                for j in range(self.ni):
+                    gamma_name = ''.join(
+                        ['gamma[', str(self.max_k), ',', str(i), ',', str(j), ']'])
+                    delta_name = ''.join(
+                        ['delta[', str(self.max_k), ',', str(i), ',', str(j), ']'])
+                    gamma[i][j] = self.sub_dual.getVarByName(gamma_name).x
+                    delta[i][j] = self.sub_dual.getVarByName(delta_name).x
+            for n in range(self.ni):
+                epsilon_name = ''.join(
+                    ['epsilon[', str(self.max_k), ',', str(n), ']'])
+                lamda_name = ''.join(['lamda[', str(self.max_k), ',', str(n), ']'])
+                mu_name = ''.join(['mu[', str(self.max_k), ',', str(n), ']'])
+                epsilon[n] = self.sub_dual.getVarByName(epsilon_name).x
+                lamda[n] = self.sub_dual.getVarByName(lamda_name).x
+                mu[n] = self.sub_dual.getVarByName(mu_name).x
+            nu_name = ''.join(['nu[', str(self.max_k), ']'])
+            nu = self.sub_dual.getVarByName(nu_name).x
         # Benders' cut
         # omega >= sumsum(gamma_k'ij*y) + sum_j(-lamda*y) +  nu*sum_j((aj(k')-1)*y)
         # + sumsum((1-aj(k'))*delta_ij)+sum_i(epsilon)+sum_j(lamda)
@@ -261,16 +327,18 @@ class rflp:
                 gamma_y.append(gamma[i][j])
         ajk_y = []
         for j in range(self.ni):
-            ajk_y.append(self.sk[self.max_k][j]-1)
-        c_y = LinExpr(gamma_y,self.y.select()*self.ni) - LinExpr(lamda,self.y.select()) \
-        + nu*LinExpr(ajk_y,self.y.select())
+            ajk_y.append(self.sk[self.max_k][j] - 1)
+        c_y = LinExpr(gamma_y, self.y.select() * self.ni) - LinExpr(lamda, self.y.select()) \
+            + nu * LinExpr(ajk_y, self.y.select())
         constant_delta = 0
         for i in range(self.ni):
-            constant_delta += quicksum([(1-self.sk[self.max_k][j])*delta[i][j] for j in range(self.ni)])
+            constant_delta += quicksum([(1 - self.sk[self.max_k][j])
+                                        * delta[i][j] for j in range(self.ni)])
         constant = quicksum(epsilon) + quicksum(lamda) + constant_delta +\
-        quicksum([(1-self.sk[self.max_k][j])*mu[j] for j in range(self.ni)]) + self.p*nu
+            quicksum([(1 - self.sk[self.max_k][j]) * mu[j]
+                      for j in range(self.ni)]) + self.p * nu
         self.constr_y = c_y + constant
-
+    #
     def gap_calculation(self):
         # extract L
         var_L = self.master_model.getVarByName('L')
@@ -278,27 +346,66 @@ class rflp:
         # update LB = objective value of master problem
         obj_master = self.master_model.getObjective()
         self.LB = obj_master.getValue()
-        max_L3 = self.worst_scenario()
+        max_Lk = self.worst_scenario()
         # update UB
-        self.UB = min([self.UB,0.5*value_L + 0.5*max_L3[0]])
-        self.gap = (self.UB-self.LB)/self.LB
+        self.UB = min([self.UB, self.a1 * value_L + self.a2 * max_Lk[0]])
+        self.gap = (self.UB - self.LB) / self.LB
         return self.gap
-
+    #
     def worst_scenario(self):
-        value_L3 = []
-        for k in range(self.nk):
-            L3_name = ''.join(['L3[',str(k),']'])
-            L3_temp = self.sub_model.getVarByName(L3_name)
-            value_L3.append(L3_temp.x)
-        # maximum L3 and its index (worst k)
-        max_L3 = max([[v,i] for i,v in enumerate(value_L3)])
-        self.max_k = max_L3[1]
-        return max_L3
-
+        if self.dual == 0:
+            value_L3 = []
+            for k in range(self.nk):
+                L3_name = ''.join(['L3[', str(k), ']'])
+                L3_temp = self.sub_model.getVarByName(L3_name)
+                value_L3.append(L3_temp.x)
+            # maximum L3 and its index (worst k)
+            max_Lk = max([[v, i] for i, v in enumerate(value_L3)])
+        elif self.dual == 1:
+            value_Qk = []
+            for k in range(self.nk):
+                Qk_name = ''.join(['Qk[',str(k),']'])
+                Qk_temp = self.sub_dual.getVarByName(Qk_name)
+                value_Qk.append(Qk_temp.x)
+            # maximum Qk and its index (worst k)
+            max_Lk = max([[v,i] for i,v in enumerate(value_Qk)])
+        self.max_k = max_Lk[1]
+        return max_Lk
+    #
     def update_status(self):
         self.add_cut_scen.append(self.max_k)
         self.iteration += 1
         print('==========================================')
-        print('Current iteration:',str(self.iteration))
-        print('gap = ',str(self.gap))
-        print('Cuts added form scenario:',str(self.add_cut_scen[0:-1]))
+        print('Current iteration:', str(self.iteration))
+        print('gap = ', str(self.gap))
+        print('Cuts added form scenario:', str(self.add_cut_scen[0:-1]))
+    # tune parameters to avoid numerical issues for subproblem
+    # wrong optimal solutions appear for both sub&dual_sub
+    def params_tuneup(self):
+        # self.master_model.params.Presolve = 0
+        # self.master_model.params.ScaleFlag = 3
+        # self.master_model.params.NumericFocus = 3
+        if self.dual == 0:
+            self.sub_model.params.Presolve = 0
+            self.sub_model.params.ScaleFlag = 3
+            self.sub_model.params.NumericFocus = 3
+        elif self.dual == 1:
+            self.sub_dual.params.Presolve = 0
+            self.sub_dual.params.ScaleFlag = 3
+            self.sub_dual.params.NumericFocus = 3
+        # References:
+        #m1.params.ScaleFlag = 3
+        #m1.params.ObjScale = 100
+        #m1.params.NumericFocus = 3
+        #m1.params.NormAdjust = 3
+        #m1.params.InfUnbdInfo = 0 #1
+        #m1.params.Quad = -1 #1
+        #m1.params.Sifting = -1 #2
+        #m1.params.SiftMethod = -1 # 2
+        #m1.params.SimplexPricing = -1 #3
+        #m1.params.Method = -1
+        #m1.params.AggFill = 0
+        #m1.params.Aggregate = 0
+        #m1.params.DualReductions = 1 #0
+        #m1.params.PreDual = 2 #2
+        #m1.params.Presolve = 0
