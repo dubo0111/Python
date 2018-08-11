@@ -84,6 +84,7 @@ m.addConstrs(
 m.addConstrs(
         (x.sum(i,'*') == 1 for i in range(ni)),
         "sumx")
+
 # ---------- Sub problem ----------
 def sub_dual(value_y):
     # Create sub model

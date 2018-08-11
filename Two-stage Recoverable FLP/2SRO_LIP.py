@@ -7,6 +7,7 @@ Created on Tue Jul 26 2018
 
 @author: DUBO
 """
+%reset -f
 import time
 import data_generator1 as dg
 #INPUT Parameters:p, cost matrix
@@ -35,8 +36,8 @@ try:
     # --------- Master problem ---------
     # Create variables
     # x:allocations y:location L:auxiliary variable
-    x = m.addVars(ni,ni,vtype=GRB.BINARY, name="x")
-    y = m.addVars(ni,vtype=GRB.BINARY, name="y")
+    x = m.addVars(ni,ni,vtype=GRB.CONTINUOUS, name="x")
+    y = m.addVars(ni,vtype=GRB.CONTINUOUS, name="y")
     L = m.addVar(vtype=GRB.CONTINUOUS,obj=a1,name="L")
 
     # Set objective to minimize
@@ -67,8 +68,8 @@ try:
             "sumx")
     # ---------- Sub problem ----------
     # v:allocations u:location L3,eta: auxiliary variable
-    v = m.addVars(nk,ni,ni,vtype=GRB.BINARY, name="v")
-    u = m.addVars(nk,ni,vtype=GRB.BINARY, name="u")
+    v = m.addVars(nk,ni,ni,vtype=GRB.CONTINUOUS, name="v")
+    u = m.addVars(nk,ni,vtype=GRB.CONTINUOUS, name="u")
     L3 = m.addVars(nk,vtype=GRB.CONTINUOUS, name="L3")
     eta = m.addVar(vtype=GRB.CONTINUOUS, obj=a2, name="eta")
 
