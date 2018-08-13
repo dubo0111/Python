@@ -7,13 +7,13 @@ Created on Tue Jul 26 2018
 
 @author: DUBO
 """
-%reset -f
+#%reset -f
 import time
 import data_generator1 as dg
 #INPUT Parameters:p, cost matrix
 #p,cd = dg.ins_small()
 #p,cd = dg.ins_big(5)
-p,cd,cdk,sk = dg.ins_k(20, 50, 2) #(ni,nk,randomseed)
+p,cd,cdk,sk = dg.ins_k(10, 100, 11) #(ni,nk,randomseed)
 # !!!!! Make sure index match: cdk VS. v_ij(k) [k][i][j]
 from gurobipy import *
 start_time = time.time()
@@ -37,15 +37,15 @@ try:
     # Create variables
     # x:allocations y:location L:auxiliary variable
     x = m.addVars(ni,ni,vtype=GRB.CONTINUOUS, name="x")
-    y = m.addVars(ni,vtype=GRB.CONTINUOUS, name="y")
+    y = m.addVars(ni,vtype=GRB.BINARY, name="y")
     L = m.addVar(vtype=GRB.CONTINUOUS,obj=a1,name="L")
 
     # Set objective to minimize
     m.modelSense = GRB.MINIMIZE
     m.params.OutputFlag = 0
-    m.params.Presolve = 0
-    m.params.ScaleFlag = 3
-    m.params.NumericFocus = 3
+#    m.params.Presolve = 0
+#    m.params.ScaleFlag = 3
+#    m.params.NumericFocus = 3
     # (1) Maximum cost constraints (objective): L>sum(cdx) forall i
     cdx = x.copy()
     for i in range(ni):
@@ -69,6 +69,7 @@ try:
     # ---------- Sub problem ----------
     # v:allocations u:location L3,eta: auxiliary variable
     v = m.addVars(nk,ni,ni,vtype=GRB.CONTINUOUS, name="v")
+#    u = m.addVars(nk,ni,vtype=GRB.BINARY, name="u")
     u = m.addVars(nk,ni,vtype=GRB.CONTINUOUS, name="u")
     L3 = m.addVars(nk,vtype=GRB.CONTINUOUS, name="L3")
     eta = m.addVar(vtype=GRB.CONTINUOUS, obj=a2, name="eta")
@@ -126,6 +127,34 @@ except GurobiError as e:
 except AttributeError:
     print('Encountered an attribute error')
 print('=================LIP SOLUTION==================')
+print('1st stage:',L.x)
+print('2nd stage:',eta.x)
+print('obj:',a1*L.x+a2*eta.x)
+print("--- %s seconds ---" % round((time.time() - start_time),2))
+
+value_u = []
+for k in range(nk):
+    for i in range(ni):
+        u_name = ''.join(['u[',str(k),',',str(i),']'])
+        value_u.append(m.getVarByName(u_name))
+for i in value_u:
+    if i.x != 0:
+        print(i.x)
+#
+#m.reset()
+try:
+    for k in range(nk):
+        for j in range(ni):
+            u_name=''.join(['u[',str(k),',',str(j),']'])
+            m.getVarByName(u_name).setAttr('vtype',GRB.BINARY)
+    m.optimize()
+    value_L = m.getVarByName('L')
+    value_eta = m.getVarByName('eta')
+except GurobiError as e:
+    print('Error code ' + str(e.errno) + ": " + str(e))
+except AttributeError:
+    print('Encountered an attribute error')
+print('=================LIP SOLUTION With MIP Subproblem==================')
 print('1st stage:',L.x)
 print('2nd stage:',eta.x)
 print('obj:',a1*L.x+a2*eta.x)

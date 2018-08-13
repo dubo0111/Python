@@ -15,6 +15,7 @@ start_time = time.time()
 TSRFLP = mr.rflp(p, ni, nk, a1, a2, cd, cdk, sk)
 # primal sub problem
 TSRFLP.dual = 0
+TSRFLP.params_tuneup()
 # ----------Benders' Decompisition----------
 iteration = 0
 gap = 1
@@ -22,7 +23,7 @@ stop = 1e-5
 TSRFLP.master()
 TSRFLP.master_model.params.OutputFlag = 0
 TSRFLP.sub_model.params.OutputFlag = 0
-while abs(gap) >= stop:
+while abs(TSRFLP.gap) >= stop:
     if iteration != 0:
         TSRFLP.update_master()
     #filename = ''.join(['.\model\master(',str(iteration),').lp'])
@@ -35,13 +36,13 @@ while abs(gap) >= stop:
     #filename = ''.join(['.\model\sub(',str(iteration),').lp'])
     # TSRFLP.sub_model.write(filename)
     TSRFLP.sub_model.optimize()
-    gap = TSRFLP.gap_calculation()
+    TSRFLP.gap_calculation()
     TSRFLP.update_status()
     TSRFLP.error_check()
-    if abs(gap) <= stop:
+    if abs(TSRFLP.gap) <= stop:
         print('OPTIMAL SOLUTION FOUND !')
         print('Optimal Objective Value = ', str(TSRFLP.UB))
     iteration += 1
-    if iteration >= 200:
+    if iteration >= 50:
         break
 print("--- %s seconds ---" % round((time.time() - start_time), 2))

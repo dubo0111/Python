@@ -3,15 +3,17 @@
 # get variables,dual variables
 from gurobipy import *
 
-
 class rflp:
     # Attributes
     master_model = Model()
     sub_model = Model()
     sub_dual = Model()
     value_y = []
+    value_omega = 0
     max_k = 0
+    max_Lk = []
     constr_y = LinExpr()
+    integer_cut = LinExpr()
     UB = float('inf')
     LB = -float('inf')
     y = []
@@ -26,8 +28,10 @@ class rflp:
     nu = 0
     add_cut_scen = []
     iteration = 0
-    gap = 0
+    gap = float('inf')
+    int_gap = 0
     dual = 1
+    intSP = 0
     error = 0
     # Input
     p = 0
@@ -38,7 +42,6 @@ class rflp:
     cd = []
     cdk = []
     sk = []
-
     def __init__(self, p, ni, nk, a1, a2, cd, cdk, sk):
         self.p = p
         self.ni = ni
@@ -54,7 +57,7 @@ class rflp:
         # Create variables
         # x:allocations y:location L:auxiliary variable
         x = self.master_model.addVars(
-            self.ni, self.ni, vtype=GRB.BINARY, name="x")
+            self.ni, self.ni, vtype=GRB.CONTINUOUS, name="x")
         self.y = self.master_model.addVars(self.ni, vtype=GRB.BINARY, name="y")
         L = self.master_model.addVar(
             vtype=GRB.CONTINUOUS, obj=self.a1, name="L")
@@ -94,8 +97,12 @@ class rflp:
         # v:allocations u:location L3,eta: auxiliary variable
         v = self.sub_model.addVars(
             self.nk, self.ni, self.ni, lb=0, ub=1, vtype=GRB.CONTINUOUS, name="v")
-        u = self.sub_model.addVars(
-            self.nk, self.ni, lb=0, ub=1, vtype=GRB.CONTINUOUS, name="u")
+        if self.intSP == 0:
+            u = self.sub_model.addVars(
+                self.nk, self.ni, lb=0, ub=1, vtype=GRB.CONTINUOUS, name="u")
+        elif self.intSP == 1:
+            u = self.sub_model.addVars(
+                self.nk, self.ni, vtype=GRB.BINARY, name="u")
         L3 = self.sub_model.addVars(self.nk, vtype=GRB.CONTINUOUS, name="L3")
         eta = self.sub_model.addVar(vtype=GRB.CONTINUOUS, obj=1, name="eta")
         self.sub_model.modelSense = GRB.MINIMIZE
@@ -340,21 +347,39 @@ class rflp:
                       for j in range(self.ni)]) + self.p * nu
         self.constr_y = c_y + constant
     #
-    def gap_calculation(self):
-        # extract L
-        var_L = self.master_model.getVarByName('L')
-        value_L = var_L.x
-        # update LB = objective value of master problem
-        obj_master = self.master_model.getObjective()
-        self.LB = obj_master.getValue()
-        max_Lk = self.worst_scenario()
-        # update UB
-        self.UB = min([self.UB, self.a1 * value_L + self.a2 * max_Lk[0]])
-        self.gap = (self.UB - self.LB) / self.LB
-        return self.gap
+    def update_integer_cut(self):
+        sum_c_y = LinExpr()
+        for i in range(self.ni):
+            if self.value_y[i] == 1:
+                sum_c_y += self.y[i]-1
+            elif self.value_y[i] == 1:
+                sum_c_y += -self.y[i]
+        sum_c_y += 1
+        max_Lk = self.worst_scenario(1)
+        self.integer_cut = max_Lk[0]*sum_c_y
     #
-    def worst_scenario(self):
-        if self.dual == 0:
+    def gap_calculation(self,MIP_SP = 0):
+        if MIP_SP == 1:
+            vals = self.master_model.cbGetSolution(self.master_model._vars)
+            #value_L = vals(-2)
+            max_Lk = self.worst_scenario(1)
+            self.int_gap = max_Lk[0] - self.value_omega
+#            print('max_Lk:',max_Lk[0])
+        else:
+            # extract L
+            var_L = self.master_model.getVarByName('L')
+            value_L = var_L.x
+            # update LB = objective value of master problem
+            obj_master = self.master_model.getObjective()
+            self.LB = obj_master.getValue()
+            max_Lk = self.worst_scenario()
+            # update UB
+            self.UB = min([self.UB, self.a1 * value_L + self.a2 * max_Lk[0]])
+            self.gap = (self.UB - self.LB) / self.LB
+        # return self.gap
+    #
+    def worst_scenario(self,MIP_SP = 0):
+        if self.dual == 0 or MIP_SP == 1:
             value_L3 = []
             for k in range(self.nk):
                 L3_name = ''.join(['L3[', str(k), ']'])
@@ -362,7 +387,7 @@ class rflp:
                 value_L3.append(L3_temp.x)
             # maximum L3 and its index (worst k)
             max_Lk = max([[v, i] for i, v in enumerate(value_L3)])
-        elif self.dual == 1:
+        elif self.dual == 1 and MIP_SP != 1:
             value_Qk = []
             for k in range(self.nk):
                 Qk_name = ''.join(['Qk[',str(k),']'])
@@ -383,9 +408,9 @@ class rflp:
     # tune parameters to avoid numerical issues for subproblem
     # wrong optimal solutions appear for both sub&dual_sub
     def params_tuneup(self):
-        # self.master_model.params.Presolve = 0
-        # self.master_model.params.ScaleFlag = 3
-        # self.master_model.params.NumericFocus = 3
+        self.master_model.params.Presolve = 0
+        self.master_model.params.ScaleFlag = 3
+        self.master_model.params.NumericFocus = 3
         if self.dual == 0:
             self.sub_model.params.Presolve = 0
             self.sub_model.params.ScaleFlag = 3
@@ -410,6 +435,7 @@ class rflp:
         #m1.params.DualReductions = 1 #0
         #m1.params.PreDual = 2 #2
         #m1.params.Presolve = 0
+    #
     def error_check(self):
         if self.gap <= -0.1:
             self.error = 1

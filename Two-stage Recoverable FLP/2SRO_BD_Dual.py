@@ -10,7 +10,7 @@ Created on Wed Aug  1 08:24:56 2018
 import data_generator1 as dg
 # debug:(3,1,3):primal dual value error;
 # debug:(3,1,2):dual problem error
-p,cd,cdk,sk = dg.ins_k(20,100) #(ni,nk,randomseed)
+p,cd,cdk,sk = dg.ins_k(50,30) #(ni,nk,randomseed)
 from gurobipy import *
 ni = len(cd)
 nk = len(cdk)
@@ -319,3 +319,11 @@ print('=============================')
 dualobj1,dualobj2 = cal_DualObj()
 print('primal-dual1:',dualobj1)
 print('primal-dual2:',dualobj2)
+value_u = []
+for k in range(nk):
+    for i in range(ni):
+        u_name = ''.join(['u[',str(k),',',str(i),']'])
+        value_u.append(m2.getVarByName(u_name))
+for i in value_u:
+    if i.x != 0:
+        print(i.x)
