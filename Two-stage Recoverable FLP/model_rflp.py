@@ -364,7 +364,7 @@ class rflp:
             #value_L = vals(-2)
             max_Lk = self.worst_scenario(1)
             self.int_gap = max_Lk[0] - self.value_omega
-#            print('max_Lk:',max_Lk[0])
+           #print('max_Lk:',max_Lk[0])
         else:
             # extract L
             var_L = self.master_model.getVarByName('L')
