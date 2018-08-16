@@ -2,7 +2,7 @@
 #%reset -f
 import model_rflp as mr
 import data_generator1 as dg
-p, cd, cdk, sk = dg.ins_k(10,100,4)  # (ni,nk,randomseed*)
+p, cd, cdk, sk = dg.ins_k(50,100,40)  # (ni,nk,randomseed*)
 from gurobipy import *
 import time
 # Number of nodes

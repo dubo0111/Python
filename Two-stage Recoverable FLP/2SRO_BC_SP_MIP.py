@@ -2,7 +2,7 @@
 # %reset -f
 import model_rflp as mr
 import data_generator1 as dg
-p, cd, cdk, sk = dg.ins_k(100, 100, 40)  # (ni,nk,randomseed*)
+p, cd, cdk, sk = dg.ins_k(50, 100, 40)  # (ni,nk,randomseed*)
 from gurobipy import *
 import time
 # Number of nodes
@@ -12,17 +12,47 @@ nk = len(cdk)
 a1 = 0.5
 a2 = 1 - a1
 try:
+    # if gap doesn't change for * iterations, add fractional cut
+    gap_cnt = [-GRB.INFINITY,GRB.INFINITY]
+    gap_iter = 0
     def mycallback(model, where):
-        # if where == GRB.Callback.MIPNODE:
-        #     if model.cbGet(GRB.Callback.MIPNODE_STATUS) == GRB.Status.OPTIMAL:
-        #         vals = model.cbGetNodeRel(model._vars)
-        #         TSRFLP.value_y = vals[-2 - ni:-2]
-        #         TSRFLP.update_sub_dual(callback=1)
-        #         TSRFLP.sub_dual.optimize()
-        #         TSRFLP.worst_scenario()
-        #         TSRFLP.update_cut()
-        #         model.cbCut(TSRFLP.omega >= TSRFLP.constr_y)
-        #         print('++++')
+        global gap_cnt,gap_iter
+        if where == GRB.Callback.MIP:
+            # General MIP callback
+            nodecnt = model.cbGet(GRB.Callback.MIP_NODCNT)
+            objbst = model.cbGet(GRB.Callback.MIP_OBJBST)
+            objbnd = model.cbGet(GRB.Callback.MIP_OBJBND)
+            solcnt = model.cbGet(GRB.Callback.MIP_SOLCNT)
+            if nodecnt - model._lastnode >= 100:
+                model._lastnode = nodecnt
+                actnodes = model.cbGet(GRB.Callback.MIP_NODLFT)
+                itcnt = model.cbGet(GRB.Callback.MIP_ITRCNT)
+                cutcnt = model.cbGet(GRB.Callback.MIP_CUTCNT)
+                print('%d %d %d %g %g %d %d' % (nodecnt, actnodes, \
+                      itcnt, objbst, objbnd, solcnt, cutcnt))
+            gap_cnt[1] = abs(objbst - objbnd)/(1.0 + abs(objbst))
+            if gap_cnt[0] == gap_cnt[1]:
+                gap_iter += 1
+            else:
+                gap_iter = 0
+            gap_cnt[0] = gap_cnt[1]
+            # if abs(objbst - objbnd) < 0.1 * (1.0 + abs(objbst)):
+            #     print('Stop early - 10% gap achieved')
+            #     model.terminate()
+            # if nodecnt >= 10000 and solcnt:
+            #     print('Stop early - 10000 nodes explored')
+            #     model.terminate()
+#        if where == GRB.Callback.MIPNODE:
+#            if model.cbGet(GRB.Callback.MIPNODE_STATUS) == GRB.Status.OPTIMAL:
+#                if gap_iter >= 20:
+#                    vals = model.cbGetNodeRel(model._vars)
+#                    TSRFLP.value_y = vals[-2 - ni:-2]
+#                    TSRFLP.update_sub_dual(callback=1)
+#                    TSRFLP.sub_dual.optimize()
+#                    TSRFLP.worst_scenario()
+#                    TSRFLP.update_cut()
+#                    model.cbCut(TSRFLP.omega >= TSRFLP.constr_y)
+#                    print('++++')
         if where == GRB.Callback.MIPSOL:
             vals = model.cbGetSolution(model._vars)
             TSRFLP.value_y = vals[-2 - ni:-2]
@@ -40,15 +70,15 @@ try:
             x = model.cbGetSolution(model._vars)
             print('**** New solution at node %d, obj %g, sol %d, '
                   'x[0] = %g ****' % (nodecnt, obj, solcnt, x[0]))
-            # integer l-shaped cut
-            TSRFLP.update_sub(callback=1)
-            TSRFLP.sub_model.optimize()
-            TSRFLP.worst_scenario(1)
-            TSRFLP.gap_calculation(1)
-            if abs(TSRFLP.int_gap) >= 1e-4:
-                TSRFLP.update_integer_cut()
-                # cut incumbent solution
-                model.cbLazy(TSRFLP.omega >= TSRFLP.integer_cut)
+#            # integer l-shaped cut
+#            TSRFLP.update_sub(callback=1)
+#            TSRFLP.sub_model.optimize()
+#            TSRFLP.worst_scenario(1)
+#            TSRFLP.gap_calculation(1)
+#            if abs(TSRFLP.int_gap) >= 1e-4:
+#                TSRFLP.update_integer_cut()
+#                # cut incumbent solution
+#                model.cbLazy(TSRFLP.omega >= TSRFLP.integer_cut)
     start_time = time.time()
     TSRFLP = mr.rflp(p, ni, nk, a1, a2, cd, cdk, sk)
     TSRFLP.dual = 1
@@ -61,6 +91,7 @@ try:
     TSRFLP.master()
     TSRFLP.dual_sub(callback=1)
     TSRFLP.sub(callback=1)
+    TSRFLP.master_model._lastnode = -GRB.INFINITY
     TSRFLP.master_model.params.OutputFlag = 1
     TSRFLP.sub_dual.params.OutputFlag = 0
     TSRFLP.sub_model.params.OutputFlag = 0

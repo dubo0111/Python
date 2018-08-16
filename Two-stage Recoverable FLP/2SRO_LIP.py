@@ -13,7 +13,7 @@ import data_generator1 as dg
 #INPUT Parameters:p, cost matrix
 #p,cd = dg.ins_small()
 #p,cd = dg.ins_big(5)
-p,cd,cdk,sk = dg.ins_k(20, 100, 40) #(ni,nk,randomseed)
+p,cd,cdk,sk = dg.ins_k(50, 100, 40) #(ni,nk,randomseed)
 # !!!!! Make sure index match: cdk VS. v_ij(k) [k][i][j]
 from gurobipy import *
 start_time = time.time()

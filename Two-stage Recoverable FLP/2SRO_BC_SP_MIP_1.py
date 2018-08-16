@@ -1,4 +1,5 @@
 # Branch and cut
+# check optimality with MIP SP in the end
 #%reset -f
 import model_rflp as mr
 import data_generator1 as dg
