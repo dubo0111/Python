@@ -2,7 +2,7 @@
 #%reset -f
 import model_rflp as mr
 import data_generator1 as dg
-p, cd, cdk, sk = dg.ins_k_alldiff(4,10)
+p, cd, cdk, sk = dg.ins_k_alldiff(20,50)
 cd  # (ni,nk,randomseed*)
 cdk
 sk

@@ -63,7 +63,7 @@ def ins_generator(ni,rnd=None,nk=0,sumk=0):
     for x in range(ni):
         x1 = city[x]
         newco[x,:]=cxy[x1,:]
-        newdemand[x,0]=cxy[x1,0]
+        newdemand[x,0]=demand[x1,0]
     if nk != 0:
         print('Generating',nk,'senarios......')
     return newco,newdemand
@@ -107,12 +107,12 @@ def ins_k(ni,nk,rnd=None):
         cd2.tolist()
         cdk[k] = cd2
         cdk[k] = cdk[k].tolist()
-        p = round(ni*1/3)
-        if p == 1:
-            sumk = 1
-        else:
-            sumk = p - 1
-        sk = ins_kdisrupt(ni,nk,sumk,rnd)
+    p = round(ni*1/3)
+    if p == 1:
+        sumk = 1
+    else:
+        sumk = p - 1
+    sk = ins_kdisrupt(ni,nk,sumk,rnd)
         #cd,cdk = roundlist(cd,cdk,nk,ni)
     return p,cd,cdk,sk
 def roundlist(cd,cdk,nk,ni):
@@ -130,20 +130,20 @@ def ins_k_alldiff(ni,nk,rnd=None):
     c,cd = cal_cost(co,d)
     cdk = [[[0 for j in range(ni)] for i in range(ni)] for k in range(nk)]
     # np.random.seed(rnd)
+    s = 0
     for k in range(nk):
-        np.random.seed()
-        co1,d1 = ins_generator(ni,rnd)
-        c1,cd1 = cal_cost(co,d)
+        random.seed(s)
+        co1,d1 = ins_generator(ni,s)
+        c1,cd1 = cal_cost(co1,d1)
         # for i in range(ni):
         #     for j in range(ni):
         #         cd1 = c1[i,j]*d1[i,0]
-        cd1.tolist()
-        cdk[k] = cd1
-        cdk[k] = cdk[k].tolist()
-        p = round(ni*1/3)
-        if p == 1:
-            sumk = 1
-        else:
-            sumk = p - 1
-        sk = ins_kdisrupt(ni,nk,sumk,rnd)
+        cdk[k] = cd1.tolist()
+        s += 1
+    p = round(ni*1/3)
+    if p == 1:
+        sumk = 1
+    else:
+        sumk = p - 1
+    sk = ins_kdisrupt(ni,nk,sumk,rnd)
     return p,cd,cdk,sk

@@ -101049,3 +101049,451 @@ Changed value of parameter ScaleFlag to 3
    Prev: -1  Min: -1  Max: 3  Default: -1
 Changed value of parameter NumericFocus to 3
    Prev: 0  Min: 0  Max: 3  Default: 0
+
+Gurobi 8.0.1 (win64, Python) logging started 08/20/18 02:00:09
+
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Parameter OutputFlag unchanged
+   Value: 1  Min: 0  Max: 1  Default: 1
+Changed value of parameter lazyConstraints to 1
+   Prev: 0  Min: 0  Max: 1  Default: 0
+Optimize a model with 441 rows, 422 columns and 1620 nonzeros
+Variable types: 402 continuous, 20 integer (20 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 5e+03]
+  Objective range  [5e-01, 5e-01]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 7e+00]
+Found heuristic solution: objective 2301.4384443
+Variable types: 402 continuous, 20 integer (20 binary)
+
+Root relaxation: objective 8.513717e+01, 166 iterations, 0.02 seconds
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0   85.13717    0   15 2301.43844   85.13717  96.3%     -    0s
+H    0     0                     668.7155022   85.13717  87.3%     -    0s
+H    0     0                     592.8034978   85.13717  85.6%     -    0s
+H    0     2                     500.5082537   85.13717  83.0%     -    0s
+     0     2   85.13717    0   15  500.50825   85.13717  83.0%     -    0s
+H    5     8                     215.7446273  102.51562  52.5%  38.6    0s
+H   29     8                     197.6385815  197.63858  0.00%  20.8    0s
+
+Explored 37 nodes (802 simplex iterations) in 0.18 seconds
+Thread count was 8 (of 8 available processors)
+
+Solution count 6: 197.639 215.745 500.508 ... 2301.44
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 1.976385814923e+02, best bound 1.976385814923e+02, gap 0.0000%
+Optimize a model with 441 rows, 422 columns and 1620 nonzeros
+Variable types: 402 continuous, 20 integer (20 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 5e+03]
+  Objective range  [5e-01, 5e-01]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 7e+00]
+Variable types: 402 continuous, 20 integer (20 binary)
+
+Root relaxation: objective 8.513717e+01, 166 iterations, 0.01 seconds
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0   85.13717    0   15          -   85.13717      -     -    2s
+
+Gurobi 8.0.1 (win64, Python) logging started 08/20/18 02:00:43
+
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+
+Gurobi 8.0.1 (win64, Python) logging started 08/20/18 02:02:22
+
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+
+Gurobi 8.0.1 (win64, Python) logging started 08/20/18 02:05:08
+
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+
+Gurobi 8.0.1 (win64, Python) logging started 08/20/18 02:08:44
+
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
