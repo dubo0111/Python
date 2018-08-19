@@ -13,7 +13,7 @@ import data_generator1 as dg
 #INPUT Parameters:p, cost matrix
 #p,cd = dg.ins_small()
 #p,cd = dg.ins_big(5)
-p,cd,cdk,sk = dg.ins_k(50, 100, 40) #(ni,nk,randomseed)
+p,cd,cdk,sk = dg.ins_k(20,30, 1) #(ni,nk,andomseed)
 # !!!!! Make sure index match: cdk VS. v_ij(k) [k][i][j]
 from gurobipy import *
 start_time = time.time()
@@ -159,3 +159,5 @@ print('1st stage:',L.x)
 print('2nd stage:',eta.x)
 print('obj:',a1*L.x+a2*eta.x)
 print("--- %s seconds ---" % round((time.time() - start_time),2))
+y
+u

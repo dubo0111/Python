@@ -2,14 +2,17 @@
 #%reset -f
 import model_rflp as mr
 import data_generator1 as dg
-p, cd, cdk, sk = dg.ins_k(50,100,40)  # (ni,nk,randomseed*)
+p, cd, cdk, sk = dg.ins_k_alldiff(4,10)
+cd  # (ni,nk,randomseed*)
+cdk
+sk
 from gurobipy import *
 import time
 # Number of nodes
 ni = len(cd)
 nk = len(cdk)
 # weights of two stages
-a1 = 0.5
+a1 = 0.01
 a2 = 1 - a1
 start_time = time.time()
 TSRFLP = mr.rflp(p, ni, nk, a1, a2, cd, cdk, sk)
@@ -28,6 +31,8 @@ while abs(TSRFLP.gap) >= stop:
     #filename = ''.join(['.\model\master(',str(iteration),').lp'])
     # TSRFLP.master_model.write(filename)
     TSRFLP.master_model.optimize()
+    L0 = TSRFLP.master_model.getVarByName('L').x
+    print('L0: ',L0)
     if iteration == 0:
         TSRFLP.dual_sub()
     else:

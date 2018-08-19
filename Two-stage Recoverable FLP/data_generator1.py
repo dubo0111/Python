@@ -125,3 +125,25 @@ def roundlist(cd,cdk,nk,ni):
             cd[i][j] = round(cd[i][j],2)
     return cd,cdk
 #ins_k(5,3)
+def ins_k_alldiff(ni,nk,rnd=None):
+    co,d = ins_generator(ni,rnd)
+    c,cd = cal_cost(co,d)
+    cdk = [[[0 for j in range(ni)] for i in range(ni)] for k in range(nk)]
+    # np.random.seed(rnd)
+    for k in range(nk):
+        np.random.seed()
+        co1,d1 = ins_generator(ni,rnd)
+        c1,cd1 = cal_cost(co,d)
+        # for i in range(ni):
+        #     for j in range(ni):
+        #         cd1 = c1[i,j]*d1[i,0]
+        cd1.tolist()
+        cdk[k] = cd1
+        cdk[k] = cdk[k].tolist()
+        p = round(ni*1/3)
+        if p == 1:
+            sumk = 1
+        else:
+            sumk = p - 1
+        sk = ins_kdisrupt(ni,nk,sumk,rnd)
+    return p,cd,cdk,sk
