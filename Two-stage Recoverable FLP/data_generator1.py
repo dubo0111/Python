@@ -128,6 +128,7 @@ def roundlist(cd,cdk,nk,ni):
 def ins_k_alldiff(ni,nk,rnd=None):
     co,d = ins_generator(ni,rnd)
     c,cd = cal_cost(co,d)
+    cd = cd.tolist()
     cdk = [[[0 for j in range(ni)] for i in range(ni)] for k in range(nk)]
     # np.random.seed(rnd)
     s = 0

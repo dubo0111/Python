@@ -101497,3 +101497,18 @@ Changed value of parameter ScaleFlag to 3
    Prev: -1  Min: -1  Max: 3  Default: -1
 Changed value of parameter NumericFocus to 3
    Prev: 0  Min: 0  Max: 3  Default: 0
+
+Gurobi 8.0.1 (win64, Python) logging started 08/20/18 19:24:45
+
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
