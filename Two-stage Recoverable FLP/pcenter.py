@@ -6,10 +6,14 @@ Created on Tue Jul 25 2018
 
 p-center model
 """
-import data_generator1 as dg
+#import data_generator1 as dg
 #INPUT Parameters:p, cost matrix
 #p,cd = dg.ins_small()
-p,cd = dg.ins_big(100)
+#p,cd = dg.ins_big(100)
+import data_generator0 as dg0
+data = dg0.data_gen(4,1)
+p,cd,cdk,sk = data.data()
+
 from gurobipy import *
 def mycallback(model, where):
     if where == GRB.Callback.MIPSOL:
@@ -26,7 +30,7 @@ try:
 
     # Create variables
     # x:allocations y:location L:auxiliary variable
-    x = m.addVars(ni,ni,vtype=GRB.BINARY, name="x")
+    x = m.addVars(ni,ni,vtype=GRB.CONTINUOUS, name="x")
     y = m.addVars(ni,vtype=GRB.BINARY, name="y")
     L = m.addVar(vtype=GRB.CONTINUOUS,obj=1,name="L")
 

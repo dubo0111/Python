@@ -10,6 +10,7 @@ import scipy.io
 import numpy as np
 import math
 import random
+import copy
 #import pandas as pd
 #from pandas import ExcelWriter
 #from pandas import ExcelFile
@@ -119,10 +120,10 @@ def roundlist(cd,cdk,nk,ni):
     for k in range(nk):
         for i in range(ni):
             for j in range(ni):
-                cdk[k][i][j] = round(cdk[k][i][j],2)
+                cdk[k][i][j] = round(cdk[k][i][j]/10000)
     for i in range(ni):
         for j in range(ni):
-            cd[i][j] = round(cd[i][j],2)
+            cd[i][j] = round(cd[i][j]/10000)
     return cd,cdk
 #ins_k(5,3)
 def ins_k_alldiff(ni,nk,rnd=None):
@@ -131,7 +132,7 @@ def ins_k_alldiff(ni,nk,rnd=None):
     cd = cd.tolist()
     cdk = [[[0 for j in range(ni)] for i in range(ni)] for k in range(nk)]
     # np.random.seed(rnd)
-    s = 0
+    s = round(np.random.rand()*1000)
     for k in range(nk):
         random.seed(s)
         co1,d1 = ins_generator(ni,s)
@@ -139,6 +140,7 @@ def ins_k_alldiff(ni,nk,rnd=None):
         # for i in range(ni):
         #     for j in range(ni):
         #         cd1 = c1[i,j]*d1[i,0]
+#        cdk[k] = copy.deepcopy(cd)
         cdk[k] = cd1.tolist()
         s += 1
     p = round(ni*1/3)
@@ -147,4 +149,5 @@ def ins_k_alldiff(ni,nk,rnd=None):
     else:
         sumk = p - 1
     sk = ins_kdisrupt(ni,nk,sumk,rnd)
+    cd,cdk = roundlist(cd,cdk,nk,ni)
     return p,cd,cdk,sk

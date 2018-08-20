@@ -101512,3 +101512,2289 @@ Changed value of parameter ScaleFlag to 3
    Prev: -1  Min: -1  Max: 3  Default: -1
 Changed value of parameter NumericFocus to 3
    Prev: 0  Min: 0  Max: 3  Default: 0
+
+Gurobi 8.0.1 (win64, Python) logging started 08/20/18 20:35:41
+
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+
+Gurobi 8.0.1 (win64, Python) logging started 08/20/18 20:38:54
+
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+
+Gurobi 8.0.1 (win64, Python) logging started 08/20/18 20:40:58
+
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+
+Gurobi 8.0.1 (win64, Python) logging started 08/20/18 23:20:41
+
+
+Gurobi 8.0.1 (win64, Python) logging started 08/20/18 23:20:57
+
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Parameter InfUnbdInfo unchanged
+   Value: 0  Min: 0  Max: 1  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter FeasibilityTol to 1e-09
+   Prev: 1e-06  Min: 1e-09  Max: 0.01  Default: 1e-06
+Changed value of parameter OptimalityTol to 1e-09
+   Prev: 1e-06  Min: 1e-09  Max: 0.01  Default: 1e-06
+Changed value of parameter ScaleFlag to 0
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Parameter NumericFocus unchanged
+   Value: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Parameter InfUnbdInfo unchanged
+   Value: 0  Min: 0  Max: 1  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter FeasibilityTol to 1e-09
+   Prev: 1e-06  Min: 1e-09  Max: 0.01  Default: 1e-06
+Changed value of parameter OptimalityTol to 1e-09
+   Prev: 1e-06  Min: 1e-09  Max: 0.01  Default: 1e-06
+Changed value of parameter ScaleFlag to 0
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Parameter NumericFocus unchanged
+   Value: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Parameter InfUnbdInfo unchanged
+   Value: 0  Min: 0  Max: 1  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter FeasibilityTol to 1e-09
+   Prev: 1e-06  Min: 1e-09  Max: 0.01  Default: 1e-06
+Changed value of parameter OptimalityTol to 1e-09
+   Prev: 1e-06  Min: 1e-09  Max: 0.01  Default: 1e-06
+Changed value of parameter ScaleFlag to 0
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Parameter NumericFocus unchanged
+   Value: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Parameter InfUnbdInfo unchanged
+   Value: 0  Min: 0  Max: 1  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter FeasibilityTol to 1e-09
+   Prev: 1e-06  Min: 1e-09  Max: 0.01  Default: 1e-06
+Changed value of parameter OptimalityTol to 1e-09
+   Prev: 1e-06  Min: 1e-09  Max: 0.01  Default: 1e-06
+Changed value of parameter ScaleFlag to 0
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Parameter NumericFocus unchanged
+   Value: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Parameter InfUnbdInfo unchanged
+   Value: 0  Min: 0  Max: 1  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter FeasibilityTol to 1e-09
+   Prev: 1e-06  Min: 1e-09  Max: 0.01  Default: 1e-06
+Changed value of parameter OptimalityTol to 1e-09
+   Prev: 1e-06  Min: 1e-09  Max: 0.01  Default: 1e-06
+Changed value of parameter ScaleFlag to 0
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Parameter NumericFocus unchanged
+   Value: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Parameter InfUnbdInfo unchanged
+   Value: 0  Min: 0  Max: 1  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter FeasibilityTol to 1e-09
+   Prev: 1e-06  Min: 1e-09  Max: 0.01  Default: 1e-06
+Changed value of parameter OptimalityTol to 1e-09
+   Prev: 1e-06  Min: 1e-09  Max: 0.01  Default: 1e-06
+Changed value of parameter ScaleFlag to 0
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Parameter NumericFocus unchanged
+   Value: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Parameter InfUnbdInfo unchanged
+   Value: 0  Min: 0  Max: 1  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter FeasibilityTol to 1e-09
+   Prev: 1e-06  Min: 1e-09  Max: 0.01  Default: 1e-06
+Changed value of parameter OptimalityTol to 1e-09
+   Prev: 1e-06  Min: 1e-09  Max: 0.01  Default: 1e-06
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Parameter InfUnbdInfo unchanged
+   Value: 0  Min: 0  Max: 1  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter FeasibilityTol to 1e-09
+   Prev: 1e-06  Min: 1e-09  Max: 0.01  Default: 1e-06
+Changed value of parameter OptimalityTol to 1e-09
+   Prev: 1e-06  Min: 1e-09  Max: 0.01  Default: 1e-06
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Parameter InfUnbdInfo unchanged
+   Value: 0  Min: 0  Max: 1  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter FeasibilityTol to 1e-09
+   Prev: 1e-06  Min: 1e-09  Max: 0.01  Default: 1e-06
+Changed value of parameter OptimalityTol to 1e-09
+   Prev: 1e-06  Min: 1e-09  Max: 0.01  Default: 1e-06
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Parameter InfUnbdInfo unchanged
+   Value: 0  Min: 0  Max: 1  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter FeasibilityTol to 1e-09
+   Prev: 1e-06  Min: 1e-09  Max: 0.01  Default: 1e-06
+Changed value of parameter OptimalityTol to 1e-09
+   Prev: 1e-06  Min: 1e-09  Max: 0.01  Default: 1e-06
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Parameter InfUnbdInfo unchanged
+   Value: 0  Min: 0  Max: 1  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter FeasibilityTol to 1e-09
+   Prev: 1e-06  Min: 1e-09  Max: 0.01  Default: 1e-06
+Changed value of parameter OptimalityTol to 1e-09
+   Prev: 1e-06  Min: 1e-09  Max: 0.01  Default: 1e-06
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Parameter InfUnbdInfo unchanged
+   Value: 0  Min: 0  Max: 1  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter FeasibilityTol to 1e-09
+   Prev: 1e-06  Min: 1e-09  Max: 0.01  Default: 1e-06
+Changed value of parameter OptimalityTol to 1e-09
+   Prev: 1e-06  Min: 1e-09  Max: 0.01  Default: 1e-06
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Parameter OutputFlag unchanged
+   Value: 1  Min: 0  Max: 1  Default: 1
+Optimize a model with 441 rows, 421 columns and 1618 nonzeros
+Variable types: 1 continuous, 420 integer (420 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+03]
+  Objective range  [5e-01, 5e-01]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 7e+00]
+Presolve time: 0.00s
+
+Explored 0 nodes (0 simplex iterations) in 0.01 seconds
+Thread count was 1 (of 8 available processors)
+
+Solution count 0
+
+Model is infeasible
+Best objective -, best bound -, gap -
+Parameter OutputFlag unchanged
+   Value: 1  Min: 0  Max: 1  Default: 1
+Optimize a model with 484 rows, 463 columns and 1783 nonzeros
+Variable types: 1 continuous, 462 integer (462 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+03]
+  Objective range  [5e-01, 5e-01]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 7e+00]
+Found heuristic solution: objective 468.5000000
+Presolve removed 23 rows and 23 columns
+Presolve time: 0.01s
+Presolved: 461 rows, 440 columns, 1691 nonzeros
+Variable types: 0 continuous, 440 integer (439 binary)
+
+Root relaxation: objective 2.305731e+01, 151 iterations, 0.00 seconds
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0   23.05731    0   84  468.50000   23.05731  95.1%     -    0s
+H    0     0                     107.0000000   23.05731  78.5%     -    0s
+H    0     0                      86.0000000   23.05731  73.2%     -    0s
+     0     0   33.41069    0   71   86.00000   33.41069  61.2%     -    0s
+     0     0   38.48339    0   68   86.00000   38.48339  55.3%     -    0s
+H    0     0                      80.5000000   38.48339  52.2%     -    0s
+H    0     0                      71.5000000   38.48339  46.2%     -    0s
+     0     0   63.00000    0    2   71.50000   63.00000  11.9%     -    0s
+H    0     0                      69.0000000   63.00000  8.70%     -    0s
+H    0     0                      63.0000000   63.00000  0.00%     -    0s
+
+Cutting planes:
+  Gomory: 1
+
+Explored 1 nodes (369 simplex iterations) in 0.17 seconds
+Thread count was 8 (of 8 available processors)
+
+Solution count 7: 63 69 71.5 ... 468.5
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 6.300000000000e+01, best bound 6.300000000000e+01, gap 0.0000%
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Parameter InfUnbdInfo unchanged
+   Value: 0  Min: 0  Max: 1  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter FeasibilityTol to 1e-09
+   Prev: 1e-06  Min: 1e-09  Max: 0.01  Default: 1e-06
+Changed value of parameter OptimalityTol to 1e-09
+   Prev: 1e-06  Min: 1e-09  Max: 0.01  Default: 1e-06
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Parameter OutputFlag unchanged
+   Value: 1  Min: 0  Max: 1  Default: 1
+Optimize a model with 484 rows, 463 columns and 1783 nonzeros
+Variable types: 1 continuous, 462 integer (462 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+03]
+  Objective range  [5e-01, 5e-01]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 7e+00]
+Found heuristic solution: objective 468.5000000
+Presolve removed 23 rows and 23 columns
+Presolve time: 0.01s
+Presolved: 461 rows, 440 columns, 1691 nonzeros
+Variable types: 0 continuous, 440 integer (439 binary)
+
+Root relaxation: objective 2.305731e+01, 151 iterations, 0.00 seconds
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0   23.05731    0   84  468.50000   23.05731  95.1%     -    0s
+H    0     0                     107.0000000   23.05731  78.5%     -    0s
+H    0     0                      86.0000000   23.05731  73.2%     -    0s
+     0     0   33.41069    0   71   86.00000   33.41069  61.2%     -    0s
+     0     0   38.48339    0   68   86.00000   38.48339  55.3%     -    0s
+H    0     0                      80.5000000   38.48339  52.2%     -    0s
+H    0     0                      71.5000000   38.48339  46.2%     -    0s
+     0     0   63.00000    0    2   71.50000   63.00000  11.9%     -    0s
+H    0     0                      69.0000000   63.00000  8.70%     -    0s
+H    0     0                      63.0000000   63.00000  0.00%     -    0s
+
+Cutting planes:
+  Gomory: 1
+
+Explored 1 nodes (369 simplex iterations) in 0.16 seconds
+Thread count was 8 (of 8 available processors)
+
+Solution count 7: 63 69 71.5 ... 468.5
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 6.300000000000e+01, best bound 6.300000000000e+01, gap 0.0000%
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Parameter InfUnbdInfo unchanged
+   Value: 0  Min: 0  Max: 1  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter FeasibilityTol to 1e-09
+   Prev: 1e-06  Min: 1e-09  Max: 0.01  Default: 1e-06
+Changed value of parameter OptimalityTol to 1e-09
+   Prev: 1e-06  Min: 1e-09  Max: 0.01  Default: 1e-06
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Parameter OutputFlag unchanged
+   Value: 1  Min: 0  Max: 1  Default: 1
+Optimize a model with 484 rows, 463 columns and 1783 nonzeros
+Variable types: 1 continuous, 462 integer (462 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+03]
+  Objective range  [5e-01, 5e-01]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 7e+00]
+Found heuristic solution: objective 468.5000000
+Presolve removed 23 rows and 23 columns
+Presolve time: 0.01s
+Presolved: 461 rows, 440 columns, 1691 nonzeros
+Variable types: 0 continuous, 440 integer (439 binary)
+
+Root relaxation: objective 2.305731e+01, 151 iterations, 0.00 seconds
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0   23.05731    0   84  468.50000   23.05731  95.1%     -    0s
+H    0     0                     107.0000000   23.05731  78.5%     -    0s
+H    0     0                      86.0000000   23.05731  73.2%     -    0s
+     0     0   33.41069    0   71   86.00000   33.41069  61.2%     -    0s
+     0     0   38.48339    0   68   86.00000   38.48339  55.3%     -    0s
+H    0     0                      80.5000000   38.48339  52.2%     -    0s
+H    0     0                      71.5000000   38.48339  46.2%     -    0s
+     0     0   63.00000    0    2   71.50000   63.00000  11.9%     -    0s
+H    0     0                      69.0000000   63.00000  8.70%     -    0s
+H    0     0                      63.0000000   63.00000  0.00%     -    0s
+
+Cutting planes:
+  Gomory: 1
+
+Explored 1 nodes (369 simplex iterations) in 0.17 seconds
+Thread count was 8 (of 8 available processors)
+
+Solution count 7: 63 69 71.5 ... 468.5
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 6.300000000000e+01, best bound 6.300000000000e+01, gap 0.0000%
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Parameter InfUnbdInfo unchanged
+   Value: 0  Min: 0  Max: 1  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter FeasibilityTol to 1e-09
+   Prev: 1e-06  Min: 1e-09  Max: 0.01  Default: 1e-06
+Changed value of parameter OptimalityTol to 1e-09
+   Prev: 1e-06  Min: 1e-09  Max: 0.01  Default: 1e-06
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Parameter OutputFlag unchanged
+   Value: 1  Min: 0  Max: 1  Default: 1
+Optimize a model with 784 rows, 757 columns and 2941 nonzeros
+Variable types: 1 continuous, 756 integer (756 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+03]
+  Objective range  [5e-01, 5e-01]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 9e+00]
+Found heuristic solution: objective 485.5000000
+Presolve removed 22 rows and 22 columns
+Presolve time: 0.01s
+Presolved: 762 rows, 735 columns, 2853 nonzeros
+Variable types: 0 continuous, 735 integer (734 binary)
+
+Root relaxation: objective 1.667984e+01, 177 iterations, 0.00 seconds
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0   16.67984    0  105  485.50000   16.67984  96.6%     -    0s
+H    0     0                     154.0000000   16.67984  89.2%     -    0s
+H    0     0                     147.0000000   16.67984  88.7%     -    0s
+H    0     0                     140.0000000   16.67984  88.1%     -    0s
+H    0     0                      60.5000000   16.67984  72.4%     -    0s
+H    0     0                      52.5000000   16.67984  68.2%     -    0s
+     0     0   33.57317    0   50   52.50000   33.57317  36.1%     -    0s
+H    0     1                      40.5000000   33.57317  17.1%     -    0s
+
+Explored 1 nodes (346 simplex iterations) in 0.15 seconds
+Thread count was 8 (of 8 available processors)
+
+Solution count 7: 40.5 52.5 60.5 ... 485.5
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 4.050000000000e+01, best bound 4.050000000000e+01, gap 0.0000%
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Parameter InfUnbdInfo unchanged
+   Value: 0  Min: 0  Max: 1  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter FeasibilityTol to 1e-09
+   Prev: 1e-06  Min: 1e-09  Max: 0.01  Default: 1e-06
+Changed value of parameter OptimalityTol to 1e-09
+   Prev: 1e-06  Min: 1e-09  Max: 0.01  Default: 1e-06
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Parameter OutputFlag unchanged
+   Value: 1  Min: 0  Max: 1  Default: 1
+Optimize a model with 784 rows, 757 columns and 2941 nonzeros
+Variable types: 1 continuous, 756 integer (756 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+03]
+  Objective range  [5e-01, 5e-01]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 9e+00]
+Found heuristic solution: objective 485.5000000
+Presolve removed 22 rows and 22 columns
+Presolve time: 0.02s
+Presolved: 762 rows, 735 columns, 2853 nonzeros
+Variable types: 0 continuous, 735 integer (734 binary)
+
+Root relaxation: objective 1.667984e+01, 177 iterations, 0.01 seconds
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0   16.67984    0  105  485.50000   16.67984  96.6%     -    0s
+H    0     0                     154.0000000   16.67984  89.2%     -    0s
+H    0     0                     147.0000000   16.67984  88.7%     -    0s
+H    0     0                     140.0000000   16.67984  88.1%     -    0s
+H    0     0                      60.5000000   16.67984  72.4%     -    0s
+H    0     0                      52.5000000   16.67984  68.2%     -    0s
+     0     0   33.57317    0   50   52.50000   33.57317  36.1%     -    0s
+H    0     1                      40.5000000   33.57317  17.1%     -    0s
+
+Explored 1 nodes (346 simplex iterations) in 0.19 seconds
+Thread count was 8 (of 8 available processors)
+
+Solution count 7: 40.5 52.5 60.5 ... 485.5
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 4.050000000000e+01, best bound 4.050000000000e+01, gap 0.0000%
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Parameter InfUnbdInfo unchanged
+   Value: 0  Min: 0  Max: 1  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter FeasibilityTol to 1e-09
+   Prev: 1e-06  Min: 1e-09  Max: 0.01  Default: 1e-06
+Changed value of parameter OptimalityTol to 1e-09
+   Prev: 1e-06  Min: 1e-09  Max: 0.01  Default: 1e-06
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Parameter OutputFlag unchanged
+   Value: 1  Min: 0  Max: 1  Default: 1
+Optimize a model with 784 rows, 757 columns and 2941 nonzeros
+Variable types: 1 continuous, 756 integer (756 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+03]
+  Objective range  [5e-01, 5e-01]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 9e+00]
+Found heuristic solution: objective 485.5000000
+Presolve removed 22 rows and 22 columns
+Presolve time: 0.01s
+Presolved: 762 rows, 735 columns, 2853 nonzeros
+Variable types: 0 continuous, 735 integer (734 binary)
+
+Root relaxation: objective 1.667984e+01, 177 iterations, 0.01 seconds
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0   16.67984    0  105  485.50000   16.67984  96.6%     -    0s
+H    0     0                     154.0000000   16.67984  89.2%     -    0s
+H    0     0                     147.0000000   16.67984  88.7%     -    0s
+H    0     0                     140.0000000   16.67984  88.1%     -    0s
+H    0     0                      60.5000000   16.67984  72.4%     -    0s
+H    0     0                      52.5000000   16.67984  68.2%     -    0s
+     0     0   33.57317    0   50   52.50000   33.57317  36.1%     -    0s
+H    0     1                      40.5000000   33.57317  17.1%     -    0s
+
+Explored 1 nodes (346 simplex iterations) in 0.16 seconds
+Thread count was 8 (of 8 available processors)
+
+Solution count 7: 40.5 52.5 60.5 ... 485.5
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 4.050000000000e+01, best bound 4.050000000000e+01, gap 0.0000%
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Parameter InfUnbdInfo unchanged
+   Value: 0  Min: 0  Max: 1  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter FeasibilityTol to 1e-09
+   Prev: 1e-06  Min: 1e-09  Max: 0.01  Default: 1e-06
+Changed value of parameter OptimalityTol to 1e-09
+   Prev: 1e-06  Min: 1e-09  Max: 0.01  Default: 1e-06
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Parameter OutputFlag unchanged
+   Value: 1  Min: 0  Max: 1  Default: 1
+Optimize a model with 961 rows, 931 columns and 3628 nonzeros
+Variable types: 1 continuous, 930 integer (930 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+03]
+  Objective range  [5e-01, 5e-01]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 1e+01]
+Found heuristic solution: objective 485.0000000
+Presolve removed 29 rows and 29 columns
+Presolve time: 0.02s
+Presolved: 932 rows, 902 columns, 3512 nonzeros
+Variable types: 0 continuous, 902 integer (901 binary)
+
+Root relaxation: objective 1.340788e+01, 191 iterations, 0.00 seconds
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0   13.40788    0  112  485.00000   13.40788  97.2%     -    0s
+H    0     0                      63.5000000   13.40788  78.9%     -    0s
+H    0     0                      59.5000000   13.40788  77.5%     -    0s
+H    0     0                      45.0000000   13.40788  70.2%     -    0s
+     0     0   20.66691    0   89   45.00000   20.66691  54.1%     -    0s
+H    0     0                      40.5000000   20.66691  49.0%     -    0s
+     0     0   22.79731    0   78   40.50000   22.79731  43.7%     -    0s
+     0     0   26.62859    0   76   40.50000   26.62859  34.3%     -    0s
+H    0     0                      39.5000000   26.62859  32.6%     -    0s
+H    0     0                      32.5000000   26.62859  18.1%     -    0s
+     0     0     cutoff    0        32.50000   32.50000  0.00%     -    0s
+
+Cutting planes:
+  Gomory: 3
+  StrongCG: 2
+  Zero half: 2
+
+Explored 1 nodes (528 simplex iterations) in 0.24 seconds
+Thread count was 8 (of 8 available processors)
+
+Solution count 8: 32.5 39.5 40.5 ... 485
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 3.250000000000e+01, best bound 3.250000000000e+01, gap 0.0000%
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Parameter InfUnbdInfo unchanged
+   Value: 0  Min: 0  Max: 1  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter FeasibilityTol to 1e-09
+   Prev: 1e-06  Min: 1e-09  Max: 0.01  Default: 1e-06
+Changed value of parameter OptimalityTol to 1e-09
+   Prev: 1e-06  Min: 1e-09  Max: 0.01  Default: 1e-06
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Parameter OutputFlag unchanged
+   Value: 1  Min: 0  Max: 1  Default: 1
+Optimize a model with 1600 rows, 1561 columns and 6121 nonzeros
+Variable types: 1 continuous, 1560 integer (1560 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+03]
+  Objective range  [5e-01, 5e-01]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 1e+01]
+Found heuristic solution: objective 481.0000000
+Presolve removed 49 rows and 49 columns
+Presolve time: 0.03s
+Presolved: 1551 rows, 1512 columns, 5925 nonzeros
+Variable types: 0 continuous, 1512 integer (1511 binary)
+
+Root relaxation: objective 1.079934e+01, 327 iterations, 0.02 seconds
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0   10.79934    0  146  481.00000   10.79934  97.8%     -    0s
+H    0     0                     157.5000000   10.79934  93.1%     -    0s
+H    0     0                     110.5000000   10.79934  90.2%     -    0s
+     0     0   15.33018    0  145  110.50000   15.33018  86.1%     -    0s
+H    0     0                      99.5000000   15.33018  84.6%     -    0s
+H    0     0                      93.5000000   15.33018  83.6%     -    0s
+     0     0   16.31867    0  136   93.50000   16.31867  82.5%     -    0s
+H    0     0                      43.5000000   16.31867  62.5%     -    0s
+H    0     0                      37.5000000   16.31867  56.5%     -    0s
+H    0     0                      35.0000000   16.66743  52.4%     -    0s
+     0     0   20.37833    0  106   35.00000   20.37833  41.8%     -    0s
+H    0     0                      28.5000000   20.37833  28.5%     -    0s
+*    0     0               0      26.0000000   26.00000  0.00%     -    0s
+
+Explored 1 nodes (1126 simplex iterations) in 0.46 seconds
+Thread count was 8 (of 8 available processors)
+
+Solution count 10: 26 28.5 35 ... 157.5
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 2.600000000000e+01, best bound 2.600000000000e+01, gap 0.0000%
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Parameter InfUnbdInfo unchanged
+   Value: 0  Min: 0  Max: 1  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter FeasibilityTol to 1e-09
+   Prev: 1e-06  Min: 1e-09  Max: 0.01  Default: 1e-06
+Changed value of parameter OptimalityTol to 1e-09
+   Prev: 1e-06  Min: 1e-09  Max: 0.01  Default: 1e-06
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Parameter OutputFlag unchanged
+   Value: 1  Min: 0  Max: 1  Default: 1
+Optimize a model with 1521 rows, 1483 columns and 5812 nonzeros
+Variable types: 1 continuous, 1482 integer (1482 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+03]
+  Objective range  [5e-01, 5e-01]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 1e+01]
+Presolve time: 0.00s
+
+Explored 0 nodes (0 simplex iterations) in 0.01 seconds
+Thread count was 1 (of 8 available processors)
+
+Solution count 0
+
+Model is infeasible
+Best objective -, best bound -, gap -
+Parameter OutputFlag unchanged
+   Value: 1  Min: 0  Max: 1  Default: 1
+Optimize a model with 1444 rows, 1407 columns and 5511 nonzeros
+Variable types: 1 continuous, 1406 integer (1406 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+03]
+  Objective range  [5e-01, 5e-01]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 1e+01]
+Presolve time: 0.00s
+
+Explored 0 nodes (0 simplex iterations) in 0.01 seconds
+Thread count was 1 (of 8 available processors)
+
+Solution count 0
+
+Model is infeasible
+Best objective -, best bound -, gap -
+Parameter OutputFlag unchanged
+   Value: 1  Min: 0  Max: 1  Default: 1
+Optimize a model with 441 rows, 421 columns and 1618 nonzeros
+Variable types: 1 continuous, 420 integer (420 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+03]
+  Objective range  [5e-01, 5e-01]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 7e+00]
+Presolve time: 0.00s
+
+Explored 0 nodes (0 simplex iterations) in 0.01 seconds
+Thread count was 1 (of 8 available processors)
+
+Solution count 0
+
+Model is infeasible
+Best objective -, best bound -, gap -
+Parameter OutputFlag unchanged
+   Value: 1  Min: 0  Max: 1  Default: 1
+Optimize a model with 441 rows, 421 columns and 1620 nonzeros
+Variable types: 1 continuous, 420 integer (420 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+03]
+  Objective range  [5e-01, 5e-01]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 7e+00]
+Presolve time: 0.00s
+
+Explored 0 nodes (0 simplex iterations) in 0.01 seconds
+Thread count was 1 (of 8 available processors)
+
+Solution count 0
+
+Model is infeasible
+Best objective -, best bound -, gap -
+Parameter OutputFlag unchanged
+   Value: 1  Min: 0  Max: 1  Default: 1
+Optimize a model with 441 rows, 421 columns and 1620 nonzeros
+Variable types: 1 continuous, 420 integer (420 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+03]
+  Objective range  [5e-01, 5e-01]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 7e+00]
+Presolve time: 0.00s
+
+Explored 0 nodes (0 simplex iterations) in 0.01 seconds
+Thread count was 1 (of 8 available processors)
+
+Solution count 0
+
+Model is infeasible
+Best objective -, best bound -, gap -
+Parameter OutputFlag unchanged
+   Value: 1  Min: 0  Max: 1  Default: 1
+Optimize a model with 441 rows, 421 columns and 1620 nonzeros
+Variable types: 1 continuous, 420 integer (420 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+03]
+  Objective range  [5e-01, 5e-01]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 7e+00]
+Presolve time: 0.00s
+
+Explored 0 nodes (0 simplex iterations) in 0.01 seconds
+Thread count was 1 (of 8 available processors)
+
+Solution count 0
+
+Model is infeasible
+Best objective -, best bound -, gap -
+Parameter OutputFlag unchanged
+   Value: 1  Min: 0  Max: 1  Default: 1
+Optimize a model with 441 rows, 421 columns and 1620 nonzeros
+Variable types: 1 continuous, 420 integer (420 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+03]
+  Objective range  [5e-01, 5e-01]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 7e+00]
+Found heuristic solution: objective 498.0000000
+Presolve removed 41 rows and 41 columns
+Presolve time: 0.01s
+Presolved: 400 rows, 380 columns, 1456 nonzeros
+Variable types: 0 continuous, 380 integer (379 binary)
+
+Root relaxation: objective 5.096467e+01, 117 iterations, 0.00 seconds
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0   50.96467    0   86  498.00000   50.96467  89.8%     -    0s
+H    0     0                     107.5000000   50.96467  52.6%     -    0s
+H    0     0                      97.0000000   50.96467  47.5%     -    0s
+H    0     0                      90.5000000   50.96467  43.7%     -    0s
+     0     0     cutoff    0        90.50000   90.50000  0.00%     -    0s
+     0     0     cutoff    0        90.50000   90.50000  0.00%     -    0s
+
+Cutting planes:
+  Gomory: 3
+  Zero half: 2
+
+Explored 1 nodes (143 simplex iterations) in 0.10 seconds
+Thread count was 8 (of 8 available processors)
+
+Solution count 4: 90.5 97 107.5 498 
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 9.050000000000e+01, best bound 9.050000000000e+01, gap 0.0000%
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Parameter InfUnbdInfo unchanged
+   Value: 0  Min: 0  Max: 1  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter FeasibilityTol to 1e-09
+   Prev: 1e-06  Min: 1e-09  Max: 0.01  Default: 1e-06
+Changed value of parameter OptimalityTol to 1e-09
+   Prev: 1e-06  Min: 1e-09  Max: 0.01  Default: 1e-06
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Parameter OutputFlag unchanged
+   Value: 1  Min: 0  Max: 1  Default: 1
+Optimize a model with 441 rows, 421 columns and 1620 nonzeros
+Variable types: 1 continuous, 420 integer (420 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+03]
+  Objective range  [5e-01, 5e-01]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 7e+00]
+Found heuristic solution: objective 498.0000000
+Presolve removed 41 rows and 41 columns
+Presolve time: 0.01s
+Presolved: 400 rows, 380 columns, 1456 nonzeros
+Variable types: 0 continuous, 380 integer (379 binary)
+
+Root relaxation: objective 5.096467e+01, 117 iterations, 0.00 seconds
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0   50.96467    0   86  498.00000   50.96467  89.8%     -    0s
+H    0     0                     107.5000000   50.96467  52.6%     -    0s
+H    0     0                      97.0000000   50.96467  47.5%     -    0s
+H    0     0                      90.5000000   50.96467  43.7%     -    0s
+     0     0     cutoff    0        90.50000   90.50000  0.00%     -    0s
+     0     0     cutoff    0        90.50000   90.50000  0.00%     -    0s
+
+Cutting planes:
+  Gomory: 3
+  Zero half: 2
+
+Explored 1 nodes (143 simplex iterations) in 0.11 seconds
+Thread count was 8 (of 8 available processors)
+
+Solution count 4: 90.5 97 107.5 498 
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 9.050000000000e+01, best bound 9.050000000000e+01, gap 0.0000%
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Parameter InfUnbdInfo unchanged
+   Value: 0  Min: 0  Max: 1  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter FeasibilityTol to 1e-09
+   Prev: 1e-06  Min: 1e-09  Max: 0.01  Default: 1e-06
+Changed value of parameter OptimalityTol to 1e-09
+   Prev: 1e-06  Min: 1e-09  Max: 0.01  Default: 1e-06
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Parameter OutputFlag unchanged
+   Value: 1  Min: 0  Max: 1  Default: 1
+Optimize a model with 441 rows, 421 columns and 1620 nonzeros
+Variable types: 1 continuous, 420 integer (420 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+03]
+  Objective range  [5e-01, 5e-01]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 7e+00]
+Found heuristic solution: objective 498.0000000
+Presolve removed 41 rows and 41 columns
+Presolve time: 0.01s
+Presolved: 400 rows, 380 columns, 1456 nonzeros
+Variable types: 0 continuous, 380 integer (379 binary)
+
+Root relaxation: objective 5.096467e+01, 117 iterations, 0.00 seconds
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0   50.96467    0   86  498.00000   50.96467  89.8%     -    0s
+H    0     0                     107.5000000   50.96467  52.6%     -    0s
+H    0     0                      97.0000000   50.96467  47.5%     -    0s
+H    0     0                      90.5000000   50.96467  43.7%     -    0s
+     0     0     cutoff    0        90.50000   90.50000  0.00%     -    0s
+     0     0     cutoff    0        90.50000   90.50000  0.00%     -    0s
+
+Cutting planes:
+  Gomory: 3
+  Zero half: 2
+
+Explored 1 nodes (143 simplex iterations) in 0.09 seconds
+Thread count was 8 (of 8 available processors)
+
+Solution count 4: 90.5 97 107.5 498 
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 9.050000000000e+01, best bound 9.050000000000e+01, gap 0.0000%
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Parameter InfUnbdInfo unchanged
+   Value: 0  Min: 0  Max: 1  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter FeasibilityTol to 1e-09
+   Prev: 1e-06  Min: 1e-09  Max: 0.01  Default: 1e-06
+Changed value of parameter OptimalityTol to 1e-09
+   Prev: 1e-06  Min: 1e-09  Max: 0.01  Default: 1e-06
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Parameter OutputFlag unchanged
+   Value: 1  Min: 0  Max: 1  Default: 1
+Optimize a model with 441 rows, 421 columns and 1620 nonzeros
+Variable types: 1 continuous, 420 integer (420 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+03]
+  Objective range  [5e-01, 5e-01]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 7e+00]
+Found heuristic solution: objective 498.0000000
+Presolve removed 41 rows and 41 columns
+Presolve time: 0.01s
+Presolved: 400 rows, 380 columns, 1456 nonzeros
+Variable types: 0 continuous, 380 integer (379 binary)
+
+Root relaxation: objective 5.096467e+01, 117 iterations, 0.00 seconds
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0   50.96467    0   86  498.00000   50.96467  89.8%     -    0s
+H    0     0                     107.5000000   50.96467  52.6%     -    0s
+H    0     0                      97.0000000   50.96467  47.5%     -    0s
+H    0     0                      90.5000000   50.96467  43.7%     -    0s
+     0     0     cutoff    0        90.50000   90.50000  0.00%     -    0s
+     0     0     cutoff    0        90.50000   90.50000  0.00%     -    0s
+
+Cutting planes:
+  Gomory: 3
+  Zero half: 2
+
+Explored 1 nodes (143 simplex iterations) in 0.09 seconds
+Thread count was 8 (of 8 available processors)
+
+Solution count 4: 90.5 97 107.5 498 
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 9.050000000000e+01, best bound 9.050000000000e+01, gap 0.0000%
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Parameter InfUnbdInfo unchanged
+   Value: 0  Min: 0  Max: 1  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter FeasibilityTol to 1e-09
+   Prev: 1e-06  Min: 1e-09  Max: 0.01  Default: 1e-06
+Changed value of parameter OptimalityTol to 1e-09
+   Prev: 1e-06  Min: 1e-09  Max: 0.01  Default: 1e-06
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Parameter OutputFlag unchanged
+   Value: 1  Min: 0  Max: 1  Default: 1
+Optimize a model with 16 rows, 13 columns and 39 nonzeros
+Variable types: 1 continuous, 12 integer (12 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 5e+02]
+  Objective range  [5e-01, 5e-01]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 1e+00]
+Found heuristic solution: objective 143.0000000
+Presolve removed 16 rows and 13 columns
+Presolve time: 0.00s
+Presolve: All rows and columns removed
+
+Explored 0 nodes (0 simplex iterations) in 0.01 seconds
+Thread count was 1 (of 8 available processors)
+
+Solution count 1: 143 
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 1.430000000000e+02, best bound 1.430000000000e+02, gap 0.0000%
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Parameter InfUnbdInfo unchanged
+   Value: 0  Min: 0  Max: 1  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter FeasibilityTol to 1e-09
+   Prev: 1e-06  Min: 1e-09  Max: 0.01  Default: 1e-06
+Changed value of parameter OptimalityTol to 1e-09
+   Prev: 1e-06  Min: 1e-09  Max: 0.01  Default: 1e-06
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Parameter OutputFlag unchanged
+   Value: 1  Min: 0  Max: 1  Default: 1
+Optimize a model with 16 rows, 13 columns and 39 nonzeros
+Variable types: 1 continuous, 12 integer (12 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 5e+02]
+  Objective range  [5e-01, 5e-01]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 1e+00]
+Found heuristic solution: objective 143.0000000
+Presolve removed 16 rows and 13 columns
+Presolve time: 0.00s
+Presolve: All rows and columns removed
+
+Explored 0 nodes (0 simplex iterations) in 0.01 seconds
+Thread count was 1 (of 8 available processors)
+
+Solution count 1: 143 
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 1.430000000000e+02, best bound 1.430000000000e+02, gap 0.0000%
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Parameter InfUnbdInfo unchanged
+   Value: 0  Min: 0  Max: 1  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter FeasibilityTol to 1e-09
+   Prev: 1e-06  Min: 1e-09  Max: 0.01  Default: 1e-06
+Changed value of parameter OptimalityTol to 1e-09
+   Prev: 1e-06  Min: 1e-09  Max: 0.01  Default: 1e-06
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Parameter OutputFlag unchanged
+   Value: 1  Min: 0  Max: 1  Default: 1
+Optimize a model with 16 rows, 13 columns and 39 nonzeros
+Variable types: 1 continuous, 12 integer (12 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 5e+02]
+  Objective range  [5e-01, 5e-01]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 1e+00]
+Found heuristic solution: objective 143.0000000
+Presolve removed 16 rows and 13 columns
+Presolve time: 0.00s
+Presolve: All rows and columns removed
+
+Explored 0 nodes (0 simplex iterations) in 0.01 seconds
+Thread count was 1 (of 8 available processors)
+
+Solution count 1: 143 
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 1.430000000000e+02, best bound 1.430000000000e+02, gap 0.0000%
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Parameter InfUnbdInfo unchanged
+   Value: 0  Min: 0  Max: 1  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter FeasibilityTol to 1e-09
+   Prev: 1e-06  Min: 1e-09  Max: 0.01  Default: 1e-06
+Changed value of parameter OptimalityTol to 1e-09
+   Prev: 1e-06  Min: 1e-09  Max: 0.01  Default: 1e-06
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Parameter OutputFlag unchanged
+   Value: 1  Min: 0  Max: 1  Default: 1
+Optimize a model with 16 rows, 13 columns and 39 nonzeros
+Variable types: 1 continuous, 12 integer (12 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 5e+02]
+  Objective range  [5e-01, 5e-01]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 1e+00]
+Found heuristic solution: objective 143.0000000
+Presolve removed 16 rows and 13 columns
+Presolve time: 0.00s
+Presolve: All rows and columns removed
+
+Explored 0 nodes (0 simplex iterations) in 0.01 seconds
+Thread count was 1 (of 8 available processors)
+
+Solution count 1: 143 
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 1.430000000000e+02, best bound 1.430000000000e+02, gap 0.0000%
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Parameter InfUnbdInfo unchanged
+   Value: 0  Min: 0  Max: 1  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter FeasibilityTol to 1e-09
+   Prev: 1e-06  Min: 1e-09  Max: 0.01  Default: 1e-06
+Changed value of parameter OptimalityTol to 1e-09
+   Prev: 1e-06  Min: 1e-09  Max: 0.01  Default: 1e-06
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Parameter OutputFlag unchanged
+   Value: 1  Min: 0  Max: 1  Default: 1
+Optimize a model with 16 rows, 13 columns and 39 nonzeros
+Variable types: 1 continuous, 12 integer (12 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 5e+02]
+  Objective range  [5e-01, 5e-01]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 1e+00]
+Found heuristic solution: objective 143.0000000
+Presolve removed 16 rows and 13 columns
+Presolve time: 0.00s
+Presolve: All rows and columns removed
+
+Explored 0 nodes (0 simplex iterations) in 0.01 seconds
+Thread count was 1 (of 8 available processors)
+
+Solution count 1: 143 
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 1.430000000000e+02, best bound 1.430000000000e+02, gap 0.0000%
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Parameter InfUnbdInfo unchanged
+   Value: 0  Min: 0  Max: 1  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter FeasibilityTol to 1e-09
+   Prev: 1e-06  Min: 1e-09  Max: 0.01  Default: 1e-06
+Changed value of parameter OptimalityTol to 1e-09
+   Prev: 1e-06  Min: 1e-09  Max: 0.01  Default: 1e-06
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Parameter OutputFlag unchanged
+   Value: 1  Min: 0  Max: 1  Default: 1
+Optimize a model with 16 rows, 13 columns and 39 nonzeros
+Variable types: 1 continuous, 12 integer (12 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 5e+02]
+  Objective range  [5e-01, 5e-01]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 1e+00]
+Found heuristic solution: objective 143.0000000
+Presolve removed 16 rows and 13 columns
+Presolve time: 0.00s
+Presolve: All rows and columns removed
+
+Explored 0 nodes (0 simplex iterations) in 0.01 seconds
+Thread count was 1 (of 8 available processors)
+
+Solution count 1: 143 
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 1.430000000000e+02, best bound 1.430000000000e+02, gap 0.0000%
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Parameter InfUnbdInfo unchanged
+   Value: 0  Min: 0  Max: 1  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter FeasibilityTol to 1e-09
+   Prev: 1e-06  Min: 1e-09  Max: 0.01  Default: 1e-06
+Changed value of parameter OptimalityTol to 1e-09
+   Prev: 1e-06  Min: 1e-09  Max: 0.01  Default: 1e-06
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Parameter OutputFlag unchanged
+   Value: 1  Min: 0  Max: 1  Default: 1
+Optimize a model with 16 rows, 13 columns and 39 nonzeros
+Variable types: 1 continuous, 12 integer (12 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 5e+02]
+  Objective range  [5e-01, 5e-01]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 1e+00]
+Found heuristic solution: objective 143.0000000
+Presolve removed 16 rows and 13 columns
+Presolve time: 0.00s
+Presolve: All rows and columns removed
+
+Explored 0 nodes (0 simplex iterations) in 0.01 seconds
+Thread count was 1 (of 8 available processors)
+
+Solution count 1: 143 
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 1.430000000000e+02, best bound 1.430000000000e+02, gap 0.0000%
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Parameter InfUnbdInfo unchanged
+   Value: 0  Min: 0  Max: 1  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter FeasibilityTol to 1e-09
+   Prev: 1e-06  Min: 1e-09  Max: 0.01  Default: 1e-06
+Changed value of parameter OptimalityTol to 1e-09
+   Prev: 1e-06  Min: 1e-09  Max: 0.01  Default: 1e-06
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Parameter OutputFlag unchanged
+   Value: 1  Min: 0  Max: 1  Default: 1
+Optimize a model with 16 rows, 13 columns and 39 nonzeros
+Variable types: 1 continuous, 12 integer (12 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 5e+02]
+  Objective range  [5e-01, 5e-01]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 1e+00]
+Found heuristic solution: objective 143.0000000
+Presolve removed 16 rows and 13 columns
+Presolve time: 0.00s
+Presolve: All rows and columns removed
+
+Explored 0 nodes (0 simplex iterations) in 0.01 seconds
+Thread count was 1 (of 8 available processors)
+
+Solution count 1: 143 
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 1.430000000000e+02, best bound 1.430000000000e+02, gap 0.0000%
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Parameter InfUnbdInfo unchanged
+   Value: 0  Min: 0  Max: 1  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter FeasibilityTol to 1e-09
+   Prev: 1e-06  Min: 1e-09  Max: 0.01  Default: 1e-06
+Changed value of parameter OptimalityTol to 1e-09
+   Prev: 1e-06  Min: 1e-09  Max: 0.01  Default: 1e-06
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Parameter OutputFlag unchanged
+   Value: 1  Min: 0  Max: 1  Default: 1
+Optimize a model with 16 rows, 13 columns and 39 nonzeros
+Variable types: 1 continuous, 12 integer (12 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 5e+02]
+  Objective range  [5e-01, 5e-01]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 1e+00]
+Found heuristic solution: objective 143.0000000
+Presolve removed 16 rows and 13 columns
+Presolve time: 0.00s
+Presolve: All rows and columns removed
+
+Explored 0 nodes (0 simplex iterations) in 0.01 seconds
+Thread count was 1 (of 8 available processors)
+
+Solution count 1: 143 
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 1.430000000000e+02, best bound 1.430000000000e+02, gap 0.0000%
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Parameter InfUnbdInfo unchanged
+   Value: 0  Min: 0  Max: 1  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter FeasibilityTol to 1e-09
+   Prev: 1e-06  Min: 1e-09  Max: 0.01  Default: 1e-06
+Changed value of parameter OptimalityTol to 1e-09
+   Prev: 1e-06  Min: 1e-09  Max: 0.01  Default: 1e-06
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Parameter OutputFlag unchanged
+   Value: 1  Min: 0  Max: 1  Default: 1
+Optimize a model with 16 rows, 13 columns and 39 nonzeros
+Variable types: 1 continuous, 12 integer (12 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 5e+02]
+  Objective range  [5e-01, 5e-01]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 1e+00]
+Found heuristic solution: objective 143.0000000
+Presolve removed 16 rows and 13 columns
+Presolve time: 0.00s
+Presolve: All rows and columns removed
+
+Explored 0 nodes (0 simplex iterations) in 0.02 seconds
+Thread count was 1 (of 8 available processors)
+
+Solution count 1: 143 
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 1.430000000000e+02, best bound 1.430000000000e+02, gap 0.0000%
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Parameter InfUnbdInfo unchanged
+   Value: 0  Min: 0  Max: 1  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter FeasibilityTol to 1e-09
+   Prev: 1e-06  Min: 1e-09  Max: 0.01  Default: 1e-06
+Changed value of parameter OptimalityTol to 1e-09
+   Prev: 1e-06  Min: 1e-09  Max: 0.01  Default: 1e-06
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Parameter InfUnbdInfo unchanged
+   Value: 0  Min: 0  Max: 1  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter FeasibilityTol to 1e-09
+   Prev: 1e-06  Min: 1e-09  Max: 0.01  Default: 1e-06
+Changed value of parameter OptimalityTol to 1e-09
+   Prev: 1e-06  Min: 1e-09  Max: 0.01  Default: 1e-06
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Parameter InfUnbdInfo unchanged
+   Value: 0  Min: 0  Max: 1  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+Changed value of parameter FeasibilityTol to 1e-09
+   Prev: 1e-06  Min: 1e-09  Max: 0.01  Default: 1e-06
+Changed value of parameter OptimalityTol to 1e-09
+   Prev: 1e-06  Min: 1e-09  Max: 0.01  Default: 1e-06
+Changed value of parameter ScaleFlag to 3
+   Prev: -1  Min: -1  Max: 3  Default: -1
+Changed value of parameter NumericFocus to 3
+   Prev: 0  Min: 0  Max: 3  Default: 0
+Changed value of parameter Presolve to 0
+   Prev: -1  Min: -1  Max: 2  Default: -1
+
+Gurobi 8.0.1 (win64, Python) logging started 08/21/18 00:37:15
+

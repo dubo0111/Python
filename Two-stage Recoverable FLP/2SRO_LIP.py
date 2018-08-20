@@ -10,11 +10,12 @@ Created on Tue Jul 26 2018
 #%reset -f
 import time
 import data_generator1 as dg
+import data_generator0 as dg0
 #INPUT Parameters:p, cost matrix
-#p,cd = dg.ins_small()
-#p,cd = dg.ins_big(5)
-p,cd,cdk,sk = dg.ins_k(20,30, 1) #(ni,nk,andomseed)
-# !!!!! Make sure index match: cdk VS. v_ij(k) [k][i][j]
+# p,cd,cdk,sk = dg.ins_k_alldiff(3,1) #(ni,nk,andomseed)
+data = dg0.data_gen(3,1,1)
+p,cd,cdk,sk = data.data()
+
 from gurobipy import *
 start_time = time.time()
 
@@ -66,6 +67,11 @@ try:
     m.addConstrs(
             (x.sum(i,'*') == 1 for i in range(ni)),
             "sumx")
+
+    m.optimize()
+    print('========================')
+    print('L:',L.x)
+
     # ---------- Sub problem ----------
     # v:allocations u:location L3,eta: auxiliary variable
     v = m.addVars(nk,ni,ni,vtype=GRB.CONTINUOUS, name="v")
@@ -141,7 +147,7 @@ print("--- %s seconds ---" % round((time.time() - start_time),2))
 #     if i.x != 0:
 #         print(i.x)
 #
-#m.reset()
+m.reset()
 try:
     for k in range(nk):
         for j in range(ni):
@@ -159,5 +165,3 @@ print('1st stage:',L.x)
 print('2nd stage:',eta.x)
 print('obj:',a1*L.x+a2*eta.x)
 print("--- %s seconds ---" % round((time.time() - start_time),2))
-y
-u

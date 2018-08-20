@@ -1,18 +1,19 @@
 # test class
 #%reset -f
 import model_rflp as mr
-import data_generator1 as dg
-p, cd, cdk, sk = dg.ins_k_alldiff(20,50)
-cd  # (ni,nk,randomseed*)
-cdk
-sk
+#import data_generator1 as dg
+#p, cd, cdk, sk = dg.ins_k_alldiff(20,30)
+import data_generator0 as dg0
+data = dg0.data_gen(3,1,1)
+p,cd,cdk,sk = data.data()
+
 from gurobipy import *
 import time
 # Number of nodes
 ni = len(cd)
 nk = len(cdk)
 # weights of two stages
-a1 = 0.01
+a1 = 0.5
 a2 = 1 - a1
 start_time = time.time()
 TSRFLP = mr.rflp(p, ni, nk, a1, a2, cd, cdk, sk)

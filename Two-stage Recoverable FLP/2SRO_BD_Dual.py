@@ -7,10 +7,12 @@ Created on Wed Aug  1 08:24:56 2018
 @author: DUBO
 """
 
-import data_generator1 as dg
+#import data_generator1 as dg
 # debug:(3,1,3):primal dual value error;
 # debug:(3,1,2):dual problem error
-p,cd,cdk,sk = dg.ins_k(250,30) #(ni,nk,randomseed)
+import data_generator0 as dg0
+data = dg0.data_gen(3,1,1)
+p,cd,cdk,sk = data.data()
 from gurobipy import *
 ni = len(cd)
 nk = len(cdk)
@@ -89,6 +91,7 @@ m.addConstrs(
 def sub_dual(value_y):
     # Create sub model
     m1 = Model('sub model')
+    m1.params.OutputFlag = 0
 
     # beta gamma delta epsilon lamda mu nu
     beta = m1.addVars(nk,ni,ub = 0,lb = -float('inf'), vtype=GRB.CONTINUOUS, name="beta")
@@ -134,6 +137,7 @@ def sub_dual(value_y):
 def sub_model(value_y):
     # Create relaxed sub model
     m2 = Model('sub model')
+    m2.params.OutputFlag = 0
 
     # ---------- Sub problem ----------
     # v:allocations u:location L3,eta: auxiliary variable
@@ -185,61 +189,28 @@ def sub_model(value_y):
     return m2
 #=========================================
 m.optimize()
+m.write('.\model.\master.lp')
 # extract value_y
 value_y = []
 for j in range(ni):
     y_name = ''.join(['y[',str(j),']'])
     y_temp = m.getVarByName(y_name)
+    print(y_name,':',y_temp)
     value_y.append(y_temp.x)
 m1=sub_dual(value_y)
-#m1.params.FeasibilityTol = 1e-9
-#m1.params.OptimalityTol = 1e-9
-#m1.params.MarkowitzTol = 0.0001
-#m1.params.IntFeasTol = 1e-5
-
 m1.params.ScaleFlag = 3
-#m1.params.ObjScale = 100
 m1.params.NumericFocus = 3
-#m1.params.NormAdjust = 3
-m1.params.InfUnbdInfo = 0 #1
-# m1.params.Quad = -1 #1
-#m1.params.Sifting = -1 #2
-#m1.params.SiftMethod = -1 # 2
-#m1.params.SimplexPricing = -1 #3
-
-#m1.params.Method = -1
-#m1.params.AggFill = 0
-#m1.params.Aggregate = 0
-#m1.params.DualReductions = 1 #0
-#m1.params.PreDual = 2 #2
 m1.params.Presolve = 0 #2
-#m1.write('dual.lp')
-m1.params.OutputFlag = 0
+m1.write('.\model\dual.lp')
 m1.optimize()
+
 m2=sub_model(value_y)
-#m2.write('primal.lp')
+m2.write('.\model\primal.lp')
 m2.params.FeasibilityTol = 1e-9
 m2.params.OptimalityTol = 1e-9
-#m2.params.MarkowitzTol = 0.0001
-#m2.params.IntFeasTol = 1e-5
-
-m2.params.ScaleFlag = 0
-#m2.params.ObjScale = 0
-m2.params.NumericFocus = 0
-#m2.params.NormAdjust = -1
-#m2.params.InfUnbdInfo = 0 #1
-#m2.params.Quad = -1 #1
-#m2.params.Sifting = -1 #2
-#m2.params.SiftMethod = -1 # 2
-#m2.params.SimplexPricing = -1 #3
-
-#m2.params.Method = -1
-#m2.params.AggFill = -1  #inf
-#m2.params.Aggregate = 1 #1
-#m2.params.DualReductions = 0 #0
-#m2.params.PreDual = -1 #2
-#m2.params.Presolve = 0 #2
-m2.params.OutputFlag = 0
+m2.params.ScaleFlag = 3
+m2.params.NumericFocus = 3
+m2.params.Presolve = 0
 m2.optimize()
 
 # max_k for dual
