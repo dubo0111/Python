@@ -35,6 +35,7 @@ class data_gen:
                     self.cd[i][j] = round(np.random.rand() * 1000)+100
                     for k in range(self.nk):
                         self.cdk[k][i][j] = round(np.random.rand() * 1000)+100
+                        # self.cdk[k][i][j] = self.cd[i][j]
 
     def ins_Kdisrupt(self):
         # np.random.seed(self.rnd)
