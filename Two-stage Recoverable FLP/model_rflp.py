@@ -96,10 +96,10 @@ class rflp:
             self.update_y()
         # v:allocations u:location L3,eta: auxiliary variable
         v = self.sub_model.addVars(
-            self.nk, self.ni, self.ni, lb=0, ub=1, vtype=GRB.CONTINUOUS, name="v")
+            self.nk, self.ni, self.ni, lb=0, ub=GRB.INFINITY, vtype=GRB.CONTINUOUS, name="v")
         if self.intSP == 0:
             u = self.sub_model.addVars(
-                self.nk, self.ni, lb=0, ub=1, vtype=GRB.CONTINUOUS, name="u")
+                self.nk, self.ni, lb=0, ub=GRB.INFINITY, vtype=GRB.CONTINUOUS, name="u")
         elif self.intSP == 1:
             u = self.sub_model.addVars(
                 self.nk, self.ni, vtype=GRB.BINARY, name="u")
@@ -170,12 +170,12 @@ class rflp:
         self.delta = self.sub_dual.addVars(
             self.nk, self.ni, self.ni, ub=0, lb=-float('inf'), vtype=GRB.CONTINUOUS, name="delta")
         self.epsilon = self.sub_dual.addVars(
-            self.nk, self.ni, lb=0, vtype=GRB.CONTINUOUS, name="epsilon")
+            self.nk, self.ni, lb=-GRB.INFINITY, ub=GRB.INFINITY, vtype=GRB.CONTINUOUS, name="epsilon")
         self.lamda = self.sub_dual.addVars(
             self.nk, self.ni, ub=0, lb=-float('inf'), vtype=GRB.CONTINUOUS, name="lamda")
         self.mu = self.sub_dual.addVars(
             self.nk, self.ni, ub=0, lb=-float('inf'), vtype=GRB.CONTINUOUS, name="mu")
-        self.nu = self.sub_dual.addVars(self.nk, vtype=GRB.CONTINUOUS, name="nu")
+        self.nu = self.sub_dual.addVars(self.nk,lb=-GRB.INFINITY, ub=GRB.INFINITY, vtype=GRB.CONTINUOUS, name="nu")
         # Qk are auxiliary variables, maximize every subproblem
         self.Qk = self.sub_dual.addVars(
             self.nk, vtype=GRB.CONTINUOUS, obj=1, name="Qk")

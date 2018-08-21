@@ -4,7 +4,7 @@ import model_rflp as mr
 #import data_generator1 as dg
 #p, cd, cdk, sk = dg.ins_k_alldiff(20,30)
 import data_generator0 as dg0
-data = dg0.data_gen(3,1,1)
+data = dg0.data_gen(10,30,1)
 p,cd,cdk,sk = data.data()
 
 from gurobipy import *
@@ -49,6 +49,6 @@ while abs(TSRFLP.gap) >= stop:
         print('OPTIMAL SOLUTION FOUND !')
         print('Optimal Objective Value = ', str(TSRFLP.UB))
     iteration += 1
-    if iteration >= 20:
+    if iteration >= 2000:
         break
 print("--- %s seconds ---" % round((time.time() - start_time), 2))
