@@ -29,7 +29,7 @@ class rflp:
     add_cut_scen = []
     iteration = 0
     gap = float('inf')
-    int_gap = 0
+    int_gap = float('inf')
     dual = 1
     intSP = 0
     error = 0
@@ -358,8 +358,8 @@ class rflp:
         max_Lk = self.worst_scenario(1)
         self.integer_cut = max_Lk[0]*sum_c_y
     #
-    def gap_calculation(self,MIP_SP = 0):
-        if MIP_SP == 1:
+    def gap_calculation(self,MIP_SP = 0,Check_optimal = 0):
+        if MIP_SP == 1: # in mycallback
             vals = self.master_model.cbGetSolution(self.master_model._vars)
             #value_L = vals(-2)
             max_Lk = self.worst_scenario(1)
@@ -372,7 +372,10 @@ class rflp:
             # update LB = objective value of master problem
             obj_master = self.master_model.getObjective()
             self.LB = obj_master.getValue()
-            max_Lk = self.worst_scenario()
+            if Check_optimal == 0:
+                max_Lk = self.worst_scenario()
+            elif Check_optimal == 1:
+                max_Lk = self.worst_scenario(1)
             # update UB
             self.UB = min([self.UB, self.a1 * value_L + self.a2 * max_Lk[0]])
             self.gap = (self.UB - self.LB) / self.LB
@@ -408,20 +411,24 @@ class rflp:
     # tune parameters to avoid numerical issues for subproblem
     # wrong optimal solutions appear for both sub&dual_sub
     def params_tuneup(self):
-#        self.master_model.params.OutputFlag = 0
-        self.master_model.params.Presolve = 0
-#        self.master_model.params.ScaleFlag = 3
-#        self.master_model.params.NumericFocus = 3
-        if self.dual == 0:
-            self.sub_model.params.OutputFlag = 0
-            self.sub_model.params.Presolve = 0
-#            self.sub_model.params.ScaleFlag = 3
-#            self.sub_model.params.NumericFocus = 3
-        elif self.dual == 1:
-            self.sub_dual.params.OutputFlag = 0
-            self.sub_dual.params.Presolve = 0
-#            self.sub_dual.params.ScaleFlag = 3
-#            self.sub_dual.params.NumericFocus = 3
+       # self.master_model.params.OutputFlag = 0
+        #self.master_model.params.Presolve = 0
+       # self.master_model.params.ScaleFlag = 3
+       # self.master_model.params.NumericFocus = 3
+        # self.sub_model.params.OutputFlag = 0
+        # self.master_model.params.Presolve = 0
+        # self.master_model.params.ScaleFlag = 3
+        # self.master_model.params.NumericFocus = 3
+
+        self.sub_model.params.OutputFlag = 0
+        # self.sub_model.params.Presolve = 0
+        # self.sub_model.params.ScaleFlag = 3
+        # self.sub_model.params.NumericFocus = 3
+
+        self.sub_dual.params.OutputFlag = 0
+        # self.sub_dual.params.Presolve = 0
+        # self.sub_dual.params.ScaleFlag = 3
+        # elf.sub_dual.params.NumericFocus = 3
         # References:
         #m1.params.ScaleFlag = 3
         #m1.params.ObjScale = 100

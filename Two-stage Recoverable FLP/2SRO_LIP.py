@@ -12,7 +12,7 @@ import time
 #import data_generator1 as dg
 import data_generator0 as dg0
 #INPUT Parameters:p, cost matrix
-data = dg0.data_gen(10,30,7)
+data = dg0.data_gen(10,30,6)
 p,cd,cdk,sk = data.data()
 
 from gurobipy import *

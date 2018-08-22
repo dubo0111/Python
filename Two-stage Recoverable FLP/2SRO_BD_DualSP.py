@@ -1,5 +1,7 @@
-# test class
-#%reset -f
+'''
+Benders' Decomposition: old fashion
+Du Bo
+'''
 import model_rflp as mr
 #import data_generator1 as dg
 import data_generator0 as dg0
@@ -28,17 +30,13 @@ TSRFLP.master_model.params.OutputFlag = 0
 while abs(TSRFLP.gap) >= stop:
     if iteration != 0:
         TSRFLP.update_master()
-    #filename = ''.join(['.\model\master(',str(iteration),').lp'])
-    # TSRFLP.master_model.write(filename)
     TSRFLP.master_model.optimize()
-    L0 = TSRFLP.master_model.getVarByName('L').x
-    print('L0: ',L0)
+    # L0 = TSRFLP.master_model.getVarByName('L').x
+    # print('L0: ',L0)
     if iteration == 0:
         TSRFLP.dual_sub()
     else:
         TSRFLP.update_sub_dual()
-    #filename = ''.join(['.\model\sub(',str(iteration),').lp'])
-    # TSRFLP.sub_model.write(filename)
     TSRFLP.sub_dual.params.OutputFlag = 0
     TSRFLP.sub_dual.optimize()
     TSRFLP.gap_calculation()
@@ -50,4 +48,5 @@ while abs(TSRFLP.gap) >= stop:
     iteration += 1
     if iteration >= 2000:
         break
+#while abs()
 print("--- %s seconds ---" % round((time.time() - start_time), 2))
