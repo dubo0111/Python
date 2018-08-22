@@ -45,6 +45,7 @@ try:
         if where == GRB.Callback.MIPSOL:
             vals = model.cbGetSolution(model._vars)
             TSRFLP.value_y = vals[-2 - ni:-2]
+            # optimality cut (Benders' cut)
             TSRFLP.value_omega = vals[-1]
             TSRFLP.update_sub_dual(callback=1)
             TSRFLP.sub_dual.optimize()
@@ -91,32 +92,6 @@ try:
 #        for i in range(ni):
 #            TSRFLP.master_model.getVars()[-ni-2+i].start = x[-ni-2+i]
         TSRFLP.master_model.optimize(mycallback_int)
-    
-    # optimality = 1
-    # for k in range(nk):
-    #     if optimality != 1:
-    #         break
-    #     for j in range(ni):
-    #         u_name=''.join(['u[',str(k),',',str(j),']'])
-    #         if TSRFLP.sub_model.getVarByName(u_name).x == 0\
-    #             or TSRFLP.sub_model.getVarByName(u_name).x == 1:
-    #             optimality = 1
-    #         else:
-    #             optimality = 0
-    #             print(TSRFLP.sub_model.getVarByName(u_name))
-    #             print('Non-binary solutions exist')
-    #             break
-    #     if optimality == 0:
-    #         break
-    # if optimality == 0:
-    #     TSRFLP.update_y()
-    #     TSRFLP.update_integer_cut()
-    #     TSRFLP.master_model.addConstr(TSRFLP.omega >= TSRFLP.integer_cut)
-    #     integer_sub = 1
-    #     TSRFLP.master_model.optimize(mycallback)
-    #     print('Optimal solution found: %g' % TSRFLP.master_model.objVal)
-    # else:
-    #     print('Optimal solution found: %g' % TSRFLP.master_model.objVal)
     print('Optimal solution found: %g' % TSRFLP.master_model.objVal)
 except GurobiError as e:
     print('Error code ' + str(e.errno) + ": " + str(e))
