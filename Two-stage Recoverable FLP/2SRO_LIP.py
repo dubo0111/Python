@@ -9,11 +9,10 @@ Created on Tue Jul 26 2018
 """
 #%reset -f
 import time
-import data_generator1 as dg
+#import data_generator1 as dg
 import data_generator0 as dg0
 #INPUT Parameters:p, cost matrix
-# p,cd,cdk,sk = dg.ins_k_alldiff(3,1) #(ni,nk,andomseed)
-data = dg0.data_gen(3,1,1)
+data = dg0.data_gen(10,30,7)
 p,cd,cdk,sk = data.data()
 
 from gurobipy import *

@@ -2,9 +2,8 @@
 #%reset -f
 import model_rflp as mr
 #import data_generator1 as dg
-#p, cd, cdk, sk = dg.ins_k_alldiff(20,30)
 import data_generator0 as dg0
-data = dg0.data_gen(10,30,1)
+data = dg0.data_gen(10,30,7)
 p,cd,cdk,sk = data.data()
 
 from gurobipy import *

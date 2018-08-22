@@ -204,9 +204,9 @@ class rflp:
             c_delta = [[0 for i in range(self.ni * self.ni)]
                        for k in range(self.nk)]
             for k in range(self.nk):
-                c_delta[k] = [1 - self.sk[k][j]
+                c_delta[k] = [(1 - self.sk[k][j])
                               for j in range(self.ni)] * self.ni
-            c_lamda = [1 - self.value_y[j] for j in range(self.ni)]
+            c_lamda = [(1 - self.value_y[j]) for j in range(self.ni)]
             c_mu = [[0 for i in range(self.ni)] for k in range(self.nk)]
             for k in range(self.nk):
                 c_mu[k] = [1 - self.sk[k][j] for j in range(self.ni)]
@@ -408,17 +408,20 @@ class rflp:
     # tune parameters to avoid numerical issues for subproblem
     # wrong optimal solutions appear for both sub&dual_sub
     def params_tuneup(self):
+#        self.master_model.params.OutputFlag = 0
         self.master_model.params.Presolve = 0
-        self.master_model.params.ScaleFlag = 3
-        self.master_model.params.NumericFocus = 3
+#        self.master_model.params.ScaleFlag = 3
+#        self.master_model.params.NumericFocus = 3
         if self.dual == 0:
+            self.sub_model.params.OutputFlag = 0
             self.sub_model.params.Presolve = 0
-            self.sub_model.params.ScaleFlag = 3
-            self.sub_model.params.NumericFocus = 3
+#            self.sub_model.params.ScaleFlag = 3
+#            self.sub_model.params.NumericFocus = 3
         elif self.dual == 1:
+            self.sub_dual.params.OutputFlag = 0
             self.sub_dual.params.Presolve = 0
-            self.sub_dual.params.ScaleFlag = 3
-            self.sub_dual.params.NumericFocus = 3
+#            self.sub_dual.params.ScaleFlag = 3
+#            self.sub_dual.params.NumericFocus = 3
         # References:
         #m1.params.ScaleFlag = 3
         #m1.params.ObjScale = 100
