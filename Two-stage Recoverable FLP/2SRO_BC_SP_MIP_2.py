@@ -4,7 +4,7 @@ import model_rflp as mr
 #import data_generator1 as dg
 #p, cd, cdk, sk = dg.ins_k(20, 100, 40)  # (ni,nk,randomseed*)
 import data_generator0 as dg0
-data = dg0.data_gen(10,30,7)
+data = dg0.data_gen(10,30,6)
 p,cd,cdk,sk = data.data()
 from gurobipy import *
 import time
@@ -78,12 +78,12 @@ try:
     TSRFLP.master_model._vars = TSRFLP.master_model.getVars()
     TSRFLP.master_model.Params.lazyConstraints = 1
     TSRFLP.master_model.optimize(mycallback)
-    
+
     TSRFLP.update_sub(callback=0)
     TSRFLP.sub_model.optimize()
     TSRFLP.worst_scenario(1)
     TSRFLP.gap_calculation(0,1)
-    if abs(TSRFLP.gap) > 1e-4:  
+    if abs(TSRFLP.gap) > 1e-4:
         print('============= Start Integer L-shaped cut ================')
 #        x = []
 #        for i in TSRFLP.master_model.getVars():

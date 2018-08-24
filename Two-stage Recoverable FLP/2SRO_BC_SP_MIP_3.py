@@ -4,7 +4,7 @@ import model_rflp as mr
 #import data_generator1 as dg
 #p, cd, cdk, sk = dg.ins_k(20, 100, 40)  # (ni,nk,randomseed*)
 import data_generator0 as dg0
-data = dg0.data_gen(10,30,7)
+data = dg0.data_gen(50,100,7)
 p,cd,cdk,sk = data.data()
 from gurobipy import *
 import time
@@ -68,9 +68,11 @@ try:
             vals = model.cbGetSolution(model._vars)
             TSRFLP.value_y = vals[-2 - ni:-2]
             TSRFLP.value_omega = vals[-1]
-#            print('omega:',TSRFLP.value_omega)
             TSRFLP.update_sub_dual(callback=1)
             TSRFLP.sub_dual.optimize()
+#             multiple scenario gerneration (scenario sorting)
+#            TSRFLP.update_scenario_sorting()
+            # single cut gerneration
             TSRFLP.worst_scenario()
             TSRFLP.update_cut()
             model.cbLazy(TSRFLP.omega >= TSRFLP.constr_y)
@@ -81,18 +83,17 @@ try:
             objbst = model.cbGet(GRB.Callback.MIPSOL_OBJBST)
             objbnd = model.cbGet(GRB.Callback.MIPSOL_OBJBND)
             gap_mipsol = abs(objbst - objbnd)/(1.0 + abs(objbst))
-#            x = model.cbGetSolution(model._vars)
             print('**** New solution at node %d, obj %g, sol %d, '
                   'gap = %g ****' % (nodecnt, obj, solcnt, gap_mipsol))
             # integer l-shaped cut
-            TSRFLP.update_sub(callback=1)
-            TSRFLP.sub_model.optimize()
-            TSRFLP.worst_scenario(1)
-            TSRFLP.gap_calculation(1)
-            if abs(TSRFLP.int_gap) >= 1e-4:
-                TSRFLP.update_integer_cut()
-                # cut incumbent solution
-                model.cbLazy(TSRFLP.omega >= TSRFLP.integer_cut)
+#            TSRFLP.update_sub(callback=1)
+#            TSRFLP.sub_model.optimize()
+#            TSRFLP.worst_scenario(1)
+#            TSRFLP.gap_calculation(1)
+#            if abs(TSRFLP.int_gap) >= 1e-4:
+#                TSRFLP.update_integer_cut()
+#                # cut incumbent solution
+#                model.cbLazy(TSRFLP.omega >= TSRFLP.integer_cut)
     start_time = time.time()
     TSRFLP = mr.rflp(p, ni, nk, a1, a2, cd, cdk, sk)
     TSRFLP.dual = 1
@@ -108,15 +109,6 @@ try:
     TSRFLP.master_model._lastnode = -GRB.INFINITY
     TSRFLP.master_model._vars = TSRFLP.master_model.getVars()
     TSRFLP.master_model.Params.lazyConstraints = 1
-    # warm start?
-#    TSRFLP.master_model.optimize()
-#    TSRFLP.update_sub_dual(0)
-#    TSRFLP.sub_dual.optimize()
-#    TSRFLP.update_master()
-#    TSRFLP.update_y()
-#    TSRFLP.master_model.reset()
-#    for j in range(ni):
-#        TSRFLP.y[j].start = TSRFLP.value_y[j]
     TSRFLP.master_model.optimize(mycallback)
     print('Optimal solution found: %g' % TSRFLP.master_model.objVal)
 except GurobiError as e:
