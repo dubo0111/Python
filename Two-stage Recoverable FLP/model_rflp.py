@@ -280,12 +280,13 @@ class rflp:
             y_temp = self.master_model.getVarByName(y_name)
             self.value_y.append(y_temp.x)
     # update cut to be added to master problem in each iteration
-    def update_cut(self,numk = None):
+    def update_cut(self,numk = None,lift = 0):
         gamma = [[0 for j in range(self.ni)] for i in range(self.ni)]
         delta = [[0 for j in range(self.ni)] for i in range(self.ni)]
         epsilon = [0 for j in range(self.ni)]
         lamda = [0 for j in range(self.ni)]
         mu = [0 for j in range(self.ni)]
+        beta = [0 for j in range(self.ni)]
         if numk == None:
             numk = self.max_k
         if self.dual == 0:
@@ -294,7 +295,7 @@ class rflp:
             dual_value = []
             constrname = []
             for i in range(num_c):
-                dual_value.append(cm1[i].getAttr('Pi'))
+                dual_value.append(cm1[i].getAttr('Pi'))#
                 constrname.append(cm1[i].getAttr('ConstrName'))
             dual = dict(zip(constrname, dual_value))
             for i in range(self.ni):
@@ -325,15 +326,36 @@ class rflp:
                     gamma[i][j] = self.sub_dual.getVarByName(gamma_name).x
                     delta[i][j] = self.sub_dual.getVarByName(delta_name).x
             for n in range(self.ni):
+                beta_name = ''.join(['beta[', str(numk), ',', str(n), ']'])
                 epsilon_name = ''.join(
                     ['epsilon[', str(numk), ',', str(n), ']'])
                 lamda_name = ''.join(['lamda[', str(numk), ',', str(n), ']'])
                 mu_name = ''.join(['mu[', str(numk), ',', str(n), ']'])
+                beta[n] = self.sub_dual.getVarByName(beta_name).x
                 epsilon[n] = self.sub_dual.getVarByName(epsilon_name).x
                 lamda[n] = self.sub_dual.getVarByName(lamda_name).x
                 mu[n] = self.sub_dual.getVarByName(mu_name).x
             nu_name = ''.join(['nu[', str(numk), ']'])
             nu = self.sub_dual.getVarByName(nu_name).x
+        # dual_lifting
+        if lift != 0:
+#             sum_gamma = [0 for i in range(self.ni)]
+#             for j in range(self.ni):
+#                 for i in range(self.ni):
+#                     sum_gamma[j] += gamma[i][j]
+#             for j in range(self.ni):
+#                 if self.value_y[j] == 1:
+#                     new_lamda = -nu-mu[j]+sum_gamma[j]
+#                     if lamda[j] != new_lamda:
+# #                        print('lift lamda')
+#                         lamda[j] = new_lamda
+            for i in range(self.ni):
+                for j in range(self.ni):
+                    if self.value_y[j] == 0:
+                        new_gamma =  -epsilon[i]-delta[i][j]-self.cdk[numk][i][j]*beta[i]
+                        if gamma[i][j] != new_gamma:
+#                            print('lift gamma')
+                            gamma[i][j] = new_gamma
         # Benders' cut
         # omega >= sumsum(gamma_k'ij*y) + sum_j(-lamda*y) +  nu*sum_j((aj(k')-1)*y)
         # + sumsum((1-aj(k'))*delta_ij)+sum_i(epsilon)+sum_j(lamda)
@@ -421,23 +443,20 @@ class rflp:
     # wrong optimal solutions appear for both sub&dual_sub
     def params_tuneup(self):
        # self.master_model.params.OutputFlag = 0
-        #self.master_model.params.Presolve = 0
-       # self.master_model.params.ScaleFlag = 3
-       # self.master_model.params.NumericFocus = 3
-        # self.sub_model.params.OutputFlag = 0
-        # self.master_model.params.Presolve = 0
-        # self.master_model.params.ScaleFlag = 3
-        # self.master_model.params.NumericFocus = 3
+#        self.master_model.params.Presolve = 0
+#        self.master_model.params.ScaleFlag = 3
+#        self.master_model.params.NumericFocus = 3
+#        self.master_model.params.PreCrush = 1
 
         self.sub_model.params.OutputFlag = 0
-        # self.sub_model.params.Presolve = 0
-        # self.sub_model.params.ScaleFlag = 3
-        # self.sub_model.params.NumericFocus = 3
+#        self.sub_model.params.Presolve = 0
+#        self.sub_model.params.ScaleFlag = 3
+#        self.sub_model.params.NumericFocus = 3
 
         self.sub_dual.params.OutputFlag = 0
-        # self.sub_dual.params.Presolve = 0
-        # self.sub_dual.params.ScaleFlag = 3
-        # elf.sub_dual.params.NumericFocus = 3
+#        self.sub_dual.params.Presolve = 0
+#        self.sub_dual.params.ScaleFlag = 3
+#        self.sub_dual.params.NumericFocus = 3
         # References:
         #m1.params.ScaleFlag = 3
         #m1.params.ObjScale = 100
@@ -469,10 +488,20 @@ class rflp:
             if violation_now[k] > 0:
                 self.violation[k] += violation_now[k]
                 self.freq[k] += 1
-                self.viol_freq[k] += self.violation[k]/self.freq[k]
-        rank = sorted(range(len(self.viol_freq)), reverse=True, key=self.viol_freq.__getitem__)
+                self.viol_freq[k] = self.violation[k]/self.freq[k]
+#        print(self.viol_freq)
+#        rank = sorted(range(len(self.viol_freq)), reverse=True, key=self.viol_freq.__getitem__)
+        rank = sorted(range(len(violation_now)), reverse=True, key=violation_now.__getitem__)
+        print(rank[0])
         for n in range(round(self.nk/4)):
-            if violation_now[k] > 0:
-                self.update_cut(rank[n])
+#        for n in range(1):
+            if violation_now[rank[n]] > 0:
+                self.update_cut(rank[n],lift=0)
                 self.master_model.cbLazy(self.omega >= self.constr_y)
-    # def update_multiple_cut(self):
+            else:
+                break
+    #
+    # def dual_lifting(self):
+    #     for j in range(ni):
+    #         if self.value_y[j] = 0
+    #def zero_half(self):

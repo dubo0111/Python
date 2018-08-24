@@ -12,7 +12,7 @@ import time
 #import data_generator1 as dg
 import data_generator0 as dg0
 #INPUT Parameters:p, cost matrix
-data = dg0.data_gen(100,180,7)
+data = dg0.data_gen(30,200,1)
 p,cd,cdk,sk = data.data()
 
 from gurobipy import *
@@ -37,7 +37,7 @@ try:
     # Create variables
     # x:allocations y:location L:auxiliary variable
     x = m.addVars(ni,ni,vtype=GRB.CONTINUOUS, name="x")
-    y = m.addVars(ni,vtype=GRB.CONTINUOUS, name="y")
+    y = m.addVars(ni,vtype=GRB.BINARY, name="y")
     L = m.addVar(vtype=GRB.CONTINUOUS,obj=a1,name="L")
 
     # Set objective to minimize
