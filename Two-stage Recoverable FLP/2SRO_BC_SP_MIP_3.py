@@ -4,7 +4,7 @@ import model_rflp as mr
 #import data_generator1 as dg
 #p, cd, cdk, sk = dg.ins_k(20, 100, 40)  # (ni,nk,randomseed*)
 import data_generator0 as dg0
-data = dg0.data_gen(20,100,1)
+data = dg0.data_gen(20,40,1)
 p,cd,cdk,sk = data.data()
 from gurobipy import *
 import time
@@ -25,23 +25,22 @@ try:
             TSRFLP.value_omega = vals[-1]
             TSRFLP.update_sub_dual(callback=1)
             TSRFLP.sub_dual.optimize()
-#             multiple scenario sorting
+            # multiple scenario sorting
             TSRFLP.update_scenario_sorting()
-            # single cut gerneration
+#             single cut gerneration
 #            max_Lk = TSRFLP.worst_scenario()
-#            print(max_Lk[1])
 #            if max_Lk[0] > TSRFLP.value_omega:
 #                TSRFLP.update_cut()
 #                model.cbLazy(TSRFLP.omega >= TSRFLP.constr_y)
-#             status
+            # status
             nodecnt = model.cbGet(GRB.Callback.MIPSOL_NODCNT)
             obj = model.cbGet(GRB.Callback.MIPSOL_OBJ)
             solcnt = model.cbGet(GRB.Callback.MIPSOL_SOLCNT)
             objbst = model.cbGet(GRB.Callback.MIPSOL_OBJBST)
             objbnd = model.cbGet(GRB.Callback.MIPSOL_OBJBND)
             gap_mipsol = abs(objbst - objbnd)/(1.0 + abs(objbst))
-#            print('**** New solution at node %d, obj %g, sol %d, '
-#                  'gap = %g ****' % (nodecnt, obj, solcnt, gap_mipsol))
+            print('**** New solution at node %d, obj %g, sol %d, '
+                  'gap = %g ****' % (nodecnt, obj, solcnt, gap_mipsol))
             # integer l-shaped cut
 #            TSRFLP.update_sub(callback=1)
 #            TSRFLP.sub_model.optimize()
@@ -55,6 +54,7 @@ try:
     TSRFLP = mr.rflp(p, ni, nk, a1, a2, cd, cdk, sk)
     TSRFLP.dual = 1
     TSRFLP.intSP = 1
+    TSRFLP.zero_half = 1
     # ----------Benders' Decompisition----------
     iteration = 0
     gap = 1

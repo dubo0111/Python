@@ -7,7 +7,7 @@ Created on Wed Aug  1 08:24:56 2018
 """
 #import data_generator1 as dg
 import data_generator0 as dg0
-data = dg0.data_gen(3,2,7)
+data = dg0.data_gen(3,2,1)
 p, cd, cdk, sk = data.data()
 from gurobipy import *
 ni = len(cd)

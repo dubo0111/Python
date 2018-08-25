@@ -1,7 +1,10 @@
 # class for:
 # bulid or update specific model
 # get variables,dual variables
+import copy
+import math
 from gurobipy import *
+
 
 class rflp:
     # Attributes
@@ -37,6 +40,8 @@ class rflp:
     violation = []
     freq = []
     viol_freq = []
+    lift = 0
+    zero_half = 0
     # Input
     p = 0
     ni = 0
@@ -46,6 +51,7 @@ class rflp:
     cd = []
     cdk = []
     sk = []
+
     def __init__(self, p, ni, nk, a1, a2, cd, cdk, sk):
         self.p = p
         self.ni = ni
@@ -58,8 +64,9 @@ class rflp:
         self.value_y = [0 for i in range(ni)]
         self.violation = [0 for k in range(nk)]
         self.freq = [0 for k in range(nk)]
-        self.viol_freq  = [0 for k in range(nk)]
+        self.viol_freq = [0 for k in range(nk)]
     # build master problem model
+
     def master(self):
         # Create variables
         # x:allocations y:location L:auxiliary variable
@@ -97,6 +104,7 @@ class rflp:
         # return self.master_model
     # build subproblem model
     # (get dual variables through Constr.getAttr(Pi))
+
     def sub(self, callback=0):
         # ---------- Sub problem ----------
         if callback == 0:
@@ -164,6 +172,7 @@ class rflp:
         self.sub_model.update()
         # return(self.sub_model)
     # build dual subproblem model
+
     def dual_sub(self, callback=0):
         if callback == 0:
             self.update_y()
@@ -182,7 +191,8 @@ class rflp:
             self.nk, self.ni, ub=0, lb=-float('inf'), vtype=GRB.CONTINUOUS, name="lamda")
         self.mu = self.sub_dual.addVars(
             self.nk, self.ni, ub=0, lb=-float('inf'), vtype=GRB.CONTINUOUS, name="mu")
-        self.nu = self.sub_dual.addVars(self.nk,lb=-GRB.INFINITY, ub=GRB.INFINITY, vtype=GRB.CONTINUOUS, name="nu")
+        self.nu = self.sub_dual.addVars(
+            self.nk, lb=-GRB.INFINITY, ub=GRB.INFINITY, vtype=GRB.CONTINUOUS, name="nu")
         # Qk are auxiliary variables, maximize every subproblem
         self.Qk = self.sub_dual.addVars(
             self.nk, vtype=GRB.CONTINUOUS, obj=1, name="Qk")
@@ -206,6 +216,7 @@ class rflp:
             "L3")
         self.sub_dual.update()
     #
+
     def sub_dual_obj(self):
         def c_constr1():
             c_delta = [[0 for i in range(self.ni * self.ni)]
@@ -220,7 +231,7 @@ class rflp:
             c_nu = []
             for k in range(self.nk):
                 c_nu.append(self.p + sum([self.sk[k][j] * self.value_y[j]
-                                     for j in range(self.ni)]) - sum(self.value_y))
+                                          for j in range(self.ni)]) - sum(self.value_y))
             return c_delta, c_lamda, c_mu, c_nu
         # (1) Q(k) = sum_i(sum_j(y_j*gamma_kij))+sumsum_ij((1-a_kj)*delta_kij
         #           + sum_i(epsilon_ki) + sum_j((1-y_j)*lambda_kj) +
@@ -233,11 +244,13 @@ class rflp:
              LinExpr(c_mu[k], self.mu.select(k, '*')) + c_nu[k] * self.nu[k] for k in range(self.nk)),
             "Q(k)")
     #
+
     def update_master(self):
         self.update_cut()
         self.master_model.addConstr(self.omega >= self.constr_y)
         # self.master_model.update()
     #
+
     def update_sub(self, callback=0):
         if callback == 0:
             self.update_y()
@@ -264,6 +277,7 @@ class rflp:
         self.sub_model.update()
         # return self.sub_model
     #
+
     def update_sub_dual(self, callback=0):
         if callback == 0:
             self.update_y()
@@ -273,6 +287,7 @@ class rflp:
         self.sub_dual_obj()
         self.sub_dual.update()
     # update value of y for subproblem in each iteration
+
     def update_y(self):
         self.value_y = []
         for j in range(self.ni):
@@ -280,7 +295,8 @@ class rflp:
             y_temp = self.master_model.getVarByName(y_name)
             self.value_y.append(y_temp.x)
     # update cut to be added to master problem in each iteration
-    def update_cut(self,numk = None,lift = 0):
+
+    def update_cut(self, numk=None, lift=0):
         gamma = [[0 for j in range(self.ni)] for i in range(self.ni)]
         delta = [[0 for j in range(self.ni)] for i in range(self.ni)]
         epsilon = [0 for j in range(self.ni)]
@@ -295,7 +311,7 @@ class rflp:
             dual_value = []
             constrname = []
             for i in range(num_c):
-                dual_value.append(cm1[i].getAttr('Pi'))#
+                dual_value.append(cm1[i].getAttr('Pi'))
                 constrname.append(cm1[i].getAttr('ConstrName'))
             dual = dict(zip(constrname, dual_value))
             for i in range(self.ni):
@@ -339,22 +355,23 @@ class rflp:
             nu = self.sub_dual.getVarByName(nu_name).x
         # dual_lifting
         if lift != 0:
-#             sum_gamma = [0 for i in range(self.ni)]
-#             for j in range(self.ni):
-#                 for i in range(self.ni):
-#                     sum_gamma[j] += gamma[i][j]
-#             for j in range(self.ni):
-#                 if self.value_y[j] == 1:
-#                     new_lamda = -nu-mu[j]+sum_gamma[j]
-#                     if lamda[j] != new_lamda:
-# #                        print('lift lamda')
-#                         lamda[j] = new_lamda
+            #             sum_gamma = [0 for i in range(self.ni)]
+            #             for j in range(self.ni):
+            #                 for i in range(self.ni):
+            #                     sum_gamma[j] += gamma[i][j]
+            #             for j in range(self.ni):
+            #                 if self.value_y[j] == 1:
+            #                     new_lamda = -nu-mu[j]+sum_gamma[j]
+            #                     if lamda[j] != new_lamda:
+            # #                        print('lift lamda')
+            #                         lamda[j] = new_lamda
             for i in range(self.ni):
                 for j in range(self.ni):
                     if self.value_y[j] == 0:
-                        new_gamma =  -epsilon[i]-delta[i][j]-self.cdk[numk][i][j]*beta[i]
+                        new_gamma = -epsilon[i] - delta[i][j] - \
+                            self.cdk[numk][i][j] * beta[i]
                         if gamma[i][j] != new_gamma:
-#                            print('lift gamma')
+                            #                            print('lift gamma')
                             gamma[i][j] = new_gamma
         # Benders' cut
         # omega >= sumsum(gamma_k'ij*y) + sum_j(-lamda*y) +  nu*sum_j((aj(k')-1)*y)
@@ -378,24 +395,26 @@ class rflp:
                       for j in range(self.ni)]) + self.p * nu
         self.constr_y = c_y + constant
     #
+
     def update_integer_cut(self):
         sum_c_y = LinExpr()
         for i in range(self.ni):
             if self.value_y[i] == 1:
-                sum_c_y += self.y[i]-1
+                sum_c_y += self.y[i] - 1
             elif self.value_y[i] == 1:
                 sum_c_y += -self.y[i]
         sum_c_y += 1
         max_Lk = self.worst_scenario(1)
-        self.integer_cut = max_Lk[0]*sum_c_y
+        self.integer_cut = max_Lk[0] * sum_c_y
     #
-    def gap_calculation(self,MIP_SP = 0,Check_optimal = 0):
-        if MIP_SP == 1: # in mycallback
+
+    def gap_calculation(self, MIP_SP=0, Check_optimal=0):
+        if MIP_SP == 1:  # in mycallback
             vals = self.master_model.cbGetSolution(self.master_model._vars)
             #value_L = vals(-2)
             max_Lk = self.worst_scenario(1)
             self.int_gap = max_Lk[0] - self.value_omega
-           #print('max_Lk:',max_Lk[0])
+           # print('max_Lk:',max_Lk[0])
         else:
             # extract L
             var_L = self.master_model.getVarByName('L')
@@ -412,7 +431,8 @@ class rflp:
             self.gap = (self.UB - self.LB) / self.LB
         # return self.gap
     #
-    def worst_scenario(self,MIP_SP = 0):
+
+    def worst_scenario(self, MIP_SP=0):
         if self.dual == 0 or MIP_SP == 1:
             value_L3 = []
             for k in range(self.nk):
@@ -424,14 +444,15 @@ class rflp:
         elif self.dual == 1 and MIP_SP != 1:
             value_Qk = []
             for k in range(self.nk):
-                Qk_name = ''.join(['Qk[',str(k),']'])
+                Qk_name = ''.join(['Qk[', str(k), ']'])
                 Qk_temp = self.sub_dual.getVarByName(Qk_name)
                 value_Qk.append(Qk_temp.x)
             # maximum Qk and its index (worst k)
-            max_Lk = max([[v,i] for i,v in enumerate(value_Qk)])
+            max_Lk = max([[v, i] for i, v in enumerate(value_Qk)])
         self.max_k = max_Lk[1]
         return max_Lk
     #
+
     def update_status(self):
         self.add_cut_scen.append(self.max_k)
         self.iteration += 1
@@ -441,67 +462,99 @@ class rflp:
         print('Cuts added form scenario:', str(self.add_cut_scen[0:-1]))
     # tune parameters to avoid numerical issues for subproblem
     # wrong optimal solutions appear for both sub&dual_sub
+
     def params_tuneup(self):
-       # self.master_model.params.OutputFlag = 0
-#        self.master_model.params.Presolve = 0
-#        self.master_model.params.ScaleFlag = 3
-#        self.master_model.params.NumericFocus = 3
-#        self.master_model.params.PreCrush = 1
+        # self.master_model.params.OutputFlag = 0
+        #        self.master_model.params.Presolve = 0
+        #        self.master_model.params.ScaleFlag = 3
+        #        self.master_model.params.NumericFocus = 3
+        self.master_model.params.PreCrush = 1
 
         self.sub_model.params.OutputFlag = 0
-#        self.sub_model.params.Presolve = 0
-#        self.sub_model.params.ScaleFlag = 3
-#        self.sub_model.params.NumericFocus = 3
+        # self.sub_model.params.Presolve = 0
+        # self.sub_model.params.ScaleFlag = 3
+        # self.sub_model.params.NumericFocus = 3
 
         self.sub_dual.params.OutputFlag = 0
-#        self.sub_dual.params.Presolve = 0
-#        self.sub_dual.params.ScaleFlag = 3
-#        self.sub_dual.params.NumericFocus = 3
+        # self.sub_dual.params.Presolve = 0
+        # self.sub_dual.params.ScaleFlag = 3
+        # self.sub_dual.params.NumericFocus = 3
         # References:
         #m1.params.ScaleFlag = 3
         #m1.params.ObjScale = 100
         #m1.params.NumericFocus = 3
         #m1.params.NormAdjust = 3
-        #m1.params.InfUnbdInfo = 0 #1
-        #m1.params.Quad = -1 #1
-        #m1.params.Sifting = -1 #2
-        #m1.params.SiftMethod = -1 # 2
-        #m1.params.SimplexPricing = -1 #3
+        # m1.params.InfUnbdInfo = 0 #1
+        # m1.params.Quad = -1 #1
+        # m1.params.Sifting = -1 #2
+        # m1.params.SiftMethod = -1 # 2
+        # m1.params.SimplexPricing = -1 #3
         #m1.params.Method = -1
         #m1.params.AggFill = 0
         #m1.params.Aggregate = 0
-        #m1.params.DualReductions = 1 #0
-        #m1.params.PreDual = 2 #2
+        # m1.params.DualReductions = 1 #0
+        # m1.params.PreDual = 2 #2
         #m1.params.Presolve = 0
     #
+
     def error_check(self):
         if self.gap <= -0.1:
             self.error = 1
             print('# WARNING: gap is a negative value', '\n',
-                   '   Wrong dual problem solution.')
+                  '   Wrong dual problem solution.')
         return self.error
     # Callback: update scenario violation and frequency⁠
+
     def update_scenario_sorting(self):
         # extract omega and Q(k)
-        violation_now = [x.x-self.value_omega for x in self.sub_dual.getVars()[-self.nk:]]
+        violation_now = [
+            x.x - self.value_omega for x in self.sub_dual.getVars()[-self.nk:]]
         for k in range(self.nk):
             if violation_now[k] > 0:
                 self.violation[k] += violation_now[k]
                 self.freq[k] += 1
-                self.viol_freq[k] = self.violation[k]/self.freq[k]
-#        print(self.viol_freq)
-#        rank = sorted(range(len(self.viol_freq)), reverse=True, key=self.viol_freq.__getitem__)
-        rank = sorted(range(len(violation_now)), reverse=True, key=violation_now.__getitem__)
-        print(rank[0])
-        for n in range(round(self.nk/4)):
-#        for n in range(1):
+                self.viol_freq[k] = self.violation[k] / self.freq[k]
+        #print(self.viol_freq)
+        rank = sorted(range(len(self.viol_freq)), reverse=True, key=self.viol_freq.__getitem__)
+        rank = sorted(range(len(violation_now)), reverse=True,
+                      key=violation_now.__getitem__)
+        #print(rank[0])
+        for n in range(round(self.nk / 4)):
+            #        for n in range(1):
             if violation_now[rank[n]] > 0:
-                self.update_cut(rank[n],lift=0)
-                self.master_model.cbLazy(self.omega >= self.constr_y)
+                self.update_cut(rank[n], self.lift)
+                if self.zero_half == 0:
+                    self.master_model.cbLazy(self.omega >= self.constr_y)
+                elif self.zero_half == 1:
+                    if n == 0:
+                        self.master_model.cbLazy(self.omega >= self.constr_y)
+                        constr_strong = self.constr_y.copy()
+                        coeff_strong, constant_strong = self.reformulate_linexpr(
+                            constr_strong)
+                    else:
+                        # zero-half
+                        coeff_constr_y, constant_y = self.reformulate_linexpr(
+                            self.constr_y)
+                        coeff_sum = [0.5 * (x + y)
+                                     for x, y in zip(coeff_strong, coeff_constr_y)]
+                        coeff_zero_half = [math.ceil(x) for x in coeff_sum]
+                        constant_zero_half = math.ceil(
+                            0.5 * (constant_strong + constant_y))
+                        constr_y_zero_half = LinExpr(
+                            coeff_zero_half, self.y.select()) + constant_zero_half
+                        #print(constr_y_zero_half)
+                        self.master_model.cbLazy(self.omega >= constr_y_zero_half)
             else:
                 break
-    #
-    # def dual_lifting(self):
-    #     for j in range(ni):
-    #         if self.value_y[j] = 0
-    #def zero_half(self):
+
+    def reformulate_linexpr(self, formulation):
+        coeff_y = [0 for j in range(self.ni)]
+        for n in range(formulation.size()):
+            y_index = int(formulation.getVar(n).VarName[2])
+            coeff_y[y_index] += formulation.getCoeff(n)
+        constant_y = formulation.getConstant()
+        return coeff_y, constant_y
+        # def dual_lifting(self):
+        #     for j in range(ni):
+        #         if self.value_y[j] = 0
+        # def zero_half(self):
