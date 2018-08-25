@@ -109,10 +109,10 @@ try:
     TSRFLP.master_model._vars = TSRFLP.master_model.getVars()
     TSRFLP.master_model.Params.lazyConstraints = 1
     # warm start?
-#    TSRFLP.master_model.optimize()
-#    TSRFLP.update_sub_dual(0)
-#    TSRFLP.sub_dual.optimize()
-#    TSRFLP.update_master()
+    TSRFLP.master_model.optimize()
+    TSRFLP.update_sub_dual(0)
+    TSRFLP.sub_dual.optimize()
+    TSRFLP.update_master()
 #    TSRFLP.update_y()
 #    TSRFLP.master_model.reset()
 #    for j in range(ni):

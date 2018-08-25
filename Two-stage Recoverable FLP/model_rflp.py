@@ -465,10 +465,11 @@ class rflp:
 
     def params_tuneup(self):
         # self.master_model.params.OutputFlag = 0
-        #        self.master_model.params.Presolve = 0
-        #        self.master_model.params.ScaleFlag = 3
-        #        self.master_model.params.NumericFocus = 3
-        self.master_model.params.PreCrush = 1
+        # self.master_model.params.Presolve = 0
+        # self.master_model.params.ScaleFlag = 3
+        # self.master_model.params.NumericFocus = 3
+        # self.master_model.params.PreCrush = 1
+        self.master_model.params.Cuts = 0
 
         self.sub_model.params.OutputFlag = 0
         # self.sub_model.params.Presolve = 0
@@ -509,18 +510,18 @@ class rflp:
         # extract omega and Q(k)
         violation_now = [
             x.x - self.value_omega for x in self.sub_dual.getVars()[-self.nk:]]
-        for k in range(self.nk):
-            if violation_now[k] > 0:
-                self.violation[k] += violation_now[k]
-                self.freq[k] += 1
-                self.viol_freq[k] = self.violation[k] / self.freq[k]
+        # for k in range(self.nk):
+        #     if violation_now[k] > 0:
+        #         self.violation[k] += violation_now[k]
+        #         self.freq[k] += 1
+        #         self.viol_freq[k] = self.violation[k] / self.freq[k]
         #print(self.viol_freq)
         # rank = sorted(range(len(self.viol_freq)), reverse=True, key=self.viol_freq.__getitem__)
         rank = sorted(range(len(violation_now)), reverse=True,
                       key=violation_now.__getitem__)
         #print(rank[0])
-        for n in range(round(self.nk / 5 + 1)):
-        # for n in range(1):
+        # for n in range(round(self.nk / 4 + 1)):
+        for n in range(2):
             if violation_now[rank[n]] > 0:
                 self.update_cut(rank[n], self.lift)
                 if self.zero_half == 0:
@@ -528,9 +529,9 @@ class rflp:
                 elif self.zero_half == 1:
                     if n == 0:
                         self.master_model.cbLazy(self.omega >= self.constr_y)
-                        constr_strong = self.constr_y.copy()
                         coeff_strong, constant_strong = self.reformulate_linexpr(
-                            constr_strong)
+                            self.constr_y)
+                        constr_strong = LinExpr(coeff_strong,self.y.select())+constant_strong
                     else:
                         # zero-half
                         coeff_constr_y, constant_y = self.reformulate_linexpr(
@@ -538,12 +539,14 @@ class rflp:
                         coeff_sum = [0.5 * (x + y)
                                      for x, y in zip(coeff_strong, coeff_constr_y)]
                         coeff_zero_half = [math.ceil(x) for x in coeff_sum]
-                        constant_zero_half = math.ceil(
-                            0.5 * (constant_strong + constant_y))
+                        constant_zero_half = (
+                            0.5 * math.ceil(constant_strong + constant_y))
                         constr_y_zero_half = LinExpr(
                             coeff_zero_half, self.y.select()) + constant_zero_half
-                        #print(constr_y_zero_half)
+                        # print('strong',LinExpr(coeff_strong,self.y.select())+constant_strong)
+                        # print(constr_y_zero_half)
                         self.master_model.cbLazy(self.omega >= constr_y_zero_half)
+                        # self.master_model.cbLazy(2*self.omega >= self.constr_y+constr_strong)
             else:
                 break
 

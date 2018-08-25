@@ -57,8 +57,8 @@ try:
     TSRFLP = mr.rflp(p, ni, nk, a1, a2, cd, cdk, sk)
     TSRFLP.dual = 1
     TSRFLP.intSP = 1
-    TSRFLP.lift = 0
-    TSRFLP.zero_half = 1
+    TSRFLP.lift = 1
+    TSRFLP.zero_half = 0
     # ----------Benders' Decompisition----------
     iteration = 0
     gap = 1
@@ -70,7 +70,15 @@ try:
     TSRFLP.master_model._lastnode = -GRB.INFINITY
     TSRFLP.master_model._vars = TSRFLP.master_model.getVars()
     TSRFLP.master_model.Params.lazyConstraints = 1
+    # warm start?
+#    TSRFLP.master_model.optimize()
+#    TSRFLP.update_sub_dual(0)
+#    TSRFLP.sub_dual.optimize()
+#    TSRFLP.update_master()
+#    TSRFLP.sub_dual.getConstrs()[-1].Lazy = 1
+
     TSRFLP.master_model.optimize(mycallback)
+
     print('Optimal solution found: %g' % TSRFLP.master_model.objVal)
 except GurobiError as e:
     print('Error code ' + str(e.errno) + ": " + str(e))
