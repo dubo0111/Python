@@ -354,24 +354,24 @@ class rflp:
             nu_name = ''.join(['nu[', str(numk), ']'])
             nu = self.sub_dual.getVarByName(nu_name).x
         # dual_lifting
-        if lift != 0:
-            #             sum_gamma = [0 for i in range(self.ni)]
-            #             for j in range(self.ni):
-            #                 for i in range(self.ni):
-            #                     sum_gamma[j] += gamma[i][j]
-            #             for j in range(self.ni):
-            #                 if self.value_y[j] == 1:
-            #                     new_lamda = -nu-mu[j]+sum_gamma[j]
-            #                     if lamda[j] != new_lamda:
-            # #                        print('lift lamda')
-            #                         lamda[j] = new_lamda
+        if lift == 1:
+            # sum_gamma = [0 for i in range(self.ni)]
+            # for j in range(self.ni):
+            #     for i in range(self.ni):
+            #         sum_gamma[j] += gamma[i][j]
+            # for j in range(self.ni):
+            #     if self.value_y[j] == 1:
+            #         new_lamda = -nu-mu[j]+sum_gamma[j]
+            #         if lamda[j] < new_lamda:
+            #            # print('lift lamda')
+            #             lamda[j] = new_lamda
             for i in range(self.ni):
                 for j in range(self.ni):
                     if self.value_y[j] == 0:
                         new_gamma = -epsilon[i] - delta[i][j] - \
                             self.cdk[numk][i][j] * beta[i]
-                        if gamma[i][j] != new_gamma:
-                            #                            print('lift gamma')
+                        if gamma[i][j] < new_gamma:
+                            # print('lift gamma')
                             gamma[i][j] = new_gamma
         # Benders' cut
         # omega >= sumsum(gamma_k'ij*y) + sum_j(-lamda*y) +  nu*sum_j((aj(k')-1)*y)
@@ -515,12 +515,12 @@ class rflp:
                 self.freq[k] += 1
                 self.viol_freq[k] = self.violation[k] / self.freq[k]
         #print(self.viol_freq)
-        rank = sorted(range(len(self.viol_freq)), reverse=True, key=self.viol_freq.__getitem__)
+        # rank = sorted(range(len(self.viol_freq)), reverse=True, key=self.viol_freq.__getitem__)
         rank = sorted(range(len(violation_now)), reverse=True,
                       key=violation_now.__getitem__)
         #print(rank[0])
-        for n in range(round(self.nk / 4)):
-            #        for n in range(1):
+        for n in range(round(self.nk / 5 + 1)):
+        # for n in range(1):
             if violation_now[rank[n]] > 0:
                 self.update_cut(rank[n], self.lift)
                 if self.zero_half == 0:

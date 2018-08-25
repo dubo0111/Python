@@ -4,7 +4,7 @@ import model_rflp as mr
 #import data_generator1 as dg
 #p, cd, cdk, sk = dg.ins_k(20, 100, 40)  # (ni,nk,randomseed*)
 import data_generator0 as dg0
-data = dg0.data_gen(20,40,1)
+data = dg0.data_gen(20,50,2)
 p,cd,cdk,sk = data.data()
 from gurobipy import *
 import time
@@ -25,6 +25,9 @@ try:
             TSRFLP.value_omega = vals[-1]
             TSRFLP.update_sub_dual(callback=1)
             TSRFLP.sub_dual.optimize()
+            sub_slack = []
+            for n in TSRFLP.sub_dual.getConstrs():
+                sub_slack.append(n.slack)
             # multiple scenario sorting
             TSRFLP.update_scenario_sorting()
 #             single cut gerneration
@@ -54,6 +57,7 @@ try:
     TSRFLP = mr.rflp(p, ni, nk, a1, a2, cd, cdk, sk)
     TSRFLP.dual = 1
     TSRFLP.intSP = 1
+    TSRFLP.lift = 0
     TSRFLP.zero_half = 1
     # ----------Benders' Decompisition----------
     iteration = 0
