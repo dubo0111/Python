@@ -4,7 +4,7 @@ import model_rflp as mr
 #import data_generator1 as dg
 #p, cd, cdk, sk = dg.ins_k(20, 100, 40)  # (ni,nk,randomseed*)
 import data_generator0 as dg0
-data = dg0.data_gen(20,50,2)
+data = dg0.data_gen(30,100,21)
 p,cd,cdk,sk = data.data()
 from gurobipy import *
 import time
@@ -19,21 +19,35 @@ try:
     gap_cnt = [-GRB.INFINITY,GRB.INFINITY]
     gap_iter = 0
     def mycallback(model, where):
-        if where == GRB.Callback.MIPSOL:
+        if where == GRB.Callback.MIPNODE:
+            nodecnt = model.cbGet(GRB.Callback.MIPNODE_NODCNT)
+            # if model.cbGet(GRB.Callback.MIPNODE_STATUS) == GRB.Status.OPTIMAL:
+            #         vals = model.cbGetNodeRel(model._vars)
+            #         TSRFLP.value_y = vals[-2 - ni:-2]
+            #         TSRFLP.update_sub_dual(callback=1)
+            #         TSRFLP.sub_dual.optimize()
+            #         TSRFLP.update_scenario_sorting()
+            #         TSRFLP.worst_scenario()
+            #         TSRFLP.update_cut()
+            #         model.cbCut(TSRFLP.omega >= TSRFLP.constr_y)
+            #         print(TSRFLP.value_y)
+            #         print('++++ MIPNODE Cut ++++')
+        if where == GRB.Callback.MIPSOL:--
             vals = model.cbGetSolution(model._vars)
             TSRFLP.value_y = vals[-2 - ni:-2]
             TSRFLP.value_omega = vals[-1]
             TSRFLP.update_sub_dual(callback=1)
             TSRFLP.sub_dual.optimize()
-            sub_slack = []
-            for n in TSRFLP.sub_dual.getConstrs():
-                sub_slack.append(n.slack)
+            # sub_slack = []
+            # for n in TSRFLP.sub_dual.getConstrs():
+            #     sub_slack.append(n.slack)
             # multiple scenario sorting
             TSRFLP.update_scenario_sorting()
 #             single cut gerneration
 #            max_Lk = TSRFLP.worst_scenario()
 #            if max_Lk[0] > TSRFLP.value_omega:
 #                TSRFLP.update_cut()
+#                TSRFLP.constr_y = TSRFLP.reformulate_linexpr(TSRFLP.constr_y)
 #                model.cbLazy(TSRFLP.omega >= TSRFLP.constr_y)
             # status
             nodecnt = model.cbGet(GRB.Callback.MIPSOL_NODCNT)
@@ -45,19 +59,19 @@ try:
             print('**** New solution at node %d, obj %g, sol %d, '
                   'gap = %g ****' % (nodecnt, obj, solcnt, gap_mipsol))
             # integer l-shaped cut
-#            TSRFLP.update_sub(callback=1)
-#            TSRFLP.sub_model.optimize()
-#            TSRFLP.worst_scenario(1)
-#            TSRFLP.gap_calculation(1)
-#            if abs(TSRFLP.int_gap) >= 1e-4:
-#                TSRFLP.update_integer_cut()
-#                # cut incumbent solution
-#                model.cbLazy(TSRFLP.omega >= TSRFLP.integer_cut)
+            # TSRFLP.update_sub(callback=1)
+            # TSRFLP.sub_model.optimize()
+            # TSRFLP.worst_scenario(1)
+            # TSRFLP.gap_calculation(1)
+            # if abs(TSRFLP.int_gap) >= 1e-4:
+            #     TSRFLP.update_integer_cut()
+            #     # cut incumbent solution
+            #     model.cbLazy(TSRFLP.omega >= TSRFLP.integer_cut)
     start_time = time.time()
     TSRFLP = mr.rflp(p, ni, nk, a1, a2, cd, cdk, sk)
     TSRFLP.dual = 1
     TSRFLP.intSP = 1
-    TSRFLP.lift = 1
+    TSRFLP.lift = 0
     TSRFLP.zero_half = 0
     # ----------Benders' Decompisition----------
     iteration = 0
@@ -70,12 +84,13 @@ try:
     TSRFLP.master_model._lastnode = -GRB.INFINITY
     TSRFLP.master_model._vars = TSRFLP.master_model.getVars()
     TSRFLP.master_model.Params.lazyConstraints = 1
+#    TSRFLP.master_model.getVars()[-3].start = 1
     # warm start?
-#    TSRFLP.master_model.optimize()
-#    TSRFLP.update_sub_dual(0)
-#    TSRFLP.sub_dual.optimize()
-#    TSRFLP.update_master()
-#    TSRFLP.sub_dual.getConstrs()[-1].Lazy = 1
+    # TSRFLP.master_model.optimize()
+    # TSRFLP.update_sub_dual(0)
+    # TSRFLP.sub_dual.optimize()
+    # TSRFLP.update_master()
+    # TSRFLP.sub_dual.getConstrs()[-1].Lazy = 1
 
     TSRFLP.master_model.optimize(mycallback)
 

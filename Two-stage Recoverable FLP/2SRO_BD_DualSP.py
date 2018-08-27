@@ -5,7 +5,7 @@ Du Bo
 import model_rflp as mr
 #import data_generator1 as dg
 import data_generator0 as dg0
-data = dg0.data_gen(100,200,2)
+data = dg0.data_gen(30,100,21)
 p,cd,cdk,sk = data.data()
 
 from gurobipy import *
@@ -20,7 +20,7 @@ start_time = time.time()
 TSRFLP = mr.rflp(p, ni, nk, a1, a2, cd, cdk, sk)
 #dual sub problem
 TSRFLP.dual = 1
-TSRFLP.params_tuneup()
+#TSRFLP.params_tuneup()
 # ----------Benders' Decompisition----------
 iteration = 0
 gap = 1
@@ -32,8 +32,8 @@ while abs(TSRFLP.gap) >= stop:
     if iteration != 0:
         TSRFLP.update_master()
     TSRFLP.master_model.optimize()
-    # L0 = TSRFLP.master_model.getVarByName('L').x
-    # print('L0: ',L0)
+    L0 = TSRFLP.master_model.getVarByName('L').x
+    print('L0: ',L0)
     if iteration == 0:
         TSRFLP.dual_sub()
     else:

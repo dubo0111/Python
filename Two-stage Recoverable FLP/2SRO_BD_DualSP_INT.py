@@ -5,7 +5,7 @@ Du Bo
 import model_rflp as mr
 #import data_generator1 as dg
 import data_generator0 as dg0
-data = dg0.data_gen(30,30,7)
+data = dg0.data_gen(30,100,21)
 p,cd,cdk,sk = data.data()
 
 from gurobipy import *

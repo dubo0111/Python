@@ -464,12 +464,12 @@ class rflp:
     # wrong optimal solutions appear for both sub&dual_sub
 
     def params_tuneup(self):
-        # self.master_model.params.OutputFlag = 0
+        # self.master_model.params.OutputFlag = 1
         # self.master_model.params.Presolve = 0
         # self.master_model.params.ScaleFlag = 3
         # self.master_model.params.NumericFocus = 3
-        # self.master_model.params.PreCrush = 1
-        self.master_model.params.Cuts = 0
+        self.master_model.params.PreCrush = 1
+        # self.master_model.params.Cuts = 0
 
         self.sub_model.params.OutputFlag = 0
         # self.sub_model.params.Presolve = 0
@@ -507,6 +507,7 @@ class rflp:
     # Callback: update scenario violation and frequency⁠
 
     def update_scenario_sorting(self):
+        print('===============sorting==================')
         # extract omega and Q(k)
         violation_now = [
             x.x - self.value_omega for x in self.sub_dual.getVars()[-self.nk:]]
@@ -520,8 +521,10 @@ class rflp:
         rank = sorted(range(len(violation_now)), reverse=True,
                       key=violation_now.__getitem__)
         #print(rank[0])
-        # for n in range(round(self.nk / 4 + 1)):
-        for n in range(2):
+        odd_1 = 0
+        odd_2 = 0
+        for n in range(round(self.nk / 4 + 1)):
+        # for n in range(1):
             if violation_now[rank[n]] > 0:
                 self.update_cut(rank[n], self.lift)
                 if self.zero_half == 0:
@@ -532,24 +535,31 @@ class rflp:
                         coeff_strong, constant_strong = self.reformulate_linexpr(
                             self.constr_y)
                         constr_strong = LinExpr(coeff_strong,self.y.select())+constant_strong
+                        if [k for k in coeff_strong if k %2] != []:
+                            odd_1 = 1
+                        # print(constr_strong)
                     else:
                         # zero-half
                         coeff_constr_y, constant_y = self.reformulate_linexpr(
                             self.constr_y)
-                        coeff_sum = [0.5 * (x + y)
-                                     for x, y in zip(coeff_strong, coeff_constr_y)]
-                        coeff_zero_half = [math.ceil(x) for x in coeff_sum]
-                        constant_zero_half = (
-                            0.5 * math.ceil(constant_strong + constant_y))
-                        constr_y_zero_half = LinExpr(
-                            coeff_zero_half, self.y.select()) + constant_zero_half
-                        # print('strong',LinExpr(coeff_strong,self.y.select())+constant_strong)
-                        # print(constr_y_zero_half)
-                        self.master_model.cbLazy(self.omega >= constr_y_zero_half)
-                        # self.master_model.cbLazy(2*self.omega >= self.constr_y+constr_strong)
+                        # if self.master_model.cbGet(GRB.Callback.MIPSOL_NODCNT) == 0:
+                        if [k for k in coeff_constr_y if k %2] != []:
+                            odd_2 = 1
+                        if odd_1 == 1 and odd_2 == 1:
+                            coeff_sum, constant_sum = self.reformulate_linexpr(
+                                self.constr_y+constr_strong)
+                            coeff_sum = [math.ceil(0.5*x) for x in coeff_sum]
+                            constant_sum = math.ceil(0.5*constant_sum)
+                            constr_sum = LinExpr(coeff_sum,self.y.select()) + constant_sum
+                            self.master_model.cbLazy(self.omega >= constr_sum)
+                            # print(const r_sum)
+                        else:
+                            # print(self.constr_y)
+                            self.master_model.cbLazy(self.omega >= self.constr_y)
+
             else:
                 break
-
+    #
     def reformulate_linexpr(self, formulation):
         coeff_y = [0 for j in range(self.ni)]
         for n in range(formulation.size()):
