@@ -354,7 +354,7 @@ class rflp:
             nu_name = ''.join(['nu[', str(numk), ']'])
             nu = self.sub_dual.getVarByName(nu_name).x
         # dual_lifting
-        if lift == 1:
+        # if lift == 1:
             # sum_gamma = [0 for i in range(self.ni)]
             # for j in range(self.ni):
             #     for i in range(self.ni):
@@ -365,14 +365,14 @@ class rflp:
             #         if lamda[j] < new_lamda:
             #            # print('lift lamda')
             #             lamda[j] = new_lamda
-            for i in range(self.ni):
-                for j in range(self.ni):
-                    if self.value_y[j] == 0:
-                        new_gamma = -epsilon[i] - delta[i][j] - \
-                            self.cdk[numk][i][j] * beta[i]
-                        if gamma[i][j] < new_gamma:
-                            # print('lift gamma')
-                            gamma[i][j] = new_gamma
+            # for i in range(self.ni):
+            #     for j in range(self.ni):
+            #         if self.value_y[j] == 0:
+            #             new_gamma = -epsilon[i] - delta[i][j] - \
+            #                 self.cdk[numk][i][j] * beta[i]
+            #             if gamma[i][j] < new_gamma:
+            #                 # print('lift gamma')
+            #                 gamma[i][j] = new_gamma
         # Benders' cut
         # omega >= sumsum(gamma_k'ij*y) + sum_j(-lamda*y) +  nu*sum_j((aj(k')-1)*y)
         # + sumsum((1-aj(k'))*delta_ij)+sum_i(epsilon)+sum_j(lamda)
@@ -468,7 +468,7 @@ class rflp:
         # self.master_model.params.Presolve = 0
         # self.master_model.params.ScaleFlag = 3
         # self.master_model.params.NumericFocus = 3
-        self.master_model.params.PreCrush = 1
+        # self.master_model.params.PreCrush = 1
         # self.master_model.params.Cuts = 0
 
         self.sub_model.params.OutputFlag = 0

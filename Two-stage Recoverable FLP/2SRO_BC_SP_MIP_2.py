@@ -4,7 +4,7 @@ import model_rflp as mr
 #import data_generator1 as dg
 #p, cd, cdk, sk = dg.ins_k(20, 100, 40)  # (ni,nk,randomseed*)
 import data_generator0 as dg0
-data = dg0.data_gen(10,30,6)
+data = dg0.data_gen(30,100,21)
 p,cd,cdk,sk = data.data()
 from gurobipy import *
 import time
@@ -53,15 +53,15 @@ try:
             TSRFLP.update_cut()
             model.cbLazy(TSRFLP.omega >= TSRFLP.constr_y)
             # integer l-shaped cut
-            TSRFLP.update_sub(callback=1)
-            TSRFLP.sub_model.optimize()
-            TSRFLP.worst_scenario(1)
-            TSRFLP.gap_calculation(1)
-            print('---------gap:',TSRFLP.int_gap)
-            if abs(TSRFLP.int_gap) >= 1e-4:
-                TSRFLP.update_integer_cut()
-                # cut incumbent solution
-                model.cbLazy(TSRFLP.omega >= TSRFLP.integer_cut)
+#            TSRFLP.update_sub(callback=1)
+#            TSRFLP.sub_model.optimize()
+#            TSRFLP.worst_scenario(1)
+#            TSRFLP.gap_calculation(1)
+#            print('---------gap:',TSRFLP.int_gap)
+#            if abs(TSRFLP.int_gap) >= 1e-4:
+#                TSRFLP.update_integer_cut()
+#                # cut incumbent solution
+#                model.cbLazy(TSRFLP.omega >= TSRFLP.integer_cut)
     start_time = time.time()
     TSRFLP = mr.rflp(p, ni, nk, a1, a2, cd, cdk, sk)
     TSRFLP.dual = 1

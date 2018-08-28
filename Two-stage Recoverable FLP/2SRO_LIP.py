@@ -12,7 +12,7 @@ import time
 #import data_generator1 as dg
 import data_generator0 as dg0
 #INPUT Parameters:p, cost matrix
-data = dg0.data_gen(30,100,21)
+data = dg0.data_gen(20,10,2)
 p,cd,cdk,sk = data.data()
 
 from gurobipy import *
@@ -30,7 +30,7 @@ try:
     # Number of scenarios
     #nk = 1
     # weights of two stages
-    a1 = 0.5
+    a1 = 0.4
     a2 = 1 - a1
 
     # --------- Master problem ---------
@@ -67,9 +67,9 @@ try:
             (x.sum(i,'*') == 1 for i in range(ni)),
             "sumx")
 
-#    m.optimize()
-#    print('========================')
-#    print('L:',L.x)
+    m.optimize()
+    print('========================')
+    print('L:',L.x)
 
     # ---------- Sub problem ----------
     # v:allocations u:location L3,eta: auxiliary variable

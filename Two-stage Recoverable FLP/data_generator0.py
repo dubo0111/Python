@@ -25,7 +25,7 @@ class data_gen:
         if self.p == 1:
             self.sum_k = 1
         else:
-            self.sum_k = int(self.p - 1)
+            self.sum_k = int(round(self.p/2))
 
     def ins(self):
         np.random.seed(self.rnd)
@@ -46,5 +46,5 @@ class data_gen:
 
     def data(self):
         self.ins()
-        self.ins_Kdisrupt()
+        # self.ins_Kdisrupt()
         return self.p, self.cd, self.cdk, self.sk
