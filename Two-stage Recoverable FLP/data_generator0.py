@@ -32,9 +32,9 @@ class data_gen:
         for i in range(self.ni):
             for j in range(self.ni):
                 if i != j:
-                    self.cd[i][j] = round(np.random.rand() * 10000)+100
+                    self.cd[i][j] = round(np.random.rand() * 1000)+100
                     for k in range(self.nk):
-                        self.cdk[k][i][j] = round(np.random.rand() * 10000)+100
+                        self.cdk[k][i][j] = round(np.random.rand() * 1000)+100
                         # self.cdk[k][i][j] = self.cd[i][j]
 
     def ins_Kdisrupt(self):

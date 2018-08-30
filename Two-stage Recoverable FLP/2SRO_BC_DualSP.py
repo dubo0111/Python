@@ -2,7 +2,7 @@
 import model_rflp as mr
 import data_generator1 as dg
 import data_generator0 as dg0
-data = dg0.data_gen(6,30,1)
+data = dg0.data_gen(20,50,2)
 p,cd,cdk,sk = data.data()
 #p, cd, cdk, sk = dg.ins_k(20, 50, 2)  # (ni,nk,randomseed*)
 

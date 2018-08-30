@@ -506,7 +506,7 @@ class rflp:
         return self.error
     # Callback: update scenario violation and frequency⁠
 
-    def update_scenario_sorting(self):
+    def update_multiple_scenario(self):
         print('===============sorting==================')
         # extract omega and Q(k)
         violation_now = [
@@ -523,8 +523,8 @@ class rflp:
         #print(rank[0])
         odd_1 = 0
         odd_2 = 0
-        for n in range(round(self.nk / 4 + 1)):
-        # for n in range(1):
+        # for n in range(round(self.nk / 4 + 1)):
+        for n in range(1):
             if violation_now[rank[n]] > 0:
                 self.update_cut(rank[n], self.lift)
                 if self.zero_half == 0:

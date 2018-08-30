@@ -7,7 +7,7 @@ Created on Wed Aug  1 08:24:56 2018
 """
 #import data_generator1 as dg
 import data_generator0 as dg0
-data = dg0.data_gen(3,2,1)
+data = dg0.data_gen(20,50)
 p, cd, cdk, sk = data.data()
 from gurobipy import *
 ni = len(cd)
@@ -238,7 +238,7 @@ value_y = []
 for j in range(ni):
     y_name = ''.join(['y[', str(j), ']'])
     y_temp = m.getVarByName(y_name)
-    print(y_name, ':', y_temp)
+    #print(y_name, ':', y_temp)
     value_y.append(y_temp.x)
 
 m1 = sub_dual(value_y)
@@ -323,23 +323,23 @@ dualobj1, dualobj2 = cal_DualObj()
 print('primal-dual1:', dualobj1)
 print('primal-dual2:', dualobj2)
 
-u = [0 for i in range(ni)]
-v = [[0 for i in range(ni)] for i in range(ni)]
-Q = gamma[0][0] + gamma[1][0] + gamma[2][0] + delta[0][0] + delta[0][1] + delta[1][0] + delta[1][1] + delta[2][0] + delta[2][1] + epsilon[0] + epsilon[1] + epsilon[2] + lamda[1] + lamda[2] + mu[0] + mu[1]
-lamda[0] + lamda[2] + mu[0] + mu[1]
-u[0]= -gamma[0][0] - gamma[1][0] - gamma[2][0] + lamda[0] + mu[0] + nu
-u[1]= -gamma[0][1] - gamma[1][1] - gamma[2][1] + lamda[1] + mu[1] + nu
-u[2]= -gamma[0][2] - gamma[1][2] - gamma[2][2] + lamda[2] + mu[2] + nu
-v[0][0] = gamma[0][0] + delta[0][0] + epsilon[0]
-v[0][1]= 517 * beta[0] + gamma[0][1] + delta[0][1] + epsilon[0]
-v[0][2]= 820 * beta[0] + gamma[0][2] + delta[0][2] + epsilon[0]
-v[1][0]= 100 * beta[1] + gamma[1][0] + delta[1][0] + epsilon[1]
-v[1][1] = gamma[1][1] + delta[1][1] + epsilon[1]
-v[1][2]= 402 * beta[1] + gamma[1][2] + delta[1][2] + epsilon[1]
-v[2][0]= 247 * beta[2] + gamma[2][0] + delta[2][0] + epsilon[2]
-v[2][1]= 192 * beta[2] + gamma[2][1] + delta[2][1] + epsilon[2]
-v[2][2] = gamma[2][2] + delta[2][2] + epsilon[2]
-L3 = -beta[0] - beta[1] - beta[2] #1
+#u = [0 for i in range(ni)]
+#v = [[0 for i in range(ni)] for i in range(ni)]
+#Q = gamma[0][0] + gamma[1][0] + gamma[2][0] + delta[0][0] + delta[0][1] + delta[1][0] + delta[1][1] + delta[2][0] + delta[2][1] + epsilon[0] + epsilon[1] + epsilon[2] + lamda[1] + lamda[2] + mu[0] + mu[1]
+#lamda[0] + lamda[2] + mu[0] + mu[1]
+#u[0]= -gamma[0][0] - gamma[1][0] - gamma[2][0] + lamda[0] + mu[0] + nu
+#u[1]= -gamma[0][1] - gamma[1][1] - gamma[2][1] + lamda[1] + mu[1] + nu
+#u[2]= -gamma[0][2] - gamma[1][2] - gamma[2][2] + lamda[2] + mu[2] + nu
+#v[0][0] = gamma[0][0] + delta[0][0] + epsilon[0]
+#v[0][1]= 517 * beta[0] + gamma[0][1] + delta[0][1] + epsilon[0]
+#v[0][2]= 820 * beta[0] + gamma[0][2] + delta[0][2] + epsilon[0]
+#v[1][0]= 100 * beta[1] + gamma[1][0] + delta[1][0] + epsilon[1]
+#v[1][1] = gamma[1][1] + delta[1][1] + epsilon[1]
+#v[1][2]= 402 * beta[1] + gamma[1][2] + delta[1][2] + epsilon[1]
+#v[2][0]= 247 * beta[2] + gamma[2][0] + delta[2][0] + epsilon[2]
+#v[2][1]= 192 * beta[2] + gamma[2][1] + delta[2][1] + epsilon[2]
+#v[2][2] = gamma[2][2] + delta[2][2] + epsilon[2]
+#L3 = -beta[0] - beta[1] - beta[2] #1
 
 #m1.reset()
 

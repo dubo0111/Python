@@ -4,7 +4,7 @@ import model_rflp as mr
 #import data_generator1 as dg
 #p, cd, cdk, sk = dg.ins_k(20, 100, 40)  # (ni,nk,randomseed*)
 import data_generator0 as dg0
-data = dg0.data_gen(20,100,2)
+data = dg0.data_gen(20,100,1)
 p,cd,cdk,sk = data.data()
 from gurobipy import *
 import time
@@ -25,7 +25,7 @@ try:
             #         TSRFLP.value_y = vals[-2 - ni:-2]
             #         TSRFLP.update_sub_dual(callback=1)
             #         TSRFLP.sub_dual.optimize()
-            #         TSRFLP.update_scenario_sorting()
+            #         TSRFLP.update_multiple_scenario()
             #         TSRFLP.worst_scenario()
             #         TSRFLP.update_cut()
             #         model.cbCut(TSRFLP.omega >= TSRFLP.constr_y)
@@ -46,11 +46,11 @@ try:
             TSRFLP.value_y = vals[-2 - ni:-2]
             TSRFLP.value_omega = vals[-1]
             TSRFLP.update_sub_dual(callback=1)
-            time_subdual = time.time()
+            # time_subdual = time.time()
             TSRFLP.sub_dual.optimize()
             # print("SUB_callback--- %s seconds ---" % round((time.time() - time_subdual), 2))
             # multiple scenario
-            TSRFLP.update_scenario_sorting()
+            TSRFLP.update_multiple_scenario()
             # if gap_mipsol < 0.1:
             # integer l-shaped cut
                 # TSRFLP.update_sub(callback=1)
@@ -87,9 +87,11 @@ try:
     TSRFLP.master_model.Params.lazyConstraints = 1
 #    TSRFLP.master_model.getVars()[-3].start = 1
     # warm start?
-    # TSRFLP.master_model.optimize()
-    # TSRFLP.update_sub_dual(0)
-    # TSRFLP.sub_dual.optimize()
+    TSRFLP.master_model.optimize()
+    TSRFLP.update_sub_dual(0)
+    TSRFLP.sub_dual.optimize()
+    TSRFLP.gap_calculation()
+    TSRFLP.master_model.addConstr(TSRFLP.a1*TSRFLP.master_model.getVars()[-1]+TSRFLP.a1*TSRFLP.omega >= TSRFLP.LB)
     # TSRFLP.update_master()
     # TSRFLP.sub_dual.getConstrs()[-1].Lazy = 1
     # TSRFLP.master_model.reset()

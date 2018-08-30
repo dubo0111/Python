@@ -11,7 +11,7 @@ p-center model
 #p,cd = dg.ins_small()
 #p,cd = dg.ins_big(100)
 import data_generator0 as dg0
-data = dg0.data_gen(4,1)
+data = dg0.data_gen(10,1)
 p,cd,cdk,sk = data.data()
 
 from gurobipy import *
@@ -59,9 +59,9 @@ try:
             "sumx")
     # save model and optimize
     m.write('.\model\pcenter.lp')
-    m.params.OutputFlag = 0
+    m.params.OutputFlag = 1
     m._vars = m.getVars()
-    m.optimize(mycallback)
+    m.optimize()
 
     # Output
 #    for v in m.getVars():

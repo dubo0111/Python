@@ -5,7 +5,7 @@ Du Bo
 import model_rflp as mr
 #import data_generator1 as dg
 import data_generator0 as dg0
-data = dg0.data_gen(20,10,2)
+data = dg0.data_gen(10,50,2)
 p,cd,cdk,sk = data.data()
 
 from gurobipy import *
@@ -26,7 +26,7 @@ iteration = 0
 gap = 1
 stop = 1e-5
 TSRFLP.master()
-TSRFLP.master_model.params.OutputFlag = 0
+TSRFLP.master_model.params.OutputFlag = 1
 TSRFLP.params_tuneup()
 #TSRFLP.master_model.params.Presolve = 0
 while abs(TSRFLP.gap) >= stop:
