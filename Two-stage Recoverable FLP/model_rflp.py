@@ -469,7 +469,7 @@ class rflp:
         # self.master_model.params.ScaleFlag = 3
         # self.master_model.params.NumericFocus = 3
         # self.master_model.params.PreCrush = 1
-        # self.master_model.params.Cuts = 0
+        self.master_model.params.Cuts = 0
 
         self.sub_model.params.OutputFlag = 0
         # self.sub_model.params.Presolve = 0
@@ -571,3 +571,5 @@ class rflp:
         #     for j in range(ni):
         #         if self.value_y[j] = 0
         # def zero_half(self):
+    #
+    # def initial_stablization(self):

@@ -4,7 +4,7 @@ import model_rflp as mr
 #import data_generator1 as dg
 #p, cd, cdk, sk = dg.ins_k(20, 100, 40)  # (ni,nk,randomseed*)
 import data_generator0 as dg0
-data = dg0.data_gen(20,100,1)
+data = dg0.data_gen(20,20,2)
 p,cd,cdk,sk = data.data()
 from gurobipy import *
 import time
@@ -95,7 +95,6 @@ try:
     # TSRFLP.update_master()
     # TSRFLP.sub_dual.getConstrs()[-1].Lazy = 1
     # TSRFLP.master_model.reset()
-
     TSRFLP.master_model.optimize(mycallback)
 
     print('Optimal solution found: %g' % TSRFLP.master_model.objVal)
