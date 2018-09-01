@@ -67,12 +67,17 @@ class rflp:
         self.viol_freq = [0 for k in range(nk)]
     # build master problem model
 
-    def master(self):
+    def master(self, relax=0):
         # Create variables
         # x:allocations y:location L:auxiliary variable
         x = self.master_model.addVars(
             self.ni, self.ni, vtype=GRB.CONTINUOUS, name="x")
-        self.y = self.master_model.addVars(self.ni, vtype=GRB.BINARY, name="y")
+        if relax = 0:
+            self.y = self.master_model.addVars(
+                self.ni, vtype=GRB.BINARY, name="y")
+        else:
+            self.y = self.master_model.addVars(
+                self.ni, vtype=GRB.CONTINUOUS, name="y")
         L = self.master_model.addVar(
             vtype=GRB.CONTINUOUS, obj=self.a1, name="L")
         self.omega = self.master_model.addVar(lb=0, ub=float(
@@ -460,6 +465,7 @@ class rflp:
         print('Current iteration:', str(self.iteration))
         print('gap = ', str(self.gap))
         print('Cuts added form scenario:', str(self.add_cut_scen[0:-1]))
+
     # tune parameters to avoid numerical issues for subproblem
     # wrong optimal solutions appear for both sub&dual_sub
 
@@ -469,7 +475,7 @@ class rflp:
         # self.master_model.params.ScaleFlag = 3
         # self.master_model.params.NumericFocus = 3
         # self.master_model.params.PreCrush = 1
-        self.master_model.params.Cuts = 0
+        # self.master_model.params.Cuts = 0
 
         self.sub_model.params.OutputFlag = 0
         # self.sub_model.params.Presolve = 0
@@ -504,10 +510,11 @@ class rflp:
             print('# WARNING: gap is a negative value', '\n',
                   '   Wrong dual problem solution.')
         return self.error
+
     # Callback: update scenario violation and frequency⁠
 
     def update_multiple_scenario(self):
-        print('===============sorting==================')
+        # print('===============sorting==================')
         # extract omega and Q(k)
         violation_now = [
             x.x - self.value_omega for x in self.sub_dual.getVars()[-self.nk:]]
@@ -516,15 +523,15 @@ class rflp:
         #         self.violation[k] += violation_now[k]
         #         self.freq[k] += 1
         #         self.viol_freq[k] = self.violation[k] / self.freq[k]
-        #print(self.viol_freq)
+        # print(self.viol_freq)
         # rank = sorted(range(len(self.viol_freq)), reverse=True, key=self.viol_freq.__getitem__)
         rank = sorted(range(len(violation_now)), reverse=True,
                       key=violation_now.__getitem__)
-        #print(rank[0])
+        # print(rank[0])
         odd_1 = 0
         odd_2 = 0
-        # for n in range(round(self.nk / 4 + 1)):
-        for n in range(1):
+        for n in range(round(self.nk / 4 + 1)):
+            # for n in range(1):
             if violation_now[rank[n]] > 0:
                 self.update_cut(rank[n], self.lift)
                 if self.zero_half == 0:
@@ -534,8 +541,9 @@ class rflp:
                         self.master_model.cbLazy(self.omega >= self.constr_y)
                         coeff_strong, constant_strong = self.reformulate_linexpr(
                             self.constr_y)
-                        constr_strong = LinExpr(coeff_strong,self.y.select())+constant_strong
-                        if [k for k in coeff_strong if k %2] != []:
+                        constr_strong = LinExpr(
+                            coeff_strong, self.y.select()) + constant_strong
+                        if [k for k in coeff_strong if k % 2] != []:
                             odd_1 = 1
                         # print(constr_strong)
                     else:
@@ -543,23 +551,26 @@ class rflp:
                         coeff_constr_y, constant_y = self.reformulate_linexpr(
                             self.constr_y)
                         # if self.master_model.cbGet(GRB.Callback.MIPSOL_NODCNT) == 0:
-                        if [k for k in coeff_constr_y if k %2] != []:
+                        if [k for k in coeff_constr_y if k % 2] != []:
                             odd_2 = 1
                         if odd_1 == 1 and odd_2 == 1:
                             coeff_sum, constant_sum = self.reformulate_linexpr(
-                                self.constr_y+constr_strong)
-                            coeff_sum = [math.ceil(0.5*x) for x in coeff_sum]
-                            constant_sum = math.ceil(0.5*constant_sum)
-                            constr_sum = LinExpr(coeff_sum,self.y.select()) + constant_sum
+                                self.constr_y + constr_strong)
+                            coeff_sum = [math.ceil(0.5 * x) for x in coeff_sum]
+                            constant_sum = math.ceil(0.5 * constant_sum)
+                            constr_sum = LinExpr(
+                                coeff_sum, self.y.select()) + constant_sum
                             self.master_model.cbLazy(self.omega >= constr_sum)
                             # print(const r_sum)
                         else:
                             # print(self.constr_y)
-                            self.master_model.cbLazy(self.omega >= self.constr_y)
+                            self.master_model.cbLazy(
+                                self.omega >= self.constr_y)
 
             else:
                 break
     #
+
     def reformulate_linexpr(self, formulation):
         coeff_y = [0 for j in range(self.ni)]
         for n in range(formulation.size()):
@@ -572,4 +583,32 @@ class rflp:
         #         if self.value_y[j] = 0
         # def zero_half(self):
     #
-    # def initial_stablization(self):
+
+    def warm_start(self):
+        self.master_model.optimize()
+        self.update_sub_dual(0)
+        self.sub_dual.optimize()
+        self.gap_calculation()
+        self.master_model.addConstr(self.a1 * self.master_model.getVars()[-1] + self.a1 * self`.omega >= self.LB)
+    #
+
+    def initial_stablization(self, y_step=0.9, inter=0.1):
+        self.master(1)
+        self.master_model.optimize()
+        self.update_y()
+        # interior point:(not sure)
+        y_in = [self.p / self.ni for j in range(self.ni)]
+        y_optimal = self.value_y
+        bound_noimpro = 0
+        while bound_no_impro < 5:
+            self.value_y = [inter * a +
+                            (1 - inter) * b for a, b in zip(y_optimal, y_in)]
+            self.update_sub_dual(1)
+            self.sub_dual.optimize()
+            self.update_cut()
+            self.master_model.addConstr(self.omega >= self.constr_y)
+            y_optimal = self.value_y
+
+            # a = [1,2,3]
+            # b = [4,5,6]
+            # [0.5*x+0.5*y for x,y in zip(a,b)]

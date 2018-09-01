@@ -1,5 +1,5 @@
 # Branch and cut
-# %reset -f
+# ROOT NODE RELAXATION
 import model_rflp as mr
 #import data_generator1 as dg
 #p, cd, cdk, sk = dg.ins_k(20, 100, 40)  # (ni,nk,randomseed*)
@@ -41,7 +41,7 @@ try:
             gap_mipsol = abs(objbst - objbnd)/(1.0 + abs(objbst))
             print('**** New solution at node %d, obj %g, sol %d, '
                   'gap = %g ****' % (nodecnt, obj, solcnt, gap_mipsol))
-#            if gap_mipsol < 10:
+            # if gap_mipsol < 10:
             vals = model.cbGetSolution(model._vars)
             TSRFLP.value_y = vals[-2 - ni:-2]
             TSRFLP.value_omega = vals[-1]
@@ -68,7 +68,8 @@ try:
     TSRFLP.intSP = 1
     TSRFLP.lift = 0
     TSRFLP.zero_half = 0
-    # ----------Benders' Decompisition----------
+# ----------Benders' Decompisition--------
+--
     iteration = 0
     gap = 1
     stop = 1e-5
@@ -85,20 +86,10 @@ try:
     TSRFLP.master_model._lastnode = -GRB.INFINITY
     TSRFLP.master_model._vars = TSRFLP.master_model.getVars()
     TSRFLP.master_model.Params.lazyConstraints = 1
-#    TSRFLP.master_model.getVars()[-3].start = 1
-    # warm start?
-    # TSRFLP.master_model.optimize()
-    # TSRFLP.update_sub_dual(0)
-    # TSRFLP.sub_dual.optimize()
-    # TSRFLP.gap_calculation()
-    # TSRFLP.master_model.addConstr(TSRFLP.a1*TSRFLP.master_model.getVars()[-1]+TSRFLP.a1*TSRFLP.omega >= TSRFLP.LB)
-    # TSRFLP.update_master()
-    # TSRFLP.sub_dual.getConstrs()[-1].Lazy = 1
-    # TSRFLP.master_model.reset()
-    # TSRFLP.master_model.params.NodeLimit = 1
+    TSRFLP.warm_start()
     TSRFLP.master_model.optimize(mycallback)
-#    TSRFLP.master_model.params.NodeLimit = GRB.INFINITY
-#    TSRFLP.master_model.optimize(mycallback)
+    # TSRFLP.master_model.params.NodeLimit = GRB.INFINITY
+    # TSRFLP.master_model.optimize(mycallback)
     print('Optimal solution found: %g' % TSRFLP.master_model.objVal)
 except GurobiError as e:
     print('Error code ' + str(e.errno) + ": " + str(e))
