@@ -1,13 +1,10 @@
 # Branch and cut
-# ROOT NODE RELAXATION
+# Local Branching
 import model_rflp as mr
 #import data_generator1 as dg
 #p, cd, cdk, sk = dg.ins_k(20, 100, 40)  # (ni,nk,randomseed*)
 import data_generator0 as dg0
-import numpy as np
-rn=np.random.randint(10000)
-rn
-data = dg0.data_gen(20,100,80)
+data = dg0.data_gen(20,20,2)
 p,cd,cdk,sk = data.data()
 from gurobipy import *
 import time
@@ -44,7 +41,7 @@ try:
             gap_mipsol = abs(objbst - objbnd)/(1.0 + abs(objbst))
             print('**** New solution at node %d, obj %g, sol %d, '
                   'gap = %g ****' % (nodecnt, obj, solcnt, gap_mipsol))
-            # if gap_mipsol < 10:
+#            if gap_mipsol < 10:
             vals = model.cbGetSolution(model._vars)
             TSRFLP.value_y = vals[-2 - ni:-2]
             TSRFLP.value_omega = vals[-1]
@@ -71,13 +68,13 @@ try:
     TSRFLP.intSP = 1
     TSRFLP.lift = 0
     TSRFLP.zero_half = 0
-# ----------Benders' Decompisition--------
+    # ----------Benders' Decompisition----------
     iteration = 0
     gap = 1
     stop = 1e-5
-#    build = time.time()
+    build = time.time()
     TSRFLP.master()
-#    print("BUILDING MASTER--- %s seconds ---" % round((time.time() - build), 2))
+    print("BUILDING MASTER--- %s seconds ---" % round((time.time() - build), 2))
     build = time.time()
     TSRFLP.dual_sub(callback=1)
     print("BUILDING SUBDUAL--- %s seconds ---" % round((time.time() - build), 2))
@@ -85,16 +82,21 @@ try:
     TSRFLP.sub(callback=1)
     print("BUILDING SUB--- %s seconds ---" % round((time.time() - build), 2))
     TSRFLP.params_tuneup()
-#    TSRFLP.initial_stablization()
-#    for n in TSRFLP.master_model.getVars()[-ni-2:-2]:
-#        n.setAttr('Vtype',GRB.BINARY)
-    start_time = time.time()
     TSRFLP.master_model._lastnode = -GRB.INFINITY
     TSRFLP.master_model._vars = TSRFLP.master_model.getVars()
     TSRFLP.master_model.Params.lazyConstraints = 1
-    # TSRFLP.warm_start()
-#    TSRFLP.master_model.params.NodeLimit = 1
+#    TSRFLP.master_model.getVars()[-3].start = 1
+    # warm start?
+    TSRFLP.master_model.optimize()
+    TSRFLP.update_sub_dual(0)
+    TSRFLP.sub_dual.optimize()
+    TSRFLP.gap_calculation()
+    TSRFLP.master_model.addConstr(TSRFLP.a1*TSRFLP.master_model.getVars()[-1]+TSRFLP.a1*TSRFLP.omega >= TSRFLP.LB)
+    # TSRFLP.update_master()
+    # TSRFLP.sub_dual.getConstrs()[-1].Lazy = 1
+    # TSRFLP.master_model.reset()
     TSRFLP.master_model.optimize(mycallback)
+
     print('Optimal solution found: %g' % TSRFLP.master_model.objVal)
 except GurobiError as e:
     print('Error code ' + str(e.errno) + ": " + str(e))
