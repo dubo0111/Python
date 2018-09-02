@@ -600,6 +600,7 @@ class rflp:
         y_in = [self.p / self.ni for j in range(self.ni)]
         y_optimal = self.value_y
         bound_noimpro = 0
+        last_bound = GRB.INFINITY
         while bound_no_impro < 5:
             self.value_y = [inter * a +
                             (1 - inter) * b for a, b in zip(y_optimal, y_in)]
@@ -608,7 +609,10 @@ class rflp:
             self.update_cut()
             self.master_model.addConstr(self.omega >= self.constr_y)
             y_optimal = self.value_y
-
+            y_in = [y_step*a+(1-y_step)*b for a,b in zip(y_in,y_optimal)]
+            if last_bound == self.master_model.getObjective().getValue():
+                bound_noimpro += 1
+            last_bound = self.master_model.getObjective().getValue()
             # a = [1,2,3]
             # b = [4,5,6]
             # [0.5*x+0.5*y for x,y in zip(a,b)]
