@@ -589,7 +589,8 @@ class rflp:
         self.update_sub_dual(0)
         self.sub_dual.optimize()
         self.gap_calculation()
-        self.master_model.addConstr(self.a1 * self.master_model.getVars()[-1] + self.a1 * self.omega >= self.LB)
+        self.master_model.addConstr(
+            self.a1 * self.master_model.getVars()[-1] + self.a1 * self.omega >= self.LB)
     #
 
     def initial_stablization(self, y_step=0.9, inter=0.1):
@@ -604,7 +605,7 @@ class rflp:
         while bound_no_impro < 5:
             self.value_y = [inter * a +
                             (1 - inter) * b for a, b in zip(y_optimal, y_in)]
-#            self.value_y = self.round_y(self.value_y)
+            # self.value_y = round_y(self.value_y)
             self.update_sub_dual(1)
             self.sub_dual.optimize()
             self.update_cut()
@@ -612,17 +613,18 @@ class rflp:
             self.master_model.optimize()
             self.update_y()
             y_optimal = self.value_y
-            y_in = [y_step*a+(1-y_step)*b for a,b in zip(y_in,y_optimal)]
+            y_in = [y_step * a + (1 - y_step) * b for a,
+                    b in zip(y_in, y_optimal)]
             if last_bound == self.master_model.getObjective().getValue():
                 bound_no_impro += 1
             last_bound = self.master_model.getObjective().getValue()
-            # a = [1,2,3]
-            # b = [4,5,6]
-            # [0.5*x+0.5*y for x,y in zip(a,b)]
-    def round_y(self,value_y):
+
+    def round_y(self, value_y):
         new_y = [0 for j in range(self.ni)]
         rank = sorted(range(len(value_y)), reverse=True,
                       key=value_y.__getitem__)
         for j in range(self.p):
             new_y[rank[j]] = 1
         return new_y
+
+#    def local_branching(self):

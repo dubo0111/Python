@@ -46,5 +46,5 @@ class data_gen:
 
     def data(self):
         self.ins()
-        # self.ins_Kdisrupt()
+        self.ins_Kdisrupt()
         return self.p, self.cd, self.cdk, self.sk

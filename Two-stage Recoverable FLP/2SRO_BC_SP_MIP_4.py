@@ -7,7 +7,7 @@ import data_generator0 as dg0
 import numpy as np
 rn=np.random.randint(10000)
 rn
-data = dg0.data_gen(20,100,80)
+data = dg0.data_gen(30,200,1)
 p,cd,cdk,sk = data.data()
 from gurobipy import *
 import time
@@ -76,7 +76,7 @@ try:
     gap = 1
     stop = 1e-5
 #    build = time.time()
-    TSRFLP.master()
+#    TSRFLP.master()
 #    print("BUILDING MASTER--- %s seconds ---" % round((time.time() - build), 2))
     build = time.time()
     TSRFLP.dual_sub(callback=1)
@@ -85,15 +85,15 @@ try:
     TSRFLP.sub(callback=1)
     print("BUILDING SUB--- %s seconds ---" % round((time.time() - build), 2))
     TSRFLP.params_tuneup()
-#    TSRFLP.initial_stablization()
-#    for n in TSRFLP.master_model.getVars()[-ni-2:-2]:
-#        n.setAttr('Vtype',GRB.BINARY)
+    TSRFLP.initial_stablization()
+    for n in TSRFLP.master_model.getVars()[-ni-2:-2]:
+        n.setAttr('Vtype',GRB.BINARY)
     start_time = time.time()
     TSRFLP.master_model._lastnode = -GRB.INFINITY
     TSRFLP.master_model._vars = TSRFLP.master_model.getVars()
     TSRFLP.master_model.Params.lazyConstraints = 1
-    # TSRFLP.warm_start()
-#    TSRFLP.master_model.params.NodeLimit = 1
+#    TSRFLP.warm_start()
+    TSRFLP.master_model.params.NodeLimit = 1
     TSRFLP.master_model.optimize(mycallback)
     print('Optimal solution found: %g' % TSRFLP.master_model.objVal)
 except GurobiError as e:

@@ -20,17 +20,6 @@ try:
         time1 = time.time()
         if where == GRB.Callback.MIPNODE:
             nodecnt = model.cbGet(GRB.Callback.MIPNODE_NODCNT)
-            # if model.cbGet(GRB.Callback.MIPNODE_STATUS) == GRB.Status.OPTIMAL:
-            #         vals = model.cbGetNodeRel(model._vars)
-            #         TSRFLP.value_y = vals[-2 - ni:-2]
-            #         TSRFLP.update_sub_dual(callback=1)
-            #         TSRFLP.sub_dual.optimize()
-            #         TSRFLP.update_multiple_scenario()
-            #         TSRFLP.worst_scenario()
-            #         TSRFLP.update_cut()
-            #         model.cbCut(TSRFLP.omega >= TSRFLP.constr_y)
-            #         print(TSRFLP.value_y)
-            #         print('++++ MIPNODE Cut ++++')
         if where == GRB.Callback.MIPSOL:
             # status
             nodecnt = model.cbGet(GRB.Callback.MIPSOL_NODCNT)
