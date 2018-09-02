@@ -591,7 +591,6 @@ class rflp:
         self.gap_calculation()
         self.master_model.addConstr(
             self.a1 * self.master_model.getVars()[-1] + self.a1 * self.omega >= self.LB)
-    #
 
     def initial_stablization(self, y_step=0.9, inter=0.1):
         self.master(1)
