@@ -32,7 +32,7 @@ def LIP(p,cd,cdk,sk,a1):
 
         # Set objective to minimize
         m.modelSense = GRB.MINIMIZE
-        m.params.OutputFlag = 1
+        m.params.OutputFlag = 0
         # m.params.Presolve = 0
         # m.params.ScaleFlag = 3
         # m.params.NumericFocus = 3
@@ -111,20 +111,22 @@ def LIP(p,cd,cdk,sk,a1):
 
         #Output
     #    for v in m.getVars():
-    #         print('%s %g' % (v.varName, v.x))
+    #         #print('%s %g' % (v.varName, v.x))
         value_L = m.getVarByName('L')
         value_eta = m.getVarByName('eta')
-    #    print('Obj: %g' % m.objVal)
+    #    #print('Obj: %g' % m.objVal)
 
     except GurobiError as e:
         print('Error code ' + str(e.errno) + ": " + str(e))
     except AttributeError:
+
+
         print('Encountered an attribute error')
-    print('=================LIP SOLUTION==================')
-    print('1st stage:',L.x)
-    print('2nd stage:',eta.x)
-    print('obj:',a1*L.x+a2*eta.x)
-    print("--- %s seconds ---" % round((time.time() - start_time),2))
+    #print('=================LIP SOLUTION==================')
+    #print('1st stage:',L.x)
+    #print('2nd stage:',eta.x)
+    #print('obj:',a1*L.x+a2*eta.x)
+    #print("--- %s seconds ---" % round((time.time() - start_time),2))
 
     runtime = round((time.time() - start_time),2)
     if m.Status == 2:

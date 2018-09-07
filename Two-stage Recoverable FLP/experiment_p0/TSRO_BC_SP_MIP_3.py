@@ -26,7 +26,7 @@ def bra_cut(p,cd,cdk,sk,a1):
                 # objbst = model.cbGet(GRB.Callback.MIPSOL_OBJBST)
                 # objbnd = model.cbGet(GRB.Callback.MIPSOL_OBJBND)
                 # gap_mipsol = abs(objbst - objbnd)/(1.0 + abs(objbst))
-                # print('**** New solution at node %d, obj %g, sol %d, '
+                # #print('**** New solution at node %d, obj %g, sol %d, '
                 #       'gap = %g ****' % (nodecnt, obj, solcnt, gap_mipsol))
                 vals = model.cbGetSolution(model._vars)
                 TSRFLP.value_y = vals[-2 - ni:-2]
@@ -34,9 +34,9 @@ def bra_cut(p,cd,cdk,sk,a1):
                 TSRFLP.update_sub_dual(callback=1)
                 # time_subdual = time.time()
                 TSRFLP.sub_dual.optimize()
-                # print("SUB_callback--- %s seconds ---" % round((time.time() - time_subdual), 2))
+                # #print("SUB_callback--- %s seconds ---" % round((time.time() - time_subdual), 2))
                 TSRFLP.update_multiple_scenario()
-                # print("callback--- %s seconds ---" % round((time.time() - time1), 2))
+                # #print("callback--- %s seconds ---" % round((time.time() - time1), 2))
             if where == GRB.Callback.MESSAGE:
                 # Message callback
                 msg = model.cbGet(GRB.Callback.MSG_STRING)
@@ -48,7 +48,7 @@ def bra_cut(p,cd,cdk,sk,a1):
             if where == GRB.Callback.MIPSOL:
                 vals = model.cbGetSolution(model._vars)
                 TSRFLP.value_y = vals[-2 - ni:-2]
-                # optimality cut (Benders' cut)
+#                # optimality cut (Benders' cut)
                 TSRFLP.value_omega = vals[-1]
                 TSRFLP.update_sub_dual(callback=1)
                 TSRFLP.sub_dual.optimize()
@@ -60,7 +60,7 @@ def bra_cut(p,cd,cdk,sk,a1):
                 TSRFLP.sub_model.optimize()
                 TSRFLP.worst_scenario(1)
                 TSRFLP.gap_calculation(1)
-                print('---------gap:',TSRFLP.int_gap)
+                #print('---------gap:',TSRFLP.int_gap)
                 if abs(TSRFLP.int_gap) >= 1e-4:
                    TSRFLP.update_integer_cut()
                    # cut incumbent solution
@@ -82,13 +82,13 @@ def bra_cut(p,cd,cdk,sk,a1):
         stop = 1e-5
         # build = time.time()
         TSRFLP.master()
-        # print("BUILDING MASTER--- %s seconds ---" % round((time.time() - build), 2))
+        # #print("BUILDING MASTER--- %s seconds ---" % round((time.time() - build), 2))
         # build = time.time()
         TSRFLP.dual_sub(callback=1)
-        # print("BUILDING SUBDUAL--- %s seconds ---" % round((time.time() - build), 2))
+        # #print("BUILDING SUBDUAL--- %s seconds ---" % round((time.time() - build), 2))
         # build = time.time()
         TSRFLP.sub(callback=1)
-        # print("BUILDING SUB--- %s seconds ---" % round((time.time() - build), 2))
+        # #print("BUILDING SUB--- %s seconds ---" % round((time.time() - build), 2))
         TSRFLP.params_tuneup()
         # set initail time
         start_time = time.time()
@@ -111,16 +111,16 @@ def bra_cut(p,cd,cdk,sk,a1):
         TSRFLP.worst_scenario(1)
         TSRFLP.gap_calculation(0,1)
         if abs(TSRFLP.gap) > 1e-4:
-            # print('=========== Start Integer L-shaped cut =========')
+            # #print('=========== Start Integer L-shaped cut =========')
             TSRFLP.master_model.reset()
             TSRFLP.master_model.optimize(mycallback_int)
-        print('Optimal solution found: %g' % TSRFLP.master_model.objVal)
+        #print('Optimal solution found: %g' % TSRFLP.master_model.objVal)
     except GurobiError as e:
         print('Error code ' + str(e.errno) + ": " + str(e))
     except AttributeError:
         print('Encountered an attribute error')
         # TSRFLP.error_check()
-    print("--- %s seconds ---" % round((time.time() - start_time), 2))
+    #print("--- %s seconds ---" % round((time.time() - start_time), 2))
     # OUTPUT
     runtime =  round((time.time() - start_time), 2)
     if TSRFLP.master_model.Status == 2:
