@@ -12,7 +12,7 @@ import time
 #import data_generator1 as dg
 import data_generator0 as dg0
 #INPUT Parameters:p, cost matrix
-data = dg0.data_gen(20,20,2)
+data = dg0.data_gen(10,20,2)
 p,cd,cdk,sk = data.data()
 
 from gurobipy import *
@@ -67,15 +67,15 @@ try:
             (x.sum(i,'*') == 1 for i in range(ni)),
             "sumx")
 
-    m.optimize()
-    print('========================')
-    print('L:',L.x)
+#    m.optimize()
+#    print('========================')
+#    print('L:',L.x)
 
     # ---------- Sub problem ----------
     # v:allocations u:location L3,eta: auxiliary variable
     v = m.addVars(nk,ni,ni,vtype=GRB.CONTINUOUS, name="v")
-#    u = m.addVars(nk,ni,vtype=GRB.BINARY, name="u")
-    u = m.addVars(nk,ni,vtype=GRB.CONTINUOUS, name="u")
+    u = m.addVars(nk,ni,vtype=GRB.BINARY, name="u")
+#    u = m.addVars(nk,ni,vtype=GRB.CONTINUOUS, name="u")
     L3 = m.addVars(nk,vtype=GRB.CONTINUOUS, name="L3")
     eta = m.addVar(vtype=GRB.CONTINUOUS, obj=a2, name="eta")
 

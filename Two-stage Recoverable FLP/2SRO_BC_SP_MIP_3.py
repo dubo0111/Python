@@ -1,5 +1,5 @@
 # Branch and cut
-# %reset -f
+# multiple scenario generation
 import model_rflp as mr
 #import data_generator1 as dg
 #p, cd, cdk, sk = dg.ins_k(20, 100, 40)  # (ni,nk,randomseed*)
