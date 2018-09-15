@@ -1,23 +1,23 @@
 '''
 Algorithm camparison
 Time Limit = 2000s
--'''
+'''
 import numpy as np
 import pandas as pd
 import TSRO_BC_SP_MIP_3 as bc
 import TSRO_BD_DualSP_INT as bd
 import TSRO_LIP as lip
 import data_generator0 as dg0
-import email_self as em
+#import email_self as em
 
 ex_N = [20,20,40,60]  # number of vertexes
-ex_k = [10,30,60,100] # number of scenarios
+ex_k = [20,30,60,100] # number of scenarios
 ex_all = 10 # number of experiments for each combination
 #ex_N = [5, 10]
 #ex_k = [5, 10]
 #ex_all = 1
 a1 = 0.5
-rnd_seed = 140  # starting random seed
+rnd_seed = 17  # starting random seed
 
 try:
     result = []

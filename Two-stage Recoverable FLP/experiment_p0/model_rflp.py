@@ -469,7 +469,7 @@ class rflp:
 
     def gap_calculation(self, MIP_SP=0, Check_optimal=0):
         if MIP_SP == 1:  # in mycallback
-            vals = self.master_model.cbGetSolution(self.master_model._vars)
+            # vals = self.master_model.cbGetSolution(self.master_model._vars)
             #value_L = vals(-2)
             max_Lk = self.worst_scenario(1)
             self.int_gap = max_Lk[0] - self.value_omega
@@ -518,6 +518,7 @@ class rflp:
         print('==========================================')
         print('Current iteration:', str(self.iteration))
         print('gap = ', str(self.gap))
+        print('int_gap = ',str(self.int_gap))
         print('Cuts added form scenario:', str(self.add_cut_scen[0:-1]))
 
     # tune parameters to avoid numerical issues for subproblem

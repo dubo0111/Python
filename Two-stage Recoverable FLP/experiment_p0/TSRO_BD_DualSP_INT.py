@@ -51,7 +51,7 @@ def benders_deco(p,cd,cdk,sk,a1):
         if runtime >= 2000:
             break
     # ------------Integer cut --------------
-    TSRFLP.UB = GRB.INFINITY
+    TSRFLP.UB = GRB.INFINITY #?
     TSRFLP.sub()
     TSRFLP.sub_model.params.OutputFlag = 0
     # TSRFLP.update_sub(callback=0)
@@ -63,13 +63,13 @@ def benders_deco(p,cd,cdk,sk,a1):
         TSRFLP.update_master()
         time_master= time.time()
         TSRFLP.master_model.optimize()
-        print("---time_master--- %s seconds ---" % round((time.time() - time_sub), 2))
+        # print("---time_master--- %s seconds ---" % round((time.time() - time_sub), 2))
         TSRFLP.update_sub(callback=0)
-        time_sub= time.time()
+        # time_sub= time.time()
         TSRFLP.sub_model.optimize()
-        print("---time_sub--- %s seconds ---" % round((time.time() - time_sub), 2))
+        # print("---time_sub--- %s seconds ---" % round((time.time() - time_sub), 2))
         TSRFLP.worst_scenario(1)
-        TSRFLP.gap_calculation(0,1)
+        TSRFLP.gap_calculation(1)
         TSRFLP.update_status()
         TSRFLP.update_integer_cut()
         TSRFLP.master_model.addConstr(TSRFLP.omega >= TSRFLP.integer_cut)
@@ -85,7 +85,7 @@ def benders_deco(p,cd,cdk,sk,a1):
     if TSRFLP.int_gap == float('inf'):
         gap = TSRFLP.gap
     else:
-        gap = TSRFLP.intgap
+        gap = TSRFLP.int_gap
     if abs(gap) <= 1e-5:
         TSRFLP.opt = 1
         gap = 0
