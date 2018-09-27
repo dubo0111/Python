@@ -1,0 +1,69 @@
+\documentclass[a4paper]{article}
+\usepackage[a4paper,top=2cm,bottom=2cm,left=2cm,right=2cm,marginparwidth=1.75cm]{geometry}
+\usepackage{amsmath,amsthm,amssymb}
+ \title{Answer for Shanshu Interview Question}
+
+\author{Du Bo\thanks{dubo0111@hotmail.com; 188-1056-2686}}
+
+\begin{document}
+\maketitle
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Notations}
+\begin{itemize}
+ \item $k\in K$: Order set
+ \item $S=\{v_m|m\in M\}$: Start node set
+ \item Virtual end node 0: $t_{i0} = 0$; $c_0 =0$
+ \item $U = K \cup S  \cup 0$: Consider $s\in S$, $0$ are virtual orders
+ \item $m\in M$: Vehicle set
+ \item $c_j$: time for order $j$, $c_j = d(j_1,j_2)$; $j_1,j_2$: origin and destination of order $j$.
+ \item $t_{ij} = d(i_2,j_1)$.
+
+\end{itemize}
+
+\subsection{Variables}
+
+\begin{itemize}
+ \item $x_{ijm}=1$ if order $j$ is served after $i$ by $m$, $0$ otherwise.
+ \item $T_{im}$: the time at which $m$ begins to serve order $i$
+\end{itemize}
+
+\section{Formulation}
+
+\begin{align}
+ \max\qquad & \sum_{m\in M}\sum_{i\in U}\sum_{j\in U} c_j x_{ijm} \label{obj}                                            \\
+ s.t.\qquad & \sum_{m\in M}\sum_{j\in K} x_{ijm} \leqslant 1                  & \forall i \in K\cup S  \label{2}         \\
+            & \sum_{j \in K} x_{v_{m}jm} = 1                                  & \forall m\in M \label{3}                 \\
+            & \sum_{j \in U} x_{jim} - \sum_{j \in U} x_{ijm}=0               & \forall i \in
+ K, m\in M \label{4}                                                                                                     \\
+            & \sum_{i\in K} x_{i0m} = 1                                       & \forall m\in M \label{5}                 \\
+            & T_{jm} \geqslant (T_{im}+c_i+t_{ij})x_{ijm}                     & \forall i\in U, j\in U,m\in M \label{6}  \\
+            & l_i^p \leqslant T_{im} \leqslant u_i^p                          & \forall i \in U,m\in M \label{7}         \\
+            & l_i^d \leqslant T_{im}+c_i \leqslant u_i^d                      & \forall i \in U,m\in M \label{8}         \\
+            & x_{ijm}\in \{0,1\}                                              & \forall i\in U, j\in U, m\in M \label{9} \\
+            & T_{im} \geqslant 0                                              & \forall i\in U, m\in M \label{10}
+\end{align}
+
+\subsection{Linearization}
+
+Let $Q_{ijm} = T_{im}x_{ijm}$. Constraints in \eqref{6} can be linearized using \textit{big}-$\mathbb{M}$ method:\\
+\begin{align}
+  & T_{jm} \geqslant (c_i+t_{ij})x_{ijm}+Q_{ijm} &\forall i\in U, j\in U,m\in M \label{11}\\
+  & Q_{ijm} \leqslant \mathbb{M} x_{ijm} &\forall i\in U, j\in U,m\in M \label{12}\\
+  & Q_{ijm} \leqslant T_{im} &\forall i\in U,m\in M \label{13}\\
+  & Q_{ijm} \geqslant T_{im} - (1-x_{ijm})\mathbb{M} &\forall i\in U, j\in U,m\in M \label{14}\\
+  & Q_{ijm} \geqslant 0 &\forall i\in U, j\in U,m\in M \label{15}
+\end{align}
+
+\section{Solution}
+The model is solved using Python 3 and Gurobi 8.0. The optimal solution is:\\
+\begin{itemize}
+  \item Objective Value: 130.0
+  \item Routing Plan /(Node(Time)):
+  \item Vehicle 1: 4(0.0)--10(13.0)--9(16.0)--7(34.0)--10(55.0)
+  \item Vehicle 2: 10(0.0)--9(3.0)--2(21.0)--5(33.0)--3(47.0)
+  \item Vehicle 3: 2(0.0)--7(7.0)--10(28.0)--4(41.0)--3(54.0)
+\end{itemize}
+
+
+\end{document}

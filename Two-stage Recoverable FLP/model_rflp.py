@@ -592,7 +592,7 @@ class rflp:
         self.master_model.addConstr(
             self.a1 * self.master_model.getVars()[-1] + self.a1 * self.omega >= self.LB)
 
-    
+
         self.master(1)
         self.master_model.optimize()
         self.update_y()
