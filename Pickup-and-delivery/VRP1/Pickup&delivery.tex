@@ -10,15 +10,15 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Notations}
+
 \begin{itemize}
- \item $k\in K$: Order set
+ \item $i\in K$: Order set
  \item $S=\{v_m|m\in M\}$: Start node set
- \item Virtual end node 0: $t_{i0} = 0$; $c_0 =0$
- \item $U = K \cup S  \cup 0$: Consider $s\in S$, $0$ are virtual orders
  \item $m\in M$: Vehicle set
  \item $c_j$: time for order $j$, $c_j = d(j_1,j_2)$; $j_1,j_2$: origin and destination of order $j$.
  \item $t_{ij} = d(i_2,j_1)$.
-
+ \item 0: Virtual end node, $t_{i0} = 0, \forall i\in K$; $c_0 =0$
+ \item $U = K \cup S  \cup 0$
 \end{itemize}
 
 \subsection{Variables}
@@ -32,7 +32,7 @@
 
 \begin{align}
  \max\qquad & \sum_{m\in M}\sum_{i\in U}\sum_{j\in U} c_j x_{ijm} \label{obj}                                            \\
- s.t.\qquad & \sum_{m\in M}\sum_{j\in K} x_{ijm} \leqslant 1                  & \forall i \in K\cup S  \label{2}         \\
+ s.t.\qquad & \sum_{m\in M}\sum_{i\in K\cup S} x_{ijm} \leqslant 1                  & \forall j \in K\cup S  \label{2}         \\
             & \sum_{j \in K} x_{v_{m}jm} = 1                                  & \forall m\in M \label{3}                 \\
             & \sum_{j \in U} x_{jim} - \sum_{j \in U} x_{ijm}=0               & \forall i \in
  K, m\in M \label{4}                                                                                                     \\
@@ -44,6 +44,7 @@
             & T_{im} \geqslant 0                                              & \forall i\in U, m\in M \label{10}
 \end{align}
 
+ Consider $s\in S$, $0$ are virtual orders. constraints \eqref{2} ensure each order is only served once. constraints \eqref{3}, \eqref{4} and \eqref{5} define a feasible path in $\mathcal{G}$ for each vehicle. constraints \eqref{6} ensure consistency of time. constraints \eqref{7} and \eqref{8} are time windows.
 \subsection{Linearization}
 
 Let $Q_{ijm} = T_{im}x_{ijm}$. Constraints in \eqref{6} can be linearized using \textit{big}-$\mathbb{M}$ method:\\
@@ -56,10 +57,10 @@ Let $Q_{ijm} = T_{im}x_{ijm}$. Constraints in \eqref{6} can be linearized using 
 \end{align}
 
 \section{Solution}
-The model is solved using Python 3 and Gurobi 8.0. The optimal solution is:\\
+The model is solved using Python 3 and Gurobi 8.0. The optimal solution found:\\
 \begin{itemize}
   \item Objective Value: 130.0
-  \item Routing Plan /(Node(Time)):
+  \item Routing Plan (Node(Time)):
   \item Vehicle 1: 4(0.0)--10(13.0)--9(16.0)--7(34.0)--10(55.0)
   \item Vehicle 2: 10(0.0)--9(3.0)--2(21.0)--5(33.0)--3(47.0)
   \item Vehicle 3: 2(0.0)--7(7.0)--10(28.0)--4(41.0)--3(54.0)
