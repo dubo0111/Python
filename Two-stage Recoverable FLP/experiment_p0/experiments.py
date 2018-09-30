@@ -3,7 +3,6 @@ Algorithm camparison
 Time Limit = 2000s
 '''
 import numpy as np
-import pandas as pd
 import TSRO_BC_SP_MIP_3 as bc
 import TSRO_BD_DualSP_INT as bd
 import TSRO_LIP as lip
@@ -17,7 +16,7 @@ ex_all = 10 # number of experiments for each combination
 #ex_k = [5, 10]
 #ex_all = 1
 a1 = 0.5
-rnd_seed = 17  # starting random seed
+rnd_seed = 17  # 17 # starting random seed
 
 try:
     result = []
@@ -27,9 +26,9 @@ try:
                 data = dg0.data_gen(n_N, n_k, rnd_seed)
                 p, cd, cdk, sk = data.data()
                 rnd_seed += 1
-#                t1, cut1, opt1, val1, gap1 = bc.bra_cut(p, cd, cdk, sk, a1)
-                t2, cut2, opt2, val2, gap2 = bd.benders_deco(p, cd, cdk, sk, a1)
-#                t3, opt3, val3, gap3 = lip.LIP(p, cd, cdk, sk, a1)
+                y1,t1, cut1, opt1, val1, gap1 = bc.bra_cut(p, cd, cdk, sk, a1)
+#                t2, cut2, opt2, val2, gap2 = bd.benders_deco(p, cd, cdk, sk, a1)
+                y3,t3, opt3, val3, gap3 = lip.LIP(p, cd, cdk, sk, a1)
 #                result_i = [n_N, n_k, rnd_seed, t1, cut1, opt1, val1, gap1,
 #                            t2, cut2, opt2, val2, gap2, t3, opt3, val3, gap3]
 #                result.append(result_i)

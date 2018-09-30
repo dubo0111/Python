@@ -135,4 +135,11 @@ def LIP(p,cd,cdk,sk,a1):
     gap= m.MIPGap
     if abs(gap)<=1e-5:
         gap = 0
-    return runtime,opt,objval,gap
+
+    var_y=[]
+    for j in range(ni):
+        y_name = ''.join(['y[', str(j), ']'])
+        y_temp = m.getVarByName(y_name)
+        var_y.append(y_temp.x)
+
+    return var_y,runtime,opt,objval,gap

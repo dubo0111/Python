@@ -48,7 +48,7 @@ def bra_cut(p,cd,cdk,sk,a1):
             if where == GRB.Callback.MIPSOL:
                 vals = model.cbGetSolution(model._vars)
                 TSRFLP.value_y = vals[-2 - ni:-2]
-#                # optimality cut (Benders' cut)
+                # optimality cut (Benders' cut)
                 TSRFLP.value_omega = vals[-1]
                 TSRFLP.update_sub_dual(callback=1)
                 TSRFLP.sub_dual.optimize()
@@ -60,7 +60,7 @@ def bra_cut(p,cd,cdk,sk,a1):
                 TSRFLP.sub_model.optimize()
                 TSRFLP.worst_scenario(1)
                 TSRFLP.gap_calculation(1)
-                #print('---------gap:',TSRFLP.int_gap)
+#                print('---------gap:',TSRFLP.int_gap)
                 if abs(TSRFLP.int_gap) >= 1e-4:
                    TSRFLP.update_integer_cut()
                    # cut incumbent solution
@@ -105,6 +105,8 @@ def bra_cut(p,cd,cdk,sk,a1):
 
         TSRFLP.master_model.optimize(mycallback)
 
+        isinteger = 0
+
         # start integer cut
         TSRFLP.update_sub(callback=0)
         TSRFLP.sub_model.optimize()
@@ -112,6 +114,7 @@ def bra_cut(p,cd,cdk,sk,a1):
         TSRFLP.gap_calculation(0,1)
         if abs(TSRFLP.gap) > 1e-4:
             # #print('=========== Start Integer L-shaped cut =========')
+            isinteger = 1
             TSRFLP.master_model.reset()
             TSRFLP.master_model.optimize(mycallback_int)
         #print('Optimal solution found: %g' % TSRFLP.master_model.objVal)
@@ -129,4 +132,11 @@ def bra_cut(p,cd,cdk,sk,a1):
     gap= TSRFLP.master_model.MIPGap
     if abs(gap)<=1e-5:
         gap = 0
-    return runtime,TSRFLP.num_cut,TSRFLP.opt,objval,gap
+
+    var_y=[]
+    for j in range(TSRFLP.ni):
+        y_name = ''.join(['y[', str(j), ']'])
+        y_temp = TSRFLP.master_model.getVarByName(y_name)
+        var_y.append(y_temp.x)
+
+    return var_y,isinteger,runtime,TSRFLP.num_cut,TSRFLP.opt,objval,gap
