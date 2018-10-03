@@ -526,7 +526,7 @@ class rflp:
     # wrong optimal solutions appear for both sub&dual_sub
 
     def params_tuneup(self):
-        self.master_model.params.OutputFlag = 0
+        self.master_model.params.OutputFlag = 1
         self.master_model.params.Presolve = 0
         self.master_model.params.ScaleFlag = 3
         self.master_model.params.NumericFocus = 3

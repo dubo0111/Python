@@ -51,14 +51,14 @@ def bra_cut(p,cd,cdk,sk,a1):
         def mycallback_int(model,where):
             if where == GRB.Callback.MIPSOL:
                 # status
-                # nodecnt = model.cbGet(GRB.Callback.MIPSOL_NODCNT)
-                # obj = model.cbGet(GRB.Callback.MIPSOL_OBJ)
-                # solcnt = model.cbGet(GRB.Callback.MIPSOL_SOLCNT)
-                # objbst = model.cbGet(GRB.Callback.MIPSOL_OBJBST)
-                # objbnd = model.cbGet(GRB.Callback.MIPSOL_OBJBND)
-                # gap_mipsol = abs(objbst - objbnd)/(1.0 + abs(objbst))
-                # print('**** New solution at node %d, obj %g, sol %d, '
-                #       'gap = %g ****' % (nodecnt, obj, solcnt, gap_mipsol))
+                nodecnt = model.cbGet(GRB.Callback.MIPSOL_NODCNT)
+                obj = model.cbGet(GRB.Callback.MIPSOL_OBJ)
+                solcnt = model.cbGet(GRB.Callback.MIPSOL_SOLCNT)
+                objbst = model.cbGet(GRB.Callback.MIPSOL_OBJBST)
+                objbnd = model.cbGet(GRB.Callback.MIPSOL_OBJBND)
+                gap_mipsol = abs(objbst - objbnd)/(1.0 + abs(objbst))
+                print('**** New solution at node %d, obj %g, sol %d, '
+                      'gap = %g ****' % (nodecnt, obj, solcnt, gap_mipsol))
                 # print(TSRFLP.master_model.MIPGap)
                 vals = model.cbGetSolution(model._vars)
                 TSRFLP.value_y = vals[-2 - ni:-2]
@@ -68,22 +68,21 @@ def bra_cut(p,cd,cdk,sk,a1):
                 TSRFLP.sub_model.optimize()
                 TSRFLP.worst_scenario(1) # calculate max L3
                 TSRFLP.gap_calculation(1) # calculate int_gap
-                # print('----Integer gap:',TSRFLP.int_gap)
+                print('----Integer gap:',TSRFLP.int_gap)
                 if TSRFLP.int_gap >= 1e-4:
                     # cut incumbent solution
                     TSRFLP.update_integer_cut()
                     model.cbLazy(TSRFLP.omega >= TSRFLP.integer_cut)
-                # else:
-                #     model.terminate()
+#                else:
+#                    model.terminate()
 
                 # optimality cut (Benders' cut)
-
-                # TSRFLP.update_sub_dual(callback=1)
-                # TSRFLP.sub_dual.optimize()
-                # # TSRFLP.update_multiple_scenario()
-                # TSRFLP.worst_scenario()
-                # TSRFLP.update_cut()
-                # model.cbLazy(TSRFLP.omega >= TSRFLP.constr_y)
+                TSRFLP.update_sub_dual(callback=1)
+                TSRFLP.sub_dual.optimize()
+                # TSRFLP.update_multiple_scenario()
+                TSRFLP.worst_scenario()
+                TSRFLP.update_cut()
+                model.cbLazy(TSRFLP.omega >= TSRFLP.constr_y)
             if where == GRB.Callback.MESSAGE:
                 # Message callback
                 msg = model.cbGet(GRB.Callback.MSG_STRING)
@@ -134,7 +133,7 @@ def bra_cut(p,cd,cdk,sk,a1):
         if abs(TSRFLP.gap) > 1e-4: # start integer cut
             print(TSRFLP.gap)
             # print('=========== Start Integer L-shaped cut =========')
-            TSRFLP.master_model.addConstr(TSRFLP.a1*TSRFLP.master_model.getVars()[-1]+TSRFLP.a1*TSRFLP.omega >= TSRFLP.master_model.Objval)
+            # TSRFLP.master_model.addConstr(TSRFLP.a1*TSRFLP.master_model.getVars()[-1]+TSRFLP.a1*TSRFLP.omega >= TSRFLP.master_model.Objval)
             TSRFLP.update_integer_cut()
             TSRFLP.master_model.addConstr(TSRFLP.omega >= TSRFLP.integer_cut)
             TSRFLP.master_model.optimize(mycallback_int)

@@ -16,7 +16,7 @@ ex_all = 100000000 # number of experiments for each combination
 #ex_k = [5, 10]
 #ex_all = 1
 a1 = 0.5
-rnd_seed = 1  #starting random seed
+rnd_seed = 22  #starting random seed 
 ##############
 # bug record
 # 20 20 17
