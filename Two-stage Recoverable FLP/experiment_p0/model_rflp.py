@@ -31,8 +31,8 @@ class rflp:
     nu = 0
     add_cut_scen = []
     iteration = 0
-    gap = float('inf')
-    int_gap = float('inf')
+    gap = float('inf') #
+    int_gap = float('inf') #
     dual = 1
     intSP = 0
     error = 0
@@ -95,8 +95,8 @@ class rflp:
         self.nu = 0
         self.add_cut_scen = []
         self.iteration = 0
-        self.gap = float('inf')
-        self.int_gap = float('inf')
+        self.gap = float('inf') #
+        self.int_gap = float('inf') #
         self.dual = 1
         self.intSP = 0
         self.error = 0
@@ -364,7 +364,7 @@ class rflp:
         beta = [0 for j in range(self.ni)]
         if numk == None:
             numk = self.max_k
-        if self.dual == 0:
+        if self.dual == 0: # for pirmal sub problem
             cm1 = self.sub_model.getConstrs()
             num_c = len(cm1)
             dual_value = []
@@ -391,7 +391,7 @@ class rflp:
                 mu[n] = dual[mu_name]
             nu_name = ''.join(['nu[', str(numk), ']'])
             nu = dual[nu_name]
-        elif self.dual == 1:
+        elif self.dual == 1: # for dual sub problem
             for i in range(self.ni):
                 for j in range(self.ni):
                     gamma_name = ''.join(
@@ -456,11 +456,12 @@ class rflp:
     #
 
     def update_integer_cut(self):
+        # simplified cut (use no dual information)
         sum_c_y = LinExpr()
         for i in range(self.ni):
             if self.value_y[i] == 1:
                 sum_c_y += self.y[i] - 1
-            elif self.value_y[i] == 1:
+            elif self.value_y[i] == 0:
                 sum_c_y += -self.y[i]
         sum_c_y += 1
         max_Lk = self.worst_scenario(1)
@@ -472,7 +473,7 @@ class rflp:
             # vals = self.master_model.cbGetSolution(self.master_model._vars)
             #value_L = vals(-2)
             max_Lk = self.worst_scenario(1)
-            self.int_gap = max_Lk[0] - self.value_omega
+            self.int_gap = max_Lk[0] - self.value_omega #
            # print('max_Lk:',max_Lk[0])
         else:
             # extract L
@@ -487,7 +488,7 @@ class rflp:
                 max_Lk = self.worst_scenario(1)
             # update UB
             self.UB = min([self.UB, self.a1 * value_L + self.a2 * max_Lk[0]])
-            self.gap = (self.UB - self.LB) / self.LB
+            self.gap = (self.UB - self.LB) / self.LB #
         # return self.gap
     #
 
@@ -518,7 +519,7 @@ class rflp:
         print('==========================================')
         print('Current iteration:', str(self.iteration))
         print('gap = ', str(self.gap))
-        print('int_gap = ',str(self.int_gap))
+        # print('int_gap = ',str(self.int_gap))
         print('Cuts added form scenario:', str(self.add_cut_scen[0:-1]))
 
     # tune parameters to avoid numerical issues for subproblem
@@ -526,21 +527,21 @@ class rflp:
 
     def params_tuneup(self):
         self.master_model.params.OutputFlag = 0
-        # self.master_model.params.Presolve = 0
-        # self.master_model.params.ScaleFlag = 3
-        # self.master_model.params.NumericFocus = 3
+        self.master_model.params.Presolve = 0
+        self.master_model.params.ScaleFlag = 3
+        self.master_model.params.NumericFocus = 3
         # self.master_model.params.PreCrush = 1
         # self.master_model.params.Cuts = 0
 
         self.sub_model.params.OutputFlag = 0
-        # self.sub_model.params.Presolve = 0
-        # self.sub_model.params.ScaleFlag = 3
-        # self.sub_model.params.NumericFocus = 3
+        self.sub_model.params.Presolve = 0
+        self.sub_model.params.ScaleFlag = 3
+        self.sub_model.params.NumericFocus = 3
 
         self.sub_dual.params.OutputFlag = 0
-        # self.sub_dual.params.Presolve = 0
-        # self.sub_dual.params.ScaleFlag = 3
-        # self.sub_dual.params.NumericFocus = 3
+        self.sub_dual.params.Presolve = 0
+        self.sub_dual.params.ScaleFlag = 3
+        self.sub_dual.params.NumericFocus = 3
         # References:
         #m1.params.ScaleFlag = 3
         #m1.params.ObjScale = 100
@@ -621,7 +622,6 @@ class rflp:
                             # print(self.constr_y)
                             self.master_model.cbLazy(
                                 self.omega >= self.constr_y)
-
             else:
                 break
     #

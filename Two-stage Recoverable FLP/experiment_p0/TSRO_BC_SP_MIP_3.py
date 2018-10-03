@@ -1,5 +1,9 @@
-# Branch and cut
-# multiple scenario generation
+'''
+Benders' Decomposition:
+Branch and cut
+multiple scenario generation
+Du Bo
+'''
 import model_rflp as mr
 #import data_generator1 as dg
 #p, cd, cdk, sk = dg.ins_k(20, 100, 40)  # (ni,nk,randomseed*)
@@ -46,25 +50,40 @@ def bra_cut(p,cd,cdk,sk,a1):
 
         def mycallback_int(model,where):
             if where == GRB.Callback.MIPSOL:
+                # status
+                # nodecnt = model.cbGet(GRB.Callback.MIPSOL_NODCNT)
+                # obj = model.cbGet(GRB.Callback.MIPSOL_OBJ)
+                # solcnt = model.cbGet(GRB.Callback.MIPSOL_SOLCNT)
+                # objbst = model.cbGet(GRB.Callback.MIPSOL_OBJBST)
+                # objbnd = model.cbGet(GRB.Callback.MIPSOL_OBJBND)
+                # gap_mipsol = abs(objbst - objbnd)/(1.0 + abs(objbst))
+                # print('**** New solution at node %d, obj %g, sol %d, '
+                #       'gap = %g ****' % (nodecnt, obj, solcnt, gap_mipsol))
+                # print(TSRFLP.master_model.MIPGap)
                 vals = model.cbGetSolution(model._vars)
                 TSRFLP.value_y = vals[-2 - ni:-2]
-                # optimality cut (Benders' cut)
                 TSRFLP.value_omega = vals[-1]
-                TSRFLP.update_sub_dual(callback=1)
-                TSRFLP.sub_dual.optimize()
-                TSRFLP.worst_scenario()
-                TSRFLP.update_cut()
-                model.cbLazy(TSRFLP.omega >= TSRFLP.constr_y)
                 # integer l-shaped cut
                 TSRFLP.update_sub(callback=1)
                 TSRFLP.sub_model.optimize()
-                TSRFLP.worst_scenario(1)
-                TSRFLP.gap_calculation(1)
-#                print('---------gap:',TSRFLP.int_gap)
-                if abs(TSRFLP.int_gap) >= 1e-4:
-                   TSRFLP.update_integer_cut()
-                   # cut incumbent solution
-                   model.cbLazy(TSRFLP.omega >= TSRFLP.integer_cut)
+                TSRFLP.worst_scenario(1) # calculate max L3
+                TSRFLP.gap_calculation(1) # calculate int_gap
+                # print('----Integer gap:',TSRFLP.int_gap)
+                if TSRFLP.int_gap >= 1e-4:
+                    # cut incumbent solution
+                    TSRFLP.update_integer_cut()
+                    model.cbLazy(TSRFLP.omega >= TSRFLP.integer_cut)
+                # else:
+                #     model.terminate()
+
+                # optimality cut (Benders' cut)
+
+                # TSRFLP.update_sub_dual(callback=1)
+                # TSRFLP.sub_dual.optimize()
+                # # TSRFLP.update_multiple_scenario()
+                # TSRFLP.worst_scenario()
+                # TSRFLP.update_cut()
+                # model.cbLazy(TSRFLP.omega >= TSRFLP.constr_y)
             if where == GRB.Callback.MESSAGE:
                 # Message callback
                 msg = model.cbGet(GRB.Callback.MSG_STRING)
@@ -102,22 +121,32 @@ def bra_cut(p,cd,cdk,sk,a1):
         TSRFLP.sub_dual.optimize()
         TSRFLP.gap_calculation()
         TSRFLP.master_model.addConstr(TSRFLP.a1*TSRFLP.master_model.getVars()[-1]+TSRFLP.a1*TSRFLP.omega >= TSRFLP.LB)
-
         TSRFLP.master_model.optimize(mycallback)
-
-        isinteger = 0
-
-        # start integer cut
+        # --------------- Integer L-shaped cut -----------------
+        # print(TSRFLP.master_model.MIPGap)
+        # Check if reach optimal without integer cut
+        TSRFLP.UB = GRB.INFINITY #reset
         TSRFLP.update_sub(callback=0)
         TSRFLP.sub_model.optimize()
-        TSRFLP.worst_scenario(1)
+        # TSRFLP.worst_scenario(1)
         TSRFLP.gap_calculation(0,1)
-        if abs(TSRFLP.gap) > 1e-4:
-            # #print('=========== Start Integer L-shaped cut =========')
-            isinteger = 1
-            TSRFLP.master_model.reset()
+
+        if abs(TSRFLP.gap) > 1e-4: # start integer cut
+            print(TSRFLP.gap)
+            # print('=========== Start Integer L-shaped cut =========')
+            TSRFLP.master_model.addConstr(TSRFLP.a1*TSRFLP.master_model.getVars()[-1]+TSRFLP.a1*TSRFLP.omega >= TSRFLP.master_model.Objval)
+            TSRFLP.update_integer_cut()
+            TSRFLP.master_model.addConstr(TSRFLP.omega >= TSRFLP.integer_cut)
             TSRFLP.master_model.optimize(mycallback_int)
         #print('Optimal solution found: %g' % TSRFLP.master_model.objVal)
+
+#        # Check if reach optimal without integer cut
+#        TSRFLP.update_sub(callback=0)
+#        TSRFLP.sub_model.optimize()
+#        TSRFLP.worst_scenario(1)
+#        TSRFLP.gap_calculation(0,1)
+#        print(TSRFLP.gap)
+
     except GurobiError as e:
         print('Error code ' + str(e.errno) + ": " + str(e))
     except AttributeError:
@@ -139,4 +168,4 @@ def bra_cut(p,cd,cdk,sk,a1):
         y_temp = TSRFLP.master_model.getVarByName(y_name)
         var_y.append(y_temp.x)
 
-    return var_y,isinteger,runtime,TSRFLP.num_cut,TSRFLP.opt,objval,gap
+    return var_y,runtime,TSRFLP.num_cut,TSRFLP.opt,objval,gap
