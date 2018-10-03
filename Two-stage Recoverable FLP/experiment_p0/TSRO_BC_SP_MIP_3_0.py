@@ -35,7 +35,7 @@ def bra_cut(p,cd,cdk,sk,a1):
                 TSRFLP.sub_dual.optimize()
                 max_Lk = TSRFLP.worst_scenario()
                 # #print("SUB_callback--- %s seconds ---" % round((time.time() - time_subdual), 2))
-                if max_Lk[0] - TSRFLP.value_omega <=1e-4:
+                if max_Lk[0] - TSRFLP.value_omega >=1e-4:
                     TSRFLP.update_multiple_scenario()
                 # #print("callback--- %s seconds ---" % round((time.time() - time1), 2))
                 # ------- integer cut --------

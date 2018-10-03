@@ -1,3 +1,3 @@
 email_self.py
 *.log
-*.pyc
+*.cpython-36.pyc
