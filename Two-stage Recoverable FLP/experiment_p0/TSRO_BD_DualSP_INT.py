@@ -48,18 +48,21 @@ def benders_deco(p,cd,cdk,sk,a1):
             # print('Optimal Objective Value = ', str(TSRFLP.UB))
         iteration += 1
         runtime =  round((time.time() - start_time), 2)
+        time_limit = 0
         if runtime >= 2000:
+            time_limit = 1
             break
     # ------------Integer cut --------------
-    # Check optimality with primal SP first
-    TSRFLP.UB = GRB.INFINITY #reset
-    TSRFLP.sub()
-    TSRFLP.sub_model.params.OutputFlag = 0
-    # TSRFLP.update_sub(callback=0)
-    TSRFLP.sub_model.optimize()
-    # TSRFLP.worst_scenario(1)
-    TSRFLP.gap_calculation(0,1)
-    print('========= Start Integer L-shaped cut ==========')
+    if time_limit != 1:
+        # Check optimality with primal SP first
+        TSRFLP.UB = GRB.INFINITY #reset
+        TSRFLP.sub()
+        TSRFLP.sub_model.params.OutputFlag = 0
+        # TSRFLP.update_sub(callback=0)
+        TSRFLP.sub_model.optimize()
+        # TSRFLP.worst_scenario(1)
+        TSRFLP.gap_calculation(0,1)
+        print('========= Start Integer L-shaped cut ==========')
 
     while abs(TSRFLP.gap) > 1e-4:
         # Integer L-shaped cut
