@@ -525,23 +525,28 @@ class rflp:
     # tune parameters to avoid numerical issues for subproblem
     # wrong optimal solutions appear for both sub&dual_sub
 
-    def params_tuneup(self):
-        self.master_model.params.OutputFlag = 1
-        # self.master_model.params.Presolve = 0
-        # self.master_model.params.ScaleFlag = 3
-        # self.master_model.params.NumericFocus = 3
+    def params_tuneup(self,accu=0):
+        self.master_model.params.OutputFlag = 0
+        self.sub_model.params.OutputFlag = 0
+        self.sub_dual.params.OutputFlag = 0
         # self.master_model.params.PreCrush = 1
         # self.master_model.params.Cuts = 0
+        if accu == 1:
+            # self.master_model.params.Cuts = 0
+            # self.sub_model.params.Cuts = 0
+            # self.sub_dual.params.Cuts = 0
 
-        self.sub_model.params.OutputFlag = 0
-        # self.sub_model.params.Presolve = 0
-        # self.sub_model.params.ScaleFlag = 3
-        # self.sub_model.params.NumericFocus = 3
+            self.master_model.params.Presolve = 0
+            self.master_model.params.ScaleFlag = 3
+            self.master_model.params.NumericFocus = 3
 
-        self.sub_dual.params.OutputFlag = 0
-        # self.sub_dual.params.Presolve = 0
-        # self.sub_dual.params.ScaleFlag = 3
-        # self.sub_dual.params.NumericFocus = 3
+            self.sub_model.params.Presolve = 0
+            self.sub_model.params.ScaleFlag = 3
+            self.sub_model.params.NumericFocus = 3
+        
+            self.sub_dual.params.Presolve = 0
+            self.sub_dual.params.ScaleFlag = 3
+            self.sub_dual.params.NumericFocus = 3
         # References:
         #m1.params.ScaleFlag = 3
         #m1.params.ObjScale = 100

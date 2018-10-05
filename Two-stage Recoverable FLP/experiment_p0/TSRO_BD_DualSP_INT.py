@@ -62,9 +62,9 @@ def benders_deco(p,cd,cdk,sk,a1):
         TSRFLP.sub_model.optimize()
         # TSRFLP.worst_scenario(1)
         TSRFLP.gap_calculation(0,1)
-        print('========= Start Integer L-shaped cut ==========')
+        # print('========= Start Integer L-shaped cut ==========')
 
-    while abs(TSRFLP.gap) > 1e-4:
+    while abs(TSRFLP.gap) > 1e-4 and time_limit != 1:
         # Integer L-shaped cut
         TSRFLP.update_integer_cut()
         TSRFLP.master_model.addConstr(TSRFLP.omega >= TSRFLP.integer_cut)
@@ -87,8 +87,8 @@ def benders_deco(p,cd,cdk,sk,a1):
         runtime =  round((time.time() - start_time), 2)
         if runtime >= 2000:
             break
-    print('Optimal Objective Value = ', str(TSRFLP.UB))
-    print("--- %s seconds ---" % runtime)
+    # print('Optimal Objective Value = ', str(TSRFLP.UB))
+    # print("--- %s seconds ---" % runtime)
     if TSRFLP.int_gap == float('inf'):
         gap = TSRFLP.gap
     else:

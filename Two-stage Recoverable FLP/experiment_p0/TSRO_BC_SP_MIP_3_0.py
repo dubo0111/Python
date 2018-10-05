@@ -31,20 +31,22 @@ def bra_cut(p,cd,cdk,sk,a1):
                 TSRFLP.value_y = vals[-2 - ni:-2]
                 TSRFLP.value_omega = vals[-1]
                 TSRFLP.update_sub_dual(callback=1)
-                # time_subdual = time.time()
+                time_subdual = time.time()
                 TSRFLP.sub_dual.optimize()
                 max_Lk = TSRFLP.worst_scenario()
-                # #print("SUB_callback--- %s seconds ---" % round((time.time() - time_subdual), 2))
+                # print("DUAL_SUB_callback--- %s seconds ---" % round((time.time() - time_subdual), 2))
                 if max_Lk[0] - TSRFLP.value_omega >=1e-4:
                     TSRFLP.update_multiple_scenario()
-                # #print("callback--- %s seconds ---" % round((time.time() - time1), 2))
+                    # print("callback--- %s seconds ---" % round((time.time() - time1), 2))
                 # ------- integer cut --------
                 else:
                     TSRFLP.update_sub(callback=1)
+                    time_sub = time.time()
                     TSRFLP.sub_model.optimize()
+                    # print("PRIMAL_SUB_callback--- %s seconds ---" % round((time.time() - time_sub), 2))
                     TSRFLP.worst_scenario(1) # calculate max L3
                     TSRFLP.gap_calculation(1) # calculate int_gap
-                    print('----Integer gap:',TSRFLP.int_gap)
+                    # print('----Integer gap:',TSRFLP.int_gap)
                     if TSRFLP.int_gap >= 1e-4:
                         # cut incumbent solution
                         TSRFLP.update_integer_cut()
@@ -54,7 +56,8 @@ def bra_cut(p,cd,cdk,sk,a1):
                 msg = model.cbGet(GRB.Callback.MSG_STRING)
                 cutname = 'Lazy constraints'
                 if cutname in msg:
-                    TSRFLP.num_cut += float(msg[-2])
+                    TSRFLP.num_cut += int(msg[20:-1])
+            # print(time.time() - start_time)
             if time.time() - start_time >= 2000:
                 model.terminate()
 
