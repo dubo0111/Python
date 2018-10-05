@@ -6,6 +6,7 @@ import numpy as np
 import TSRO_BC_SP_MIP_3_0 as bc0
 import TSRO_BC_SP_MIP_3 as bc
 import TSRO_BD_DualSP_INT as bd
+import TSRO_BD_DualSP_INT_0 as bd0
 import TSRO_LIP as lip
 import data_generator0 as dg0
 #import email_self as em
@@ -34,10 +35,11 @@ for n_N in ex_N:
             p, cd, cdk, sk = data.data()
             rnd_seed += 1
 #            print(rnd_seed)
-            y0,t0, cut0, opt0, val0, gap0 = bc0.bra_cut(p, cd, cdk, sk, a1)
+#            y0,t0, cut0, opt0, val0, gap0 = bc0.bra_cut(p, cd, cdk, sk, a1)
 #            y1,t1, cut1, opt1, val1, gap1 = bc.bra_cut(p, cd, cdk, sk, a1)
-            t2, cut2, opt2, val2, gap2 = bd.benders_deco(p, cd, cdk, sk, a1)
-            y3,t3, opt3, val3, gap3 = lip.LIP(p, cd, cdk, sk, a1)
+#            t2, cut2, opt2, val2, gap2 = bd.benders_deco(p, cd, cdk, sk, a1)
+            t2, cut2, opt2, val2, gap2 = bd0.benders_deco(p, cd, cdk, sk, a1)
+#            y3,t3, opt3, val3, gap3 = lip.LIP(p, cd, cdk, sk, a1)
             break
         break
     break
