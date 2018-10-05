@@ -4,22 +4,22 @@ Time Limit = 2000s
 '''
 import numpy as np
 import pandas as pd
+#import TSRO_BC_SP_MIP_3 as bc
 import TSRO_BC_SP_MIP_3_0 as bc
-# import TSRO_BC_SP_MIP_3_0 as bc0
 import TSRO_BD_DualSP_INT as bd
 import TSRO_LIP as lip
 import data_generator0 as dg0
 #import email_self as em
 
-ex_N = [10,20,40,60]  # number of vertexes
+ex_N = [30,40]  # number of vertexes
 ex_k = [10,20,30,40,50] # number of scenarios
 ex_all = 10 # number of experiments for each combination
-## bug 
+## bug
 # 10,30,46
 ##
 a1 = 0.5
-rnd_seed = 1  # 17 # starting random seed
-bug = [45]
+rnd_seed = 120  # 17 # starting random seed
+bug = [45,101]
 
 try:
     result = []
@@ -32,7 +32,7 @@ try:
                     rnd_seed += 2
                 else:
                     rnd_seed += 1
-                
+                print(rnd_seed)
                 ###
                 y1,t1, cut1, opt1, val1, gap1 = bc.bra_cut(p, cd, cdk, sk, a1)
                 t2, cut2, opt2, val2, gap2 = bd.benders_deco(p, cd, cdk, sk, a1)

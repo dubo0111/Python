@@ -543,7 +543,7 @@ class rflp:
             self.sub_model.params.Presolve = 0
             self.sub_model.params.ScaleFlag = 3
             self.sub_model.params.NumericFocus = 3
-        
+
             self.sub_dual.params.Presolve = 0
             self.sub_dual.params.ScaleFlag = 3
             self.sub_dual.params.NumericFocus = 3
@@ -592,7 +592,7 @@ class rflp:
         odd_1 = 0
         odd_2 = 0
         for n in range(round(self.nk / 4 + 1)):
-            # for n in range(1):
+        # for n in range(1):
             if violation_now[rank[n]] > 0:
                 self.update_cut(rank[n], self.lift)
                 if self.zero_half == 0:
