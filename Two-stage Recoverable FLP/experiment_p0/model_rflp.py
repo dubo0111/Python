@@ -3,6 +3,7 @@
 # get variables,dual variables
 import copy
 import math
+import numpy as np
 from gurobipy import *
 
 
@@ -353,6 +354,7 @@ class rflp:
             y_name = ''.join(['y[', str(j), ']'])
             y_temp = self.master_model.getVarByName(y_name)
             self.value_y.append(y_temp.x)
+        self.value_y = [round(x) for x in self.value_y]
     # update cut to be added to master problem in each iteration
 
     def update_cut(self, numk=None, lift=0):
@@ -503,6 +505,8 @@ class rflp:
             max_Lk = max([[v, i] for i, v in enumerate(value_L3)])
         elif self.dual == 1 and MIP_SP != 1:
             value_Qk = []
+            # if self.sub_dual.Status != 2:
+            #     aaa = 1
             for k in range(self.nk):
                 Qk_name = ''.join(['Qk[', str(k), ']'])
                 Qk_temp = self.sub_dual.getVarByName(Qk_name)
@@ -526,7 +530,7 @@ class rflp:
     # wrong optimal solutions appear for both sub&dual_sub
 
     def params_tuneup(self,accu=0):
-        self.master_model.params.OutputFlag = 0
+        self.master_model.params.OutputFlag = 1
         self.sub_model.params.OutputFlag = 0
         self.sub_dual.params.OutputFlag = 0
         # self.master_model.params.PreCrush = 1
@@ -645,38 +649,52 @@ class rflp:
     #
 
     def warm_start(self):
-        self.master_model.optimize()
-        self.update_sub_dual(0)
-        self.sub_dual.optimize()
-        self.gap_calculation()
-        self.master_model.addConstr(
-            self.a1 * self.master_model.getVars()[-1] + self.a1 * self.omega >= self.LB)
+        # self.master_model.optimize()
+        # self.update_sub_dual(0)
+        # self.sub_dual.optimize()
+        # self.gap_calculation()
+        # self.master_model.addConstr(
+        #     self.a1 * self.master_model.getVars()[-1] + self.a1 * self.omega >= self.LB)
 
+        # random initialization
 
-        self.master(1)
-        self.master_model.optimize()
-        self.update_y()
-        # interior point:(not sure)
-        y_in = [self.p / self.ni for j in range(self.ni)]
-        y_optimal = self.value_y
-        bound_no_impro = 0
-        last_bound = GRB.INFINITY
-        while bound_no_impro < 5:
-            self.value_y = [inter * a +
-                            (1 - inter) * b for a, b in zip(y_optimal, y_in)]
-            # self.value_y = round_y(self.value_y)
-            self.update_sub_dual(1)
-            self.sub_dual.optimize()
-            self.update_cut()
-            self.master_model.addConstr(self.omega >= self.constr_y)
-            self.master_model.optimize()
-            self.update_y()
-            y_optimal = self.value_y
-            y_in = [y_step * a + (1 - y_step) * b for a,
-                    b in zip(y_in, y_optimal)]
-            if last_bound == self.master_model.getObjective().getValue():
-                bound_no_impro += 1
-            last_bound = self.master_model.getObjective().getValue()
+        # for i in range(100):
+        #     a = np.random.choice(range(self.ni), self.p, replace=False)
+        #     self.value_y = [0 for n in range(self.ni)]
+        #     for j in a:
+        #         self.value_y[j] = 1
+        #     self.update_sub_dual(1)
+        #     self.sub_dual.optimize()
+        #     max_Lk = self.worst_scenario()
+        #     self.update_cut()
+        #     self.master_model.addConstr(self.omega >= self.constr_y)
+        #     self.master_model.getConstrs()[-1].Lazy = 1
+
+        # chase the carrot??
+        # self.master(1)
+        # self.master_model.optimize()
+        # self.update_y()
+        # # interior point:(not sure)
+        # y_in = [self.p / self.ni for j in range(self.ni)]
+        # y_optimal = self.value_y
+        # bound_no_impro = 0
+        # last_bound = GRB.INFINITY
+        # while bound_no_impro < 5:
+        #     self.value_y = [inter * a +
+        #                     (1 - inter) * b for a, b in zip(y_optimal, y_in)]
+        #     # self.value_y = round_y(self.value_y)
+        #     self.update_sub_dual(1)
+        #     self.sub_dual.optimize()
+        #     self.update_cut()
+        #     self.master_model.addConstr(self.omega >= self.constr_y)
+        #     self.master_model.optimize()
+        #     self.update_y()
+        #     y_optimal = self.value_y
+        #     y_in = [y_step * a + (1 - y_step) * b for a,
+        #             b in zip(y_in, y_optimal)]
+        #     if last_bound == self.master_model.getObjective().getValue():
+        #         bound_no_impro += 1
+        #     last_bound = self.master_model.getObjective().getValue()
 
     def round_y(self, value_y):
         new_y = [0 for j in range(self.ni)]

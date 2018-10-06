@@ -106,9 +106,9 @@ def LIP(p,cd,cdk,sk,a1):
         start_time = time.time()
         m.Params.TimeLimit = 2000
         # m.OutputFlag = 1
-        # m.params.Presolve = 0
-        # m.params.ScaleFlag = 3
-        # m.params.NumericFocus = 3
+#        m.params.Presolve = 0
+        m.params.ScaleFlag = 2
+        m.params.NumericFocus = 2
         m.optimize()
 
         #Output

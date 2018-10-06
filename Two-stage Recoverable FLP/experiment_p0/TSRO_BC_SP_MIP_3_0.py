@@ -29,6 +29,7 @@ def bra_cut(p,cd,cdk,sk,a1):
                 #       'gap = %g ****' % (nodecnt, obj, solcnt, gap_mipsol))
                 vals = model.cbGetSolution(model._vars)
                 TSRFLP.value_y = vals[-2 - ni:-2]
+                TSRFLP.value_y = [round(x) for x in TSRFLP.value_y] # make sure y are binary
                 TSRFLP.value_omega = vals[-1]
                 TSRFLP.update_sub_dual(callback=1)
                 time_subdual = time.time()
@@ -85,6 +86,7 @@ def bra_cut(p,cd,cdk,sk,a1):
         TSRFLP.master_model._vars = TSRFLP.master_model.getVars()
         TSRFLP.master_model.Params.lazyConstraints = 1
         #
+#        TSRFLP.warm_start()
         TSRFLP.master_model.optimize(mycallback)
 
     except GurobiError as e:

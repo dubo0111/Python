@@ -41,7 +41,7 @@ def benders_deco(p,cd,cdk,sk,a1):
         TSRFLP.sub_dual.optimize()
         # print("---time_sub--- %s seconds ---" % round((time.time() - time_sub), 2))
         TSRFLP.gap_calculation()
-        # TSRFLP.update_status()
+        TSRFLP.update_status()
         # TSRFLP.error_check()
 #        if abs(TSRFLP.gap) <= stop:
             # print('OPTIMAL SOLUTION FOUND !')
@@ -85,7 +85,7 @@ def benders_deco(p,cd,cdk,sk,a1):
         # print("---time_sub--- %s seconds ---" % round((time.time() - time_sub), 2))
         # TSRFLP.worst_scenario(1) # worst sub obj (L3)
         TSRFLP.gap_calculation(0,1) # calculate gap
-        # TSRFLP.update_status() #
+        TSRFLP.update_status() #
         iteration += 1
         runtime =  round((time.time() - start_time), 2)
         if runtime >= 2000:
