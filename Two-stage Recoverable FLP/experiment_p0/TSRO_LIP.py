@@ -32,7 +32,7 @@ def LIP(p,cd,cdk,sk,a1):
 
         # Set objective to minimize
         m.modelSense = GRB.MINIMIZE
-        m.params.OutputFlag = 0
+        m.params.OutputFlag = 1
         # m.params.Cuts = 0
 
         # (1) Maximum cost constraints (objective): L>sum(cdx) forall i
@@ -106,9 +106,9 @@ def LIP(p,cd,cdk,sk,a1):
         start_time = time.time()
         m.Params.TimeLimit = 2000
         # m.OutputFlag = 1
-#        m.params.Presolve = 0
-        m.params.ScaleFlag = 2
-        m.params.NumericFocus = 2
+        # m.params.Presolve = 0
+        # m.params.ScaleFlag = 2
+        # m.params.NumericFocus = 2
         m.optimize()
 
         #Output

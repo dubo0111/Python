@@ -11,14 +11,14 @@ import TSRO_LIP as lip
 import data_generator0 as dg0
 #import email_self as em
 
-ex_N = [20]  # number of vertexes
+ex_N = [10]  # number of vertexes
 ex_k = [10,20,30,40,50] # number of scenarios
 ex_all = 10 # number of experiments for each combination
 ## bug
 # 10,30,46
 ##
 a1 = 0.5
-rnd_seed = 180  # 17 # starting random seed
+rnd_seed = 102  # 17 # starting random seed
 bug = [45,101,120]
 
 try:
