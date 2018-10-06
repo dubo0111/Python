@@ -25,7 +25,7 @@ class data_gen:
         if self.p == 1:
             self.sum_k = 1
         else:
-            self.sum_k = int(round(self.p*0.2))
+            self.sum_k = int(round(self.p*0.5))
 
     def ins(self):
         np.random.seed(self.rnd)
