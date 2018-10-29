@@ -3,7 +3,6 @@
 # get variables,dual variables
 import copy
 import math
-import numpy as np
 from gurobipy import *
 
 
@@ -37,12 +36,6 @@ class rflp:
     dual = 1
     intSP = 0
     error = 0
-    Benders_cut = 0
-    callback_time = 0
-    callback_num = 0
-    Benders_cut = 0
-    Integer_cut = 0
-    warm = 0
     # cuts adding
     violation = []
     freq = []
@@ -107,12 +100,6 @@ class rflp:
         self.dual = 1
         self.intSP = 0
         self.error = 0
-        self.Benders_cut = 0
-        self.callback_time = 0
-        self.callback_num = 0
-        self.Benders_cut_call = 0
-        self.Integer_cut = 0
-        self.warm = 0
         # cuts adding
         self.violation = []
         self.freq = []
@@ -366,7 +353,6 @@ class rflp:
             y_name = ''.join(['y[', str(j), ']'])
             y_temp = self.master_model.getVarByName(y_name)
             self.value_y.append(y_temp.x)
-        self.value_y = [round(x) for x in self.value_y]
     # update cut to be added to master problem in each iteration
 
     def update_cut(self, numk=None, lift=0):
@@ -517,8 +503,6 @@ class rflp:
             max_Lk = max([[v, i] for i, v in enumerate(value_L3)])
         elif self.dual == 1 and MIP_SP != 1:
             value_Qk = []
-            # if self.sub_dual.Status != 2:
-            #     aaa = 1
             for k in range(self.nk):
                 Qk_name = ''.join(['Qk[', str(k), ']'])
                 Qk_temp = self.sub_dual.getVarByName(Qk_name)
@@ -541,25 +525,19 @@ class rflp:
     # tune parameters to avoid numerical issues for subproblem
     # wrong optimal solutions appear for both sub&dual_sub
 
-    def params_tuneup(self,accu=0):
-        self.master_model.params.OutputFlag = 1
+    def params_tuneup(self,accu=1):
+        self.master_model.params.OutputFlag = 0
         self.sub_model.params.OutputFlag = 0
         self.sub_dual.params.OutputFlag = 0
         # self.master_model.params.PreCrush = 1
         # self.master_model.params.Cuts = 0
         if accu == 1:
-            # self.master_model.params.Cuts = 0
-            # self.sub_model.params.Cuts = 0
-            # self.sub_dual.params.Cuts = 0
-
             self.master_model.params.Presolve = 0
             self.master_model.params.ScaleFlag = 3
             self.master_model.params.NumericFocus = 3
-
             self.sub_model.params.Presolve = 0
             self.sub_model.params.ScaleFlag = 3
             self.sub_model.params.NumericFocus = 3
-
             self.sub_dual.params.Presolve = 0
             self.sub_dual.params.ScaleFlag = 3
             self.sub_dual.params.NumericFocus = 3
@@ -607,14 +585,12 @@ class rflp:
         # print(rank[0])
         odd_1 = 0
         odd_2 = 0
-        # for n in range(round(self.nk / 4 + 1)):
-        for n in range(round(self.nk)):
+        for n in range(round(self.nk / 4 + 1)):
             # for n in range(1):
             if violation_now[rank[n]] > 0:
                 self.update_cut(rank[n], self.lift)
                 if self.zero_half == 0:
                     self.master_model.cbLazy(self.omega >= self.constr_y)
-                    self.Benders_cut += 1
                 elif self.zero_half == 1:
                     if n == 0:
                         self.master_model.cbLazy(self.omega >= self.constr_y)
@@ -662,52 +638,39 @@ class rflp:
         # def zero_half(self):
     #
 
-    def warm_start(self,warm = 0):
-        # self.master_model.optimize()
-        # self.update_sub_dual(0)
-        # self.sub_dual.optimize()
-        # self.gap_calculation()
-        # self.master_model.addConstr(
-        #     self.a1 * self.master_model.getVars()[-1] + self.a1 * self.omega >= self.LB)
-        if warm == 0:
-            # chase the carrot??
-            self.master(1)
-            self.params_tuneup()
+    def warm_start(self):
+        self.master_model.optimize()
+        self.update_sub_dual(0)
+        self.sub_dual.optimize()
+        self.gap_calculation()
+        self.master_model.addConstr(
+            self.a1 * self.master_model.getVars()[-1] + self.a1 * self.omega >= self.LB)
+
+
+        self.master(1)
+        self.master_model.optimize()
+        self.update_y()
+        # interior point:(not sure)
+        y_in = [self.p / self.ni for j in range(self.ni)]
+        y_optimal = self.value_y
+        bound_no_impro = 0
+        last_bound = GRB.INFINITY
+        while bound_no_impro < 5:
+            self.value_y = [inter * a +
+                            (1 - inter) * b for a, b in zip(y_optimal, y_in)]
+            # self.value_y = round_y(self.value_y)
+            self.update_sub_dual(1)
+            self.sub_dual.optimize()
+            self.update_cut()
+            self.master_model.addConstr(self.omega >= self.constr_y)
             self.master_model.optimize()
             self.update_y()
-            # interior point:(not sure)
-            y_in = [self.p / self.ni for j in range(self.ni)]
             y_optimal = self.value_y
-            bound_no_impro = 0
-            last_bound = GRB.INFINITY
-            inter = 0.1 # step length
-            y_step = 0.1 # step length
-            while bound_no_impro < 5:
-                self.value_y = [inter * a +
-                                (1 - inter) * b for a, b in zip(y_optimal, y_in)]
-    #            self.value_y = round_y(self.value_y)
-                self.update_sub_dual(1)
-                self.sub_dual.optimize()
-                self.update_cut()
-                self.master_model.addConstr(self.omega >= self.constr_y)
-                self.master_model.optimize()
-                self.update_y()
-                y_optimal = self.value_y
-                y_in = [y_step * a + (1 - y_step) * b for a,
-                        b in zip(y_in, y_optimal)]
-                if last_bound == self.master_model.getObjective().getValue():
-                    bound_no_impro += 1
-                last_bound = self.master_model.getObjective().getValue()
-            # reset y to binary
-            for j in range(self.ni):
-                y_name = ''.join(['y[', str(j), ']'])
-                self.master_model.getVarByName(y_name).vtype = 'B'
-                # print(self.master_model.getVarByName(y_name).vtype)
-            self.warm = 'over'
-        else:
-            self.master()
-            self.params_tuneup()
-            self.warm = 'over'
+            y_in = [y_step * a + (1 - y_step) * b for a,
+                    b in zip(y_in, y_optimal)]
+            if last_bound == self.master_model.getObjective().getValue():
+                bound_no_impro += 1
+            last_bound = self.master_model.getObjective().getValue()
 
     def round_y(self, value_y):
         new_y = [0 for j in range(self.ni)]

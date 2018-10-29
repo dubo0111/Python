@@ -11,14 +11,14 @@ p-center model
 #p,cd = dg.ins_small()
 #p,cd = dg.ins_big(100)
 import data_generator0 as dg0
-data = dg0.data_gen(10,1)
+data = dg0.data_gen(10,1,2)
 p,cd,cdk,sk = data.data()
 
 from gurobipy import *
-def mycallback(model, where):
-    if where == GRB.Callback.MIPSOL:
-        print('-----------------------')
-        print(model.cbGetSolution(model._vars))
+# def mycallback(model, where):
+#     if where == GRB.Callback.MIPSOL:
+#         print('-----------------------')
+#         print(model.cbGetSolution(model._vars))
 
 try:
 
@@ -60,7 +60,7 @@ try:
     # save model and optimize
     m.write('.\model\pcenter.lp')
     m.params.OutputFlag = 1
-    m._vars = m.getVars()
+    # m._vars = m.getVars()
     m.optimize()
 
     # Output

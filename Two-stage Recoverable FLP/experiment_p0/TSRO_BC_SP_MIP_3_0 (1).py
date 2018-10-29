@@ -29,24 +29,19 @@ def bra_cut(p,cd,cdk,sk,a1):
                 #       'gap = %g ****' % (nodecnt, obj, solcnt, gap_mipsol))
                 vals = model.cbGetSolution(model._vars)
                 TSRFLP.value_y = vals[-2 - ni:-2]
-#                print(TSRFLP.value_y)
-                if TSRFLP.warm == 'over':
-                    TSRFLP.value_y = [round(x) for x in TSRFLP.value_y] # make sure y are binary
                 TSRFLP.value_omega = vals[-1]
                 TSRFLP.update_sub_dual(callback=1)
-                time_subdual = time.time()
+                # time_subdual = time.time()
                 TSRFLP.sub_dual.optimize()
                 max_Lk = TSRFLP.worst_scenario()
-                # print("DUAL_SUB_callback--- %s seconds ---" % round((time.time() - time_subdual), 2))
+                # #print("SUB_callback--- %s seconds ---" % round((time.time() - time_subdual), 2))
                 if max_Lk[0] - TSRFLP.value_omega >=1e-4:
                     TSRFLP.update_multiple_scenario()
-                    # print("callback--- %s seconds ---" % round((time.time() - time1), 2))
+                # #print("callback--- %s seconds ---" % round((time.time() - time1), 2))
                 # ------- integer cut --------
                 else:
                     TSRFLP.update_sub(callback=1)
-                    time_sub = time.time()
                     TSRFLP.sub_model.optimize()
-                    # print("PRIMAL_SUB_callback--- %s seconds ---" % round((time.time() - time_sub), 2))
                     TSRFLP.worst_scenario(1) # calculate max L3
                     TSRFLP.gap_calculation(1) # calculate int_gap
                     # print('----Integer gap:',TSRFLP.int_gap)
@@ -59,8 +54,7 @@ def bra_cut(p,cd,cdk,sk,a1):
                 msg = model.cbGet(GRB.Callback.MSG_STRING)
                 cutname = 'Lazy constraints'
                 if cutname in msg:
-                    TSRFLP.num_cut += int(msg[20:-1])
-            # print(time.time() - start_time)
+                    TSRFLP.num_cut += float(msg[-2])
             if time.time() - start_time >= 2000:
                 model.terminate()
 
@@ -73,7 +67,7 @@ def bra_cut(p,cd,cdk,sk,a1):
         gap = 1
         stop = 1e-5
         # build = time.time()
-#        TSRFLP.master()
+        TSRFLP.master()
         # #print("BUILDING MASTER--- %s seconds ---" % round((time.time() - build), 2))
         # build = time.time()
         TSRFLP.dual_sub(callback=1)
@@ -81,19 +75,13 @@ def bra_cut(p,cd,cdk,sk,a1):
         # build = time.time()
         TSRFLP.sub(callback=1)
         # #print("BUILDING SUB--- %s seconds ---" % round((time.time() - build), 2))
-        warm_t = time.time()
-        TSRFLP.warm_start(1)
-        print("Warm time %s seconds" % round((time.time() - warm_t), 2))
-
         TSRFLP.params_tuneup()
         # set initail time
         start_time = time.time()
-
         TSRFLP.master_model._lastnode = -GRB.INFINITY
         TSRFLP.master_model._vars = TSRFLP.master_model.getVars()
         TSRFLP.master_model.Params.lazyConstraints = 1
         #
-
         TSRFLP.master_model.optimize(mycallback)
 
     except GurobiError as e:
