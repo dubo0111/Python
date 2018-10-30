@@ -168,7 +168,7 @@ try:
             else:
                 display +='('+str(i)+')--'
         print(display)
-    
+
 except GurobiError as e:
     print('Error code ' + str(e.errno) + ": " + str(e))
 except AttributeError:
