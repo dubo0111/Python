@@ -13,6 +13,7 @@ p,cd,_,_ = data.data()
 from gurobipy import *
 import numpy as np
 import itertools
+import sys
 
 # Preprocessing
 cd0 = list(itertools.chain.from_iterable(cd)) # combine lists
@@ -45,7 +46,11 @@ for x in y_set:
 x = [[0 for j in range(ni)] for i in range(ni)]
 for j in range(ni):
     if y_initial[j] == 0:
-        cd_matrix_1 = np.delete(cd_matrix_1,j,1)
+        cd_matrix_1[:,j] = 1e8 # set j column to Big M
+for i in range(ni):
+    
+
+
 
 #try:
 #
