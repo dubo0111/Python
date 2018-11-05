@@ -11,7 +11,7 @@ p-center model
 #p,cd = dg.ins_small()
 #p,cd = dg.ins_big(100)
 import data_generator0 as dg0
-data = dg0.data_gen(10,1,2)
+data = dg0.data_gen(50,1,3)
 p,cd,cdk,sk = data.data()
 
 from gurobipy import *
@@ -58,8 +58,8 @@ try:
             (x.sum(i,'*') == 1 for i in range(ni)),
             "sumx")
     # save model and optimize
-    m.write('.\model\pcenter.lp')
-    m.params.OutputFlag = 1
+#    m.write('.\model\pcenter.lp')
+    m.params.OutputFlag = 0
     # m._vars = m.getVars()
     m.optimize()
 
@@ -67,6 +67,7 @@ try:
 #    for v in m.getVars():
 #         print('%s %g' % (v.varName, v.x))
     print('Obj: %g' % m.objVal)
+    print('Runtime: %g' % m.Runtime)
 
 except GurobiError as e:
     print('Error code ' + str(e.errno) + ": " + str(e))
