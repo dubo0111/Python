@@ -7,7 +7,7 @@ Created on Tue Oct 28 2018
 p-center model (cover formulation)
 """
 import data_generator0 as dg0
-data = dg0.data_gen(50,1,3) # ni,nk,randomseed
+data = dg0.data_gen(50,1) # ni,nk,randomseed
 p,cd,_,_ = data.data()
 from gurobipy import *
 import numpy as np
@@ -16,7 +16,7 @@ import sys
 import time
 
 
-def p_center(cd,p=1):
+def p_center(cd,p=1,LP=0):
     m = Model("p-center")
     # Number of nodes
     ni = len(cd)
@@ -24,7 +24,10 @@ def p_center(cd,p=1):
     # Create variables
     # x:allocations y:location L:auxiliary variable
     x = m.addVars(ni,ni,vtype=GRB.CONTINUOUS, name="x")
-    y = m.addVars(ni,vtype=GRB.BINARY, name="y")
+    if LP == 0:
+        y = m.addVars(ni,vtype=GRB.BINARY, name="y")
+    elif LP == 1:
+        y = m.addVars(ni,vtype=GRB.CONTINUOUS, name="y")
     L = m.addVar(vtype=GRB.CONTINUOUS,obj=1,name="L")
     # Set objective to minimize
     m.modelSense = GRB.MINIMIZE
@@ -119,14 +122,29 @@ n = p # counter
 cd_matrix = np.array(cd)
 cd_matrix_1 = np.copy(cd_matrix) # deep copy
 # Find y heuristically
+# Plan 1 : (L no more than 2 times of optimality)
+(a,b) = np.unravel_index(cd_matrix.argmax(), cd_matrix.shape) # index of maximum cost
+y_set.update({a,b})
+cd_matrix[a,b] = 0
+# find maximum cost to node in y_set
 while len(y_set) < p:
-    (a,b) = np.unravel_index(cd_matrix.argmax(), cd_matrix.shape)
-    cd_matrix[a,b] = 0
-    y_set.update({a,b})
-if len(y_set) > p:
-    y_set.remove(b)
+    y_curr = list(y_set)
+    cd_temp = cd_matrix[y_curr,:]
+    (a,b) = np.unravel_index(cd_temp.argmax(), cd_temp.shape)
+    cd_matrix[y_curr[a],b] = 0
+    y_set.update({b})
+
+# Plan 2 (more than 2 times of optimality):
+# while len(y_set) < p:
+#     (a,b) = np.unravel_index(cd_matrix.argmax(), cd_matrix.shape) # index of maximum cost
+#     cd_matrix[a,b] = 0
+#     y_set.update({a,b})
+# if len(y_set) > p:
+#     y_set.remove(b)
+
 for x in y_set:
     y_initial[x] = 1
+
 # Construct x (|y| cluster) by finding closest facility
 x = [[0 for j in range(ni)] for i in range(ni)]
 for j in range(ni):
@@ -135,13 +153,13 @@ for j in range(ni):
 facility = np.argmin(cd_matrix_1, axis=1) # index of maximum value in each row
 cost = cd_matrix_1[np.arange(cd_matrix_1.shape[0]),facility] # advanced index returning maximum value of each row
 UB1 = max(cost) # Upper Bound UB1
-LB2 = UB1/2# Lower Bound
+
 #b = np.min(cd_matrix_1, axis=1)
 for i in range(ni):
     x[i][facility[i]] = 1
-print("Find UB1--- %s seconds ---" % round((time.time() - t0), 2))
+print("Find UB1--- %s seconds ---" % round((time.time() - t0), 5))
 
-t0 = time.time()
+t1 = time.time()
 # Find UB2: Cluster
 cluster = [[] for n in range(p)]
 y_idx = list(y_set)
@@ -152,12 +170,18 @@ L_cluster = [0 for i in range(p)]
 for i in range(p):
     L_cluster[i],_ = p_center(cd_array[cluster[i][:,None],cluster[i]])
 UB2 = max(L_cluster)
-print("Find UB2--- %s seconds ---" % round((time.time() - t0), 2))
+print("Find UB2--- %s seconds ---" % round((time.time() - t1), 5))
+
+t2 = time.time()
+# LB2 = UB1/2  # Wrong Lower Bound
+LB2,_ = p_center(cd,p,1)
+print("Find LB--- %s seconds ---" % round((time.time() - t2), 5))
+
 print(UB1)
 print(UB2)
 print(LB2)
 # using UB,LB to modify cd1
-cd1 = [x for x in cd1 if x>=LB2 and x<= UB1]
+cd1 = [x for x in cd1 if x>=LB2 and x<= UB2]
 ne = len(cd1)
 A = [[[0 for e in range(ne)] for j in range(ni)] for i in range(ni)]
 for i in range(ni):
@@ -166,6 +190,7 @@ for i in range(ni):
             if cd[i][j] <= cd1[e]:
                 A[i][j][e] = 1
 cover_p_center(A,cd1,ni,ne,p)
-obj1,t1 = p_center(cd,p)
+obj1,T1 = p_center(cd,p)
 print('Obj: %g' % obj1)
-print('Runtime: %g' % t1)
+print('Runtime: %g' % T1)
+print(y_set)
