@@ -4,7 +4,7 @@ import model_rflp as mr
 #import data_generator1 as dg
 #p, cd, cdk, sk = dg.ins_k(20, 100, 40)  # (ni,nk,randomseed*)
 import data_generator0 as dg0
-data = dg0.data_gen(20,20,2)
+data = dg0.data_gen(30,20,2)
 p,cd,cdk,sk = data.data()
 from gurobipy import *
 import time

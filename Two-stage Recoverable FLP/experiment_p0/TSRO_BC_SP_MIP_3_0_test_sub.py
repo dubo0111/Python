@@ -1,7 +1,9 @@
 '''
 Benders' Decomposition:
-Branch and cut
-multiple scenario generation
+ Branch and cut
+ Multiple scenario generation
+ Improved Integer cut generation
+ Test: Callback frequency and times
 Du Bo
 '''
 import model_rflp as mr
@@ -38,7 +40,7 @@ def bra_cut(p,cd,cdk,sk,a1):
                 TSRFLP.value_omega = vals[-1]
                 TSRFLP.update_sub_dual(callback=1)
                 time_subdual = time.time()
-                TSRFLP.sub_dual.optimize()
+                TSRFLP.sub_dual.optimize() # In every callback
                 max_Lk = TSRFLP.worst_scenario()
                 print("DUAL_SUB_callback--- %s seconds ---" % round((time.time() - time_subdual), 2))
                 if max_Lk[0] - TSRFLP.value_omega >=1e-4:
@@ -49,11 +51,11 @@ def bra_cut(p,cd,cdk,sk,a1):
 
                 # ------- integer cut --------
                 else:
-                    TSRFLP.update_sub(callback=1)
+                    # TSRFLP.update_sub(callback=1)
                     time_sub = time.time()
-                    TSRFLP.sub_model.optimize()
+                    # TSRFLP.sub_model.optimize()
                     print("PRIMAL_SUB_callback--- %s seconds ---" % round((time.time() - time_sub), 2))
-                    TSRFLP.worst_scenario(1) # calculate max L3
+                    TSRFLP.worst_scenario(1) # calculate max L3k
                     TSRFLP.gap_calculation(1) # calculate int_gap
                     # print('----Integer gap:',TSRFLP.int_gap)
                     if TSRFLP.int_gap >= 1e-4:
