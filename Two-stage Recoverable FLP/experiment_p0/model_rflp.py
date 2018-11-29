@@ -284,7 +284,32 @@ class rflp:
             "L3")
         self.sub_dual.update() # build dual subproblem model
 
-    def cover_sub(self):
+    def cover_sub(self): # build cover subproblem model
+        z = self.sub_cover.addVars(ne,vtype=GRB.BINARY, name="z")
+        y = self.sub_cover.addVars(ni,vtype=GRB.BINARY, name="y")
+
+        # Set objective to minimize
+        self.sub_cover.modelSense = GRB.MINIMIZE
+        # Minimize :\sum_e \rho_e*z_e
+        self.sub_cover.setObjective(LinExpr(cd1,z.select()))
+        # (1) \sum_j a_ije*y_j >= z_e \forall i,e
+        for i in range(ni):
+            for e in range(ne):
+                sum_ay=0
+                for j in range(ni):
+                    sum_ay += a[i][j][e]*y[j]
+                self.sub_cover.addConstr(
+                        (sum_ay >= z[e]),
+                        'ay>e'+str(i)+str(e))
+        # (2) \sum y_j = p
+        self.sub_cover.addConstr(
+                (y.sum() == p),
+                'sump')
+        # (3) \sum z_e = 1
+        self.sub_cover.addConstr(
+                (z.sum() == 1),
+                'sumz')
+
 
     def cover_pre(self):
         # preprocessing cdk
@@ -540,6 +565,7 @@ class rflp:
         self.master_model.params.OutputFlag = 0
         self.sub_model.params.OutputFlag = 0
         self.sub_dual.params.OutputFlag = 0
+        self.sub_cover.params.OutputFlag = 0
         # self.master_model.params.PreCrush = 1
         # self.master_model.params.Cuts = 0
         if accu == 1:
