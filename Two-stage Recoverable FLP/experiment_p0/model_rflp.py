@@ -289,6 +289,37 @@ class rflp:
         self.sub_dual.update()
     #
 
+    def cover_sub(self):
+        self.sub_dual = Model("p-center-cover")
+        # Create variables
+        # z:ordered cost, y:location
+        z = self.sub_dual.addVars(self.nk,self.ne,vtype=GRB.BINARY, name="z") # update ne
+        y = self.sub_dual.addVars(self.nk,self.ni,vtype=GRB.BINARY, name="y")
+        L = self.sub_dual.addVars(self.nk, name="L") #??
+        # Set objective to minimize
+        self.sub_dual.modelSense = GRB.MINIMIZE
+        # Minimize :\sum_e \rho_e*z_e
+        self.sub_dual.setObjective(LinExpr(cd1,z.select()))
+        # (0) L(k) =
+        # (1) \sum_j a_ije*y_j >= z_e \forall nk,i,e
+        for k in range(self.nk)
+            for i in range(self.ni):
+                for e in range(self.ne):
+                    sum_ay=0
+                    for j in range(self.ni):
+                        sum_ay += a[k][i][j][e]*y[k][j]
+                    m.addConstr(
+                            (sum_ay >= z[k][e]),
+                            'ay>e'+str(i)+str(e))
+        # (2) \sum y_j = p
+        m.addConstr(
+                (y[k].sum() == p), #???
+                'sump')
+        # (3) \sum z_e = 1
+        m.addConstr(
+                (z[k].sum() == 1),
+                'sumz')
+
     def sub_dual_obj(self):
         def c_constr1():
             c_delta = [[0 for i in range(self.ni * self.ni)]
