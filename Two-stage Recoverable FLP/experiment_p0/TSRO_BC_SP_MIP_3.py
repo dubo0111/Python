@@ -1,7 +1,8 @@
 '''
 Benders' Decomposition:
-Branch and cut
-multiple scenario generation
+ Branch and cut
+ multiple scenario generation
+
 Du Bo
 '''
 import model_rflp as mr

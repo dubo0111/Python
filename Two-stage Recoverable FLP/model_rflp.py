@@ -36,7 +36,7 @@ class rflp:
     dual = 1
     intSP = 0
     error = 0
-    # cuts adding
+    # Cuts adding
     violation = []
     freq = []
     viol_freq = []
@@ -487,22 +487,21 @@ class rflp:
         # self.sub_dual.params.ScaleFlag = 3
         # self.sub_dual.params.NumericFocus = 3
         # References:
-        #m1.params.ScaleFlag = 3
-        #m1.params.ObjScale = 100
-        #m1.params.NumericFocus = 3
-        #m1.params.NormAdjust = 3
+        # m1.params.ScaleFlag = 3
+        # m1.params.ObjScale = 100
+        # m1.params.NumericFocus = 3
+        # m1.params.NormAdjust = 3
         # m1.params.InfUnbdInfo = 0 #1
         # m1.params.Quad = -1 #1
         # m1.params.Sifting = -1 #2
         # m1.params.SiftMethod = -1 # 2
         # m1.params.SimplexPricing = -1 #3
-        #m1.params.Method = -1
-        #m1.params.AggFill = 0
-        #m1.params.Aggregate = 0
+        # m1.params.Method = -1
+        # m1.params.AggFill = 0
+        # m1.params.Aggregate = 0
         # m1.params.DualReductions = 1 #0
         # m1.params.PreDual = 2 #2
-        #m1.params.Presolve = 0
-    #
+        # m1.params.Presolve = 0
 
     def error_check(self):
         if self.gap <= -0.1:
