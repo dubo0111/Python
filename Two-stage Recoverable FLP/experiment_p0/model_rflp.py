@@ -1,6 +1,7 @@
 # class for:
 # bulid or update specific model
 # get variables,dual variables
+# VERSION: for iterative experiments: add reset function
 import copy
 import math
 import numpy as np
@@ -284,71 +285,71 @@ class rflp:
             "L3")
         self.sub_dual.update() # build dual subproblem model
 
-    def cover_sub(self): # build cover subproblem model
-        z = self.sub_cover.addVars(ne,vtype=GRB.BINARY, name="z")
-        y = self.sub_cover.addVars(ni,vtype=GRB.BINARY, name="y")
-
-        # Set objective to minimize
-        self.sub_cover.modelSense = GRB.MINIMIZE
-        # Minimize :\sum_e \rho_e*z_e
-        self.sub_cover.setObjective(LinExpr(cd1,z.select()))
-        # (1) \sum_j a_ije*y_j >= z_e \forall i,e
-        for i in range(ni):
-            for e in range(ne):
-                sum_ay=0
-                for j in range(ni):
-                    sum_ay += a[i][j][e]*y[j]
-                self.sub_cover.addConstr(
-                        (sum_ay >= z[e]),
-                        'ay>e'+str(i)+str(e))
-        # (2) \sum y_j = p
-        self.sub_cover.addConstr(
-                (y.sum() == p),
-                'sump')
-        # (3) \sum z_e = 1
-        self.sub_cover.addConstr(
-                (z.sum() == 1),
-                'sumz')
-
-
-    def cover_pre(self):
-        # preprocessing cdk
-        cd_cover = [[] for k in range(self.nk)]
-        for k in range(self.nk):
-            cd0 = list(itertools.chain.from_iterable(self.cdk[k])) # combine lists
-            cd_cover[k] = sorted(set(cd0)) # sort without duplicates
-        return cd_cover
-
-    def cover_sub(self):
-        self.sub_dual = Model("p-center-cover")
-        # Create variables
-        # z:ordered cost, y:location
-        z = self.sub_dual.addVars(self.nk,self.ne,vtype=GRB.BINARY, name="z") # update ne
-        y = self.sub_dual.addVars(self.nk,self.ni,vtype=GRB.BINARY, name="y")
-        L = self.sub_dual.addVars(self.nk, name="L") #??
-        # Set objective to minimize
-        self.sub_dual.modelSense = GRB.MINIMIZE
-        # Minimize :\sum_e \rho_e*z_e
-        self.sub_dual.setObjective(LinExpr(cd1,z.select()))
-        # (0) L(k) =
-        # (1) \sum_j a_ije*y_j >= z_e \forall nk,i,e
-        for k in range(self.nk)
-            for i in range(self.ni):
-                for e in range(self.ne):
-                    sum_ay=0
-                    for j in range(self.ni):
-                        sum_ay += a[k][i][j][e]*y[k][j]
-                    m.addConstr(
-                            (sum_ay >= z[k][e]),
-                            'ay>e'+str(i)+str(e))
-        # (2) \sum y_j = p
-        m.addConstr(
-                (y[k].sum() == p), #???
-                'sump')
-        # (3) \sum z_e = 1
-        m.addConstr(
-                (z[k].sum() == 1),
-                'sumz')
+#     def cover_sub(self): # build cover subproblem model
+#         z = self.sub_cover.addVars(ne,vtype=GRB.BINARY, name="z")
+#         y = self.sub_cover.addVars(ni,vtype=GRB.BINARY, name="y")
+#
+#         # Set objective to minimize
+#         self.sub_cover.modelSense = GRB.MINIMIZE
+#         # Minimize :\sum_e \rho_e*z_e
+#         self.sub_cover.setObjective(LinExpr(cd1,z.select()))
+#         # (1) \sum_j a_ije*y_j >= z_e \forall i,e
+#         for i in range(ni):
+#             for e in range(ne):
+#                 sum_ay=0
+#                 for j in range(ni):
+#                     sum_ay += a[i][j][e]*y[j]
+#                 self.sub_cover.addConstr(
+#                         (sum_ay >= z[e]),
+#                         'ay>e'+str(i)+str(e))
+#         # (2) \sum y_j = p
+#         self.sub_cover.addConstr(
+#                 (y.sum() == p),
+#                 'sump')
+#         # (3) \sum z_e = 1
+#         self.sub_cover.addConstr(
+#                 (z.sum() == 1),
+#                 'sumz')
+#
+# 
+#     def cover_pre(self):
+#         # preprocessing cdk
+#         cd_cover = [[] for k in range(self.nk)]
+#         for k in range(self.nk):
+#             cd0 = list(itertools.chain.from_iterable(self.cdk[k])) # combine lists
+#             cd_cover[k] = sorted(set(cd0)) # sort without duplicates
+#         return cd_cover
+#
+# #    def cover_sub(self):
+# #        self.sub_dual = Model("p-center-cover")
+# #        # Create variables
+# #        # z:ordered cost, y:location
+# #        z = self.sub_dual.addVars(self.nk,self.ne,vtype=GRB.BINARY, name="z") # update ne
+# #        y = self.sub_dual.addVars(self.nk,self.ni,vtype=GRB.BINARY, name="y")
+# #        L = self.sub_dual.addVars(self.nk, name="L") #??
+# #        # Set objective to minimize
+# #        self.sub_dual.modelSense = GRB.MINIMIZE
+# #        # Minimize :\sum_e \rho_e*z_e
+# #        self.sub_dual.setObjective(LinExpr(cd1,z.select()))
+# #        # (0) L(k) =
+# #        # (1) \sum_j a_ije*y_j >= z_e \forall nk,i,e
+# #        for k in range(self.nk)
+# #            for i in range(self.ni):
+# #                for e in range(self.ne):
+# #                    sum_ay=0
+# #                    for j in range(self.ni):
+# #                        sum_ay += a[k][i][j][e]*y[k][j]
+# #                    m.addConstr(
+# #                            (sum_ay >= z[k][e]),
+# #                            'ay>e'+str(i)+str(e))
+# #        # (2) \sum y_j = p
+# #        m.addConstr(
+# #                (y[k].sum() == p), #???
+# #                'sump')
+# #        # (3) \sum z_e = 1
+# #        m.addConstr(
+# #                (z[k].sum() == 1),
+# #                'sumz')
 
     def sub_dual_obj(self):
         def c_constr1():

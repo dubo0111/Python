@@ -5,8 +5,9 @@ Time Limit = 2000s
 import numpy as np
 import pandas as pd
 #import TSRO_BC_SP_MIP_3 as bc
-#import TSRO_BC_SP_MIP_3_0 as bc
-import TSRO_BC_SP_MIP_3_0_test as bc
+# import TSRO_BC_SP_MIP_3_0 as bc
+#import TSRO_BC_SP_MIP_3_0_test as bc
+import TSRO_BC_SP_MIP_3_coversub as bc
 import TSRO_BD_DualSP_INT as bd
 import TSRO_LIP as lip
 import data_generator0 as dg0
@@ -19,7 +20,7 @@ ex_all = 10 # number of experiments for each combination
 # 10,30,46
 ##
 a1 = 0.5
-rnd_seed = 0  # 17 # starting random seed
+rnd_seed = 6  # 17 # starting random seed
 bug = []
 
 try:

@@ -1,8 +1,9 @@
 '''
 Benders' Decomposition:
- Branch and cut
- Multiple scenario generation
- !Improved Integer cut generation
+ *Branch and cut
+ *Multiple scenario generation
+ *!!Improved Integer cut generation (compare to MIP3)
+ *for cover subproblem (compare to MIP3_0)
 Du Bo
 '''
 import model_rflp as mr
@@ -74,7 +75,7 @@ def bra_cut(p,cd,cdk,sk,a1):
         # stop = 1e-5
 
         # build = time.time()
-        # TSRFLP.master()
+        # TSRFLP.master() # needed when .warm_start is turned off
         # print("BUILDING MASTER--- %s seconds ---" % round((time.time() - build), 2))
 
         # build = time.time()

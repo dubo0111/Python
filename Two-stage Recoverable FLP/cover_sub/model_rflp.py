@@ -1,17 +1,19 @@
 # class for:
 # bulid or update specific model
 # get variables,dual variables
-# VERSION: initial version
+# VERSION: 1.cover subproblem；
+#          2.for iterative experiments: added reset function
 import copy
 import math
+import numpy as np
 from gurobipy import *
-
 
 class rflp:
     # Attributes
     master_model = Model()
     sub_model = Model()
     sub_dual = Model()
+    sub_cover = Model()
     value_y = []
     value_omega = 0
     max_k = 0
@@ -32,17 +34,26 @@ class rflp:
     nu = 0
     add_cut_scen = []
     iteration = 0
-    gap = float('inf')
-    int_gap = float('inf')
+    gap = float('inf') #
+    int_gap = float('inf') #
     dual = 1
     intSP = 0
     error = 0
-    # Cuts adding
+    Benders_cut = 0
+    callback_time = 0
+    callback_num = 0
+    Benders_cut = 0
+    Integer_cut = 0
+    warm = 0
+    # cuts adding
     violation = []
     freq = []
     viol_freq = []
     lift = 0
     zero_half = 0
+    # Result output
+    num_cut = 0 #num of lazycut added
+    opt = 0
     # Input
     p = 0
     ni = 0
@@ -54,6 +65,7 @@ class rflp:
     sk = []
 
     def __init__(self, p, ni, nk, a1, a2, cd, cdk, sk):
+        self.reset() #
         self.p = p
         self.ni = ni
         self.nk = nk
@@ -66,7 +78,62 @@ class rflp:
         self.violation = [0 for k in range(nk)]
         self.freq = [0 for k in range(nk)]
         self.viol_freq = [0 for k in range(nk)]
-    # build master problem model
+
+    def reset(self):
+        # Attributes
+        self.master_model = Model()
+        self.sub_model = Model()
+        self.sub_dual = Model()
+        self.sub_cover = Model()
+        self.value_y = []
+        self.value_omega = 0
+        self.max_k = 0
+        self.max_Lk = []
+        self.constr_y = LinExpr()
+        self.integer_cut = LinExpr()
+        self.UB = float('inf')
+        self.LB = -float('inf')
+        self.y = []
+        self.omega = []
+        self.Qk = []
+        self.beta = 0
+        self.gamma = 0
+        self.delta = 0
+        self.epsilon = 0
+        self.lamda = 0
+        self.mu = 0
+        self.nu = 0
+        self.add_cut_scen = []
+        self.iteration = 0
+        self.gap = float('inf') #
+        self.int_gap = float('inf') #
+        self.dual = 1
+        self.intSP = 0
+        self.error = 0
+        self.Benders_cut = 0
+        self.callback_time = 0
+        self.callback_num = 0
+        self.Benders_cut_call = 0
+        self.Integer_cut = 0
+        self.warm = 0
+        # cuts adding
+        self.violation = []
+        self.freq = []
+        self.viol_freq = []
+        self.lift = 0
+        self.zero_half = 0
+        # Result output
+        self.num_cut = 0 #num of lazycut added
+        self.opt = 0
+        # Input
+        self.p = 0
+        self.ni = 0
+        self.nk = 0
+        self.a1 = 0
+        self.a2 = 0
+        self.cd = []
+        self.cdk = []
+        self.sk = []
 
     def master(self, relax=0):
         # Create variables
@@ -106,10 +173,8 @@ class rflp:
         self.master_model.addConstrs(
             (x.sum(i, '*') == 1 for i in range(self.ni)),
             "sumx")
-        self.master_model.update()
+        self.master_model.update() # build master problem model
         # return self.master_model
-    # build subproblem model
-    # (get dual variables through Constr.getAttr(Pi))
 
     def sub(self, callback=0):
         # ---------- Sub problem ----------
@@ -175,9 +240,8 @@ class rflp:
             (u.sum(k, '*') + sum(self.value_y) -
              ky[k] == self.p for k in range(self.nk)),
             "nu")
-        self.sub_model.update()
+        self.sub_model.update() # build subproblem model(get dual variables through Constr.getAttr(Pi))
         # return(self.sub_model)
-    # build dual subproblem model
 
     def dual_sub(self, callback=0):
         if callback == 0:
@@ -220,8 +284,73 @@ class rflp:
         self.sub_dual.addConstrs(
             (-self.beta.sum(k, '*') <= 1 for k in range(self.nk)),
             "L3")
-        self.sub_dual.update()
-    #
+        self.sub_dual.update() # build dual subproblem model
+
+    def cover_sub(self): # build cover subproblem model
+        z = self.sub_cover.addVars(ne,vtype=GRB.BINARY, name="z")
+        y = self.sub_cover.addVars(ni,vtype=GRB.BINARY, name="y")
+
+        # Set objective to minimize
+        self.sub_cover.modelSense = GRB.MINIMIZE
+        # Minimize :\sum_e \rho_e*z_e
+        self.sub_cover.setObjective(LinExpr(cd1,z.select()))
+        # (1) \sum_j a_ije*y_j >= z_e \forall i,e
+        for i in range(ni):
+            for e in range(ne):
+                sum_ay=0
+                for j in range(ni):
+                    sum_ay += a[i][j][e]*y[j]
+                self.sub_cover.addConstr(
+                        (sum_ay >= z[e]),
+                        'ay>e'+str(i)+str(e))
+        # (2) \sum y_j = p
+        self.sub_cover.addConstr(
+                (y.sum() == p),
+                'sump')
+        # (3) \sum z_e = 1
+        self.sub_cover.addConstr(
+                (z.sum() == 1),
+                'sumz')
+
+
+    def cover_pre(self):
+        # preprocessing cdk
+        cd_cover = [[] for k in range(self.nk)]
+        for k in range(self.nk):
+            cd0 = list(itertools.chain.from_iterable(self.cdk[k])) # combine lists
+            cd_cover[k] = sorted(set(cd0)) # sort without duplicates
+        return cd_cover
+
+#    def cover_sub(self):
+#        self.sub_dual = Model("p-center-cover")
+#        # Create variables
+#        # z:ordered cost, y:location
+#        z = self.sub_dual.addVars(self.nk,self.ne,vtype=GRB.BINARY, name="z") # update ne
+#        y = self.sub_dual.addVars(self.nk,self.ni,vtype=GRB.BINARY, name="y")
+#        L = self.sub_dual.addVars(self.nk, name="L") #??
+#        # Set objective to minimize
+#        self.sub_dual.modelSense = GRB.MINIMIZE
+#        # Minimize :\sum_e \rho_e*z_e
+#        self.sub_dual.setObjective(LinExpr(cd1,z.select()))
+#        # (0) L(k) =
+#        # (1) \sum_j a_ije*y_j >= z_e \forall nk,i,e
+#        for k in range(self.nk)
+#            for i in range(self.ni):
+#                for e in range(self.ne):
+#                    sum_ay=0
+#                    for j in range(self.ni):
+#                        sum_ay += a[k][i][j][e]*y[k][j]
+#                    m.addConstr(
+#                            (sum_ay >= z[k][e]),
+#                            'ay>e'+str(i)+str(e))
+#        # (2) \sum y_j = p
+#        m.addConstr(
+#                (y[k].sum() == p), #???
+#                'sump')
+#        # (3) \sum z_e = 1
+#        m.addConstr(
+#                (z[k].sum() == 1),
+#                'sumz')
 
     def sub_dual_obj(self):
         def c_constr1():
@@ -249,13 +378,11 @@ class rflp:
              self.epsilon.sum(k, '*') + LinExpr(c_lamda, self.lamda.select(k, '*')) +
              LinExpr(c_mu[k], self.mu.select(k, '*')) + c_nu[k] * self.nu[k] for k in range(self.nk)),
             "Q(k)")
-    #
 
     def update_master(self):
         self.update_cut()
         self.master_model.addConstr(self.omega >= self.constr_y)
         # self.master_model.update()
-    #
 
     def update_sub(self, callback=0):
         if callback == 0:
@@ -282,7 +409,6 @@ class rflp:
                 nu_name).rhs = self.p + ky[k] - sum(self.value_y)
         self.sub_model.update()
         # return self.sub_model
-    #
 
     def update_sub_dual(self, callback=0):
         if callback == 0:
@@ -292,7 +418,6 @@ class rflp:
             self.sub_dual.remove(self.sub_dual.getConstrByName(constr_name))
         self.sub_dual_obj()
         self.sub_dual.update()
-    # update value of y for subproblem in each iteration
 
     def update_y(self):
         self.value_y = []
@@ -300,7 +425,7 @@ class rflp:
             y_name = ''.join(['y[', str(j), ']'])
             y_temp = self.master_model.getVarByName(y_name)
             self.value_y.append(y_temp.x)
-    # update cut to be added to master problem in each iteration
+        self.value_y = [round(x) for x in self.value_y]# update value of y for subproblem in each iteration
 
     def update_cut(self, numk=None, lift=0):
         gamma = [[0 for j in range(self.ni)] for i in range(self.ni)]
@@ -311,7 +436,7 @@ class rflp:
         beta = [0 for j in range(self.ni)]
         if numk == None:
             numk = self.max_k
-        if self.dual == 0:
+        if self.dual == 0: # for pirmal sub problem
             cm1 = self.sub_model.getConstrs()
             num_c = len(cm1)
             dual_value = []
@@ -338,7 +463,7 @@ class rflp:
                 mu[n] = dual[mu_name]
             nu_name = ''.join(['nu[', str(numk), ']'])
             nu = dual[nu_name]
-        elif self.dual == 1:
+        elif self.dual == 1: # for dual sub problem
             for i in range(self.ni):
                 for j in range(self.ni):
                     gamma_name = ''.join(
@@ -399,27 +524,26 @@ class rflp:
         constant = quicksum(epsilon) + quicksum(lamda) + constant_delta +\
             quicksum([(1 - self.sk[numk][j]) * mu[j]
                       for j in range(self.ni)]) + self.p * nu
-        self.constr_y = c_y + constant
-    #
+        self.constr_y = c_y + constant# update cut to be added to master problem in each iteration
 
     def update_integer_cut(self):
+        # simplified cut (use no dual information)
         sum_c_y = LinExpr()
         for i in range(self.ni):
             if self.value_y[i] == 1:
                 sum_c_y += self.y[i] - 1
-            elif self.value_y[i] == 1:
+            elif self.value_y[i] == 0:
                 sum_c_y += -self.y[i]
         sum_c_y += 1
         max_Lk = self.worst_scenario(1)
         self.integer_cut = max_Lk[0] * sum_c_y
-    #
 
     def gap_calculation(self, MIP_SP=0, Check_optimal=0):
         if MIP_SP == 1:  # in mycallback
-            vals = self.master_model.cbGetSolution(self.master_model._vars)
+            # vals = self.master_model.cbGetSolution(self.master_model._vars)
             #value_L = vals(-2)
             max_Lk = self.worst_scenario(1)
-            self.int_gap = max_Lk[0] - self.value_omega
+            self.int_gap = max_Lk[0] - self.value_omega #
            # print('max_Lk:',max_Lk[0])
         else:
             # extract L
@@ -434,9 +558,8 @@ class rflp:
                 max_Lk = self.worst_scenario(1)
             # update UB
             self.UB = min([self.UB, self.a1 * value_L + self.a2 * max_Lk[0]])
-            self.gap = (self.UB - self.LB) / self.LB
+            self.gap = (self.UB - self.LB) / self.LB #
         # return self.gap
-    #
 
     def worst_scenario(self, MIP_SP=0):
         if self.dual == 0 or MIP_SP == 1:
@@ -449,6 +572,8 @@ class rflp:
             max_Lk = max([[v, i] for i, v in enumerate(value_L3)])
         elif self.dual == 1 and MIP_SP != 1:
             value_Qk = []
+            # if self.sub_dual.Status != 2:
+            #     aaa = 1
             for k in range(self.nk):
                 Qk_name = ''.join(['Qk[', str(k), ']'])
                 Qk_temp = self.sub_dual.getVarByName(Qk_name)
@@ -457,7 +582,6 @@ class rflp:
             max_Lk = max([[v, i] for i, v in enumerate(value_Qk)])
         self.max_k = max_Lk[1]
         return max_Lk
-    #
 
     def update_status(self):
         self.add_cut_scen.append(self.max_k)
@@ -465,44 +589,51 @@ class rflp:
         print('==========================================')
         print('Current iteration:', str(self.iteration))
         print('gap = ', str(self.gap))
+        # print('int_gap = ',str(self.int_gap))
         print('Cuts added form scenario:', str(self.add_cut_scen[0:-1]))
 
-    # tune parameters to avoid numerical issues for subproblem
-    # wrong optimal solutions appear for both sub&dual_sub
-
-    def params_tuneup(self):
-        # self.master_model.params.OutputFlag = 1
-        # self.master_model.params.Presolve = 0
-        # self.master_model.params.ScaleFlag = 3
-        # self.master_model.params.NumericFocus = 3
+    def params_tuneup(self,accu=0):
+        # tune parameters to avoid numerical issues for subproblem
+        # wrong optimal solutions appear for both sub&dual_sub
+        self.master_model.params.OutputFlag = 0
+        self.sub_model.params.OutputFlag = 0
+        self.sub_dual.params.OutputFlag = 0
+        self.sub_cover.params.OutputFlag = 0
         # self.master_model.params.PreCrush = 1
         # self.master_model.params.Cuts = 0
+        if accu == 1:
+            # self.master_model.params.Cuts = 0
+            # self.sub_model.params.Cuts = 0
+            # self.sub_dual.params.Cuts = 0
 
-        self.sub_model.params.OutputFlag = 0
-        # self.sub_model.params.Presolve = 0
-        # self.sub_model.params.ScaleFlag = 3
-        # self.sub_model.params.NumericFocus = 3
+            self.master_model.params.Presolve = 0
+            self.master_model.params.ScaleFlag = 3
+            self.master_model.params.NumericFocus = 3
 
-        self.sub_dual.params.OutputFlag = 0
-        # self.sub_dual.params.Presolve = 0
-        # self.sub_dual.params.ScaleFlag = 3
-        # self.sub_dual.params.NumericFocus = 3
+            self.sub_model.params.Presolve = 0
+            self.sub_model.params.ScaleFlag = 3
+            self.sub_model.params.NumericFocus = 3
+
+            self.sub_dual.params.Presolve = 0
+            self.sub_dual.params.ScaleFlag = 3
+            self.sub_dual.params.NumericFocus = 3
         # References:
-        # m1.params.ScaleFlag = 3
-        # m1.params.ObjScale = 100
-        # m1.params.NumericFocus = 3
-        # m1.params.NormAdjust = 3
+        #m1.params.ScaleFlag = 3
+        #m1.params.ObjScale = 100
+        #m1.params.NumericFocus = 3
+        #m1.params.NormAdjust = 3
         # m1.params.InfUnbdInfo = 0 #1
         # m1.params.Quad = -1 #1
         # m1.params.Sifting = -1 #2
         # m1.params.SiftMethod = -1 # 2
         # m1.params.SimplexPricing = -1 #3
-        # m1.params.Method = -1
-        # m1.params.AggFill = 0
-        # m1.params.Aggregate = 0
+        #m1.params.Method = -1
+        #m1.params.AggFill = 0
+        #m1.params.Aggregate = 0
         # m1.params.DualReductions = 1 #0
         # m1.params.PreDual = 2 #2
-        # m1.params.Presolve = 0
+        #m1.params.Presolve = 0
+
 
     def error_check(self):
         if self.gap <= -0.1:
@@ -510,8 +641,6 @@ class rflp:
             print('# WARNING: gap is a negative value', '\n',
                   '   Wrong dual problem solution.')
         return self.error
-
-    # Callback: update scenario violation and frequency⁠
 
     def update_multiple_scenario(self):
         # print('===============sorting==================')
@@ -530,46 +659,46 @@ class rflp:
         # print(rank[0])
         odd_1 = 0
         odd_2 = 0
-        for n in range(round(self.nk / 4 + 1)):
+        # for n in range(round(self.nk / 4 + 1)):
+        for n in range(round(self.nk)):
             # for n in range(1):
             if violation_now[rank[n]] > 0:
                 self.update_cut(rank[n], self.lift)
                 if self.zero_half == 0:
                     self.master_model.cbLazy(self.omega >= self.constr_y)
-                elif self.zero_half == 1:
-                    if n == 0:
-                        self.master_model.cbLazy(self.omega >= self.constr_y)
-                        coeff_strong, constant_strong = self.reformulate_linexpr(
-                            self.constr_y)
-                        constr_strong = LinExpr(
-                            coeff_strong, self.y.select()) + constant_strong
-                        if [k for k in coeff_strong if k % 2] != []:
-                            odd_1 = 1
-                        # print(constr_strong)
-                    else:
-                        # zero-half
-                        coeff_constr_y, constant_y = self.reformulate_linexpr(
-                            self.constr_y)
-                        # if self.master_model.cbGet(GRB.Callback.MIPSOL_NODCNT) == 0:
-                        if [k for k in coeff_constr_y if k % 2] != []:
-                            odd_2 = 1
-                        if odd_1 == 1 and odd_2 == 1:
-                            coeff_sum, constant_sum = self.reformulate_linexpr(
-                                self.constr_y + constr_strong)
-                            coeff_sum = [math.ceil(0.5 * x) for x in coeff_sum]
-                            constant_sum = math.ceil(0.5 * constant_sum)
-                            constr_sum = LinExpr(
-                                coeff_sum, self.y.select()) + constant_sum
-                            self.master_model.cbLazy(self.omega >= constr_sum)
-                            # print(const r_sum)
-                        else:
-                            # print(self.constr_y)
-                            self.master_model.cbLazy(
-                                self.omega >= self.constr_y)
-
+                    self.Benders_cut += 1
+                # elif self.zero_half == 1:
+                #     if n == 0:
+                #         self.master_model.cbLazy(self.omega >= self.constr_y)
+                #         coeff_strong, constant_strong = self.reformulate_linexpr(
+                #             self.constr_y)
+                #         constr_strong = LinExpr(
+                #             coeff_strong, self.y.select()) + constant_strong
+                #         if [k for k in coeff_strong if k % 2] != []:
+                #             odd_1 = 1
+                #         # print(constr_strong)
+                #     else:
+                #         # zero-half
+                #         coeff_constr_y, constant_y = self.reformulate_linexpr(
+                #             self.constr_y)
+                #         # if self.master_model.cbGet(GRB.Callback.MIPSOL_NODCNT) == 0:
+                #         if [k for k in coeff_constr_y if k % 2] != []:
+                #             odd_2 = 1
+                #         if odd_1 == 1 and odd_2 == 1:
+                #             coeff_sum, constant_sum = self.reformulate_linexpr(
+                #                 self.constr_y + constr_strong)
+                #             coeff_sum = [math.ceil(0.5 * x) for x in coeff_sum]
+                #             constant_sum = math.ceil(0.5 * constant_sum)
+                #             constr_sum = LinExpr(
+                #                 coeff_sum, self.y.select()) + constant_sum
+                #             self.master_model.cbLazy(self.omega >= constr_sum)
+                #             # print(const r_sum)
+                #         else:
+                #             # print(self.constr_y)
+                #             self.master_model.cbLazy(
+                #                 self.omega >= self.constr_y)
             else:
-                break
-    #
+                break# Callback: update scenario violation and frequency⁠
 
     def reformulate_linexpr(self, formulation):
         coeff_y = [0 for j in range(self.ni)]
@@ -582,48 +711,58 @@ class rflp:
         #     for j in range(ni):
         #         if self.value_y[j] = 0
         # def zero_half(self):
-    #
 
-    def warm_start(self):
-        self.master_model.optimize()
-        self.update_sub_dual(0)
-        self.sub_dual.optimize()
-        self.gap_calculation()
-        self.master_model.addConstr(
-            self.a1 * self.master_model.getVars()[-1] + self.a1 * self.omega >= self.LB)
-
-
-        self.master(1)
-        self.master_model.optimize()
-        self.update_y()
-        # interior point:(not sure)
-        y_in = [self.p / self.ni for j in range(self.ni)]
-        y_optimal = self.value_y
-        bound_no_impro = 0
-        last_bound = GRB.INFINITY
-        while bound_no_impro < 5:
-            self.value_y = [inter * a +
-                            (1 - inter) * b for a, b in zip(y_optimal, y_in)]
-            # self.value_y = round_y(self.value_y)
-            self.update_sub_dual(1)
-            self.sub_dual.optimize()
-            self.update_cut()
-            self.master_model.addConstr(self.omega >= self.constr_y)
+    def warm_start(self,warm = 0):
+        # self.master_model.optimize()
+        # self.update_sub_dual(0)
+        # self.sub_dual.optimize()
+        # self.gap_calculation()
+        # self.master_model.addConstr(
+        #     self.a1 * self.master_model.getVars()[-1] + self.a1 * self.omega >= self.LB)
+        if warm == 0:
+            # chase the carrot??
+            self.master(1)
+            self.params_tuneup()
             self.master_model.optimize()
             self.update_y()
+            # interior point:(not sure)
+            y_in = [self.p / self.ni for j in range(self.ni)]
             y_optimal = self.value_y
-            y_in = [y_step * a + (1 - y_step) * b for a,
-                    b in zip(y_in, y_optimal)]
-            if last_bound == self.master_model.getObjective().getValue():
-                bound_no_impro += 1
-            last_bound = self.master_model.getObjective().getValue()
+            bound_no_impro = 0
+            last_bound = GRB.INFINITY
+            inter = 0.1 # step length
+            y_step = 0.1 # step length
+            while bound_no_impro < 5:
+                self.value_y = [inter * a +
+                                (1 - inter) * b for a, b in zip(y_optimal, y_in)]
+                # self.value_y = round_y(self.value_y)
+                self.update_sub_dual(1)
+                self.sub_dual.optimize()
+                self.update_cut()
+                self.master_model.addConstr(self.omega >= self.constr_y)
+                self.master_model.optimize()
+                self.update_y()
+                y_optimal = self.value_y
+                y_in = [y_step * a + (1 - y_step) * b for a,
+                        b in zip(y_in, y_optimal)]
+                if last_bound == self.master_model.getObjective().getValue():
+                    bound_no_impro += 1
+                last_bound = self.master_model.getObjective().getValue()
+            # reset y to binary
+            for j in range(self.ni):
+                y_name = ''.join(['y[', str(j), ']'])
+                self.master_model.getVarByName(y_name).vtype = 'B'
+                # print(self.master_model.getVarByName(y_name).vtype)
+            self.warm = 'over'
+        else:
+            self.master()
+            self.params_tuneup()
+            self.warm = 'over'
 
-    def round_y(self, value_y):
+    def round_y(self, value_y): #?
         new_y = [0 for j in range(self.ni)]
         rank = sorted(range(len(value_y)), reverse=True,
                       key=value_y.__getitem__)
         for j in range(self.p):
             new_y[rank[j]] = 1
         return new_y
-
-#    def local_branching(self):

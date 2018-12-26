@@ -74,7 +74,7 @@ def bra_cut(p,cd,cdk,sk,a1):
         # stop = 1e-5
 
         # build = time.time()
-        # TSRFLP.master()
+        # TSRFLP.master() # needed when .warm_start is turned off
         # print("BUILDING MASTER--- %s seconds ---" % round((time.time() - build), 2))
 
         # build = time.time()

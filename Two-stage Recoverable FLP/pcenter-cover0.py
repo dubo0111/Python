@@ -19,13 +19,13 @@ import time
 
 
 # a_ije
-A = [[[0 for e in range(ne)] for j in range(ni)] for i in range(ni)]
-for i in range(ni):
-    for j in range(ni):
-        for e in range(ne):
-            if sk[j] == 0: # disrupted node so cannot cover??
-                if cd[i][j] <= cd1[e]:
-                    A[i][j][e] = 1
+# A = [[[0 for e in range(ne)] for j in range(ni)] for i in range(ni)]
+# for i in range(ni):
+#     for j in range(ni):
+#         for e in range(ne):
+#             if sk[j] == 0: # disrupted node so cannot cover??
+#                 if cd[i][j] <= cd1[e]:
+#                     A[i][j][e] = 1
 
 def p_center(cd,p=1,LP=0):
     m = Model("p-center")
