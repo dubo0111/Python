@@ -6,8 +6,8 @@ import numpy as np
 import pandas as pd
 #import TSRO_BC_SP_MIP_3 as bc
 # import TSRO_BC_SP_MIP_3_0 as bc
-#import TSRO_BC_SP_MIP_3_0_test as bc
-import TSRO_BC_SP_MIP_3_coversub as bc
+import TSRO_BC_SP_MIP_3_0_test as bc
+import TSRO_BC_SP_MIP_3_coversub as bc_cover
 import TSRO_BD_DualSP_INT as bd
 import TSRO_LIP as lip
 import data_generator0 as dg0
@@ -36,8 +36,9 @@ try:
                 print(rnd_seed)
                 ###
                 y1,t1, cut1, opt1, val1, gap1 = bc.bra_cut(p, cd, cdk, sk, a1)
-                t2, cut2, opt2, val2, gap2 = bd.benders_deco(p, cd, cdk, sk, a1)
-                y3,t3, opt3, val3, gap3 = lip.LIP(p, cd, cdk, sk, a1)
+                y1c,t1c, cut1c, opt1c, val1c, gap1c = bc_cover.bra_cut(p, cd, cdk, sk, a1)
+                # t2, cut2, opt2, val2, gap2 = bd.benders_deco(p, cd, cdk, sk, a1)
+                # y3,t3, opt3, val3, gap3 = lip.LIP(p, cd, cdk, sk, a1)
                 ###
                 # result_i = [n_N, n_k, rnd_seed, t1, cut1, opt1, val1, gap1,
                 #             t2, cut2, opt2, val2, gap2, t3, opt3, val3, gap3]

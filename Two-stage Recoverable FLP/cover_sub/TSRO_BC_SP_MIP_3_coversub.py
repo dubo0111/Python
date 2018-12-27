@@ -35,7 +35,7 @@ def bra_cut(p,cd,cdk,sk,a1):
                     TSRFLP.value_y = [round(x) for x in TSRFLP.value_y] # make sure y are binary
                 TSRFLP.value_omega = vals[-1]
                 TSRFLP.update_sub_dual(callback=1)
-                time_subdual = time.time()
+                # time_subdual = time.time()
                 TSRFLP.sub_dual.optimize()
                 max_Lk = TSRFLP.worst_scenario()
                 # print("DUAL_SUB_callback--- %s seconds ---" % round((time.time() - time_subdual), 2))
@@ -44,7 +44,7 @@ def bra_cut(p,cd,cdk,sk,a1):
                     # print("callback--- %s seconds ---" % round((time.time() - time1), 2))
                 else: # ----integer cut----
                     TSRFLP.update_sub(callback=1)
-                    time_sub = time.time()
+                    # time_sub = time.time()
                     TSRFLP.sub_model.optimize()
                     # print("PRIMAL_SUB_callback--- %s seconds ---" % round((time.time() - time_sub), 2))
                     TSRFLP.worst_scenario(1) # calculate max L3
@@ -68,7 +68,7 @@ def bra_cut(p,cd,cdk,sk,a1):
         # setting algorithm environment
         TSRFLP.dual = 1
         TSRFLP.intSP = 1.0
-        TSRFLP.lift = 0
+        # TSRFLP.lift = 0
         TSRFLP.zero_half = 0
         #
         gap = 1 #
@@ -79,12 +79,14 @@ def bra_cut(p,cd,cdk,sk,a1):
         # print("BUILDING MASTER--- %s seconds ---" % round((time.time() - build), 2))
 
         # build = time.time()
-        TSRFLP.dual_sub(callback=1)
+        TSRFLP.dual_sub(callback=1) #
         # print("BUILDING SUBDUAL--- %s seconds ---" % round((time.time() - build), 2))
 
         # build = time.time()
-        TSRFLP.sub(callback=1)
+        TSRFLP.sub(callback=1) #
         # print("BUILDING SUB--- %s seconds ---" % round((time.time() - build), 2))
+
+        TSRFLP.cover_sub() # COVER initialization
 
         # warm_t = time.time()
         TSRFLP.warm_start(1)
