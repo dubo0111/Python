@@ -54,6 +54,7 @@ def bra_cut(p,cd,cdk,sk,a1):
                         # cut incumbent solution
                         TSRFLP.update_integer_cut()
                         model.cbLazy(TSRFLP.omega >= TSRFLP.integer_cut)
+                    # COVER
             if where == GRB.Callback.MESSAGE: # lazy constraints
                 # Message callback
                 msg = model.cbGet(GRB.Callback.MSG_STRING)

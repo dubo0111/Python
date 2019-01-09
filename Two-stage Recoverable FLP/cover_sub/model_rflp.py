@@ -64,6 +64,9 @@ class rflp:
     cd = []
     cdk = []
     sk = []
+    # COVER
+    ne = 0
+    bije = 0
 
     def __init__(self, p, ni, nk, a1, a2, cd, cdk, sk):
         self.reset()
@@ -135,6 +138,9 @@ class rflp:
         self.cd = []
         self.cdk = []
         self.sk = []
+        # COVER
+        ne = 0
+        bije = 0
 
     def master(self, relax=0):
         # Create variables
@@ -287,48 +293,35 @@ class rflp:
             (-self.beta.sum(k, '*') <= 1 for k in range(self.nk)),
             "L3")
         self.sub_dual.update()  # build dual subproblem model
-
-    # def cover_sub(self): # COVER: build cover subproblem model
-    #     z = self.sub_cover.addVars(ne,vtype=GRB.BINARY, name="z")
-    #     y = self.sub_cover.addVars(ni,vtype=GRB.BINARY, name="y")
-    #
-    #     # Set objective to minimize
-    #     self.sub_cover.modelSense = GRB.MINIMIZE
-    #     # Minimize :\sum_e \rho_e*z_e
-    #     self.sub_cover.setObjective(LinExpr(cd1,z.select()))
-    #     # (1) \sum_j a_ije*y_j >= z_e \forall i,e
-    #     for i in range(ni):
-    #         for e in range(ne):
-    #             sum_ay=0
-    #             for j in range(ni):
-    #                 sum_ay += a[i][j][e]*y[j]
-    #             self.sub_cover.addConstr(
-    #                     (sum_ay >= z[e]),
-    #                     'ay>e'+str(i)+str(e))
-    #     # (2) \sum y_j = p
-    #     self.sub_cover.addConstr(
-    #             (y.sum() == p),
-    #             'sump')
-    #     # (3) \sum z_e = 1
-    #     self.sub_cover.addConstr(
-    #             (z.sum() == 1),
-    #             'sumz')
-
-    def cover_pre(self):
+        
+    def cover_pre(self):  # COVER
         # preprocessing cdk
         cd_cover = [[] for k in range(self.nk)]
+        self.ne = [0 for k in range(self.nk)]
         for k in range(self.nk):
             cd0 = list(itertools.chain.from_iterable(
                 self.cdk[k]))  # combine lists
             cd_cover[k] = sorted(set(cd0))  # sort without duplicates
-        return cd_cover
+            self.ne[k] = len(cd_cover[k])
+        # Build all b_ije(k)
+        b = [[[[0 for e in range(self.ne[k])] for j in range(self.ni)] for i in range(self.ni)] for k in range(self.nk)]
+        for k in range(self.nk)
+            for i in range(self.ni):
+                for j in range(self.ni):
+                    for e in range(self.ne):
+                        if cd[k][i][j] <= cd_cover[k][e]:
+                            b[k][i][j][e] = 1
+        self.bije = b
 
     def cover_sub(self):  # COVER
-        self.sub_dual = Model("p-center-cover")
+        # self.sub_dual = Model("p-center-cover")
         # Create variables
         # z:ordered cost, y:location
-        z = self.sub_dual.addVars(
-            self.nk, self.ne, vtype=GRB.BINARY, name="z")  # update ne
+        z = [[0 for e in range(self.ne[k])] for k in range(nk)]
+        for k in range(self.nk):
+            for e in range(self.ne[k]):
+                z_name = ''.join(['z[', str(k), ',', str(e),']'])
+                z[k][e] = self.sub_dual.addVar(vtype=GRB.BINARY, name=z_name)
         y = self.sub_dual.addVars(self.nk, self.ni, vtype=GRB.BINARY, name="y")
         L = self.sub_dual.addVars(self.nk, name="L")  # ??
         # Set objective to minimize
