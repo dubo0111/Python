@@ -66,6 +66,7 @@ class rflp:
     sk = []
     # COVER
     ne = 0
+    cd_cover = 0
     bije = 0
 
     def __init__(self, p, ni, nk, a1, a2, cd, cdk, sk):
@@ -139,8 +140,9 @@ class rflp:
         self.cdk = []
         self.sk = []
         # COVER
-        ne = 0
-        bije = 0
+        self.ne = 0
+        self.cd_cover = 0
+        self.bije = 0
 
     def master(self, relax=0):
         # Create variables
@@ -293,7 +295,7 @@ class rflp:
             (-self.beta.sum(k, '*') <= 1 for k in range(self.nk)),
             "L3")
         self.sub_dual.update()  # build dual subproblem model
-        
+
     def cover_pre(self):  # COVER
         # preprocessing cdk
         cd_cover = [[] for k in range(self.nk)]
@@ -304,13 +306,15 @@ class rflp:
             cd_cover[k] = sorted(set(cd0))  # sort without duplicates
             self.ne[k] = len(cd_cover[k])
         # Build all b_ije(k)
-        b = [[[[0 for e in range(self.ne[k])] for j in range(self.ni)] for i in range(self.ni)] for k in range(self.nk)]
+        b = [[[[0 for e in range(self.ne[k])] for j in range(self.ni)]
+              for i in range(self.ni)] for k in range(self.nk)]
         for k in range(self.nk)
             for i in range(self.ni):
                 for j in range(self.ni):
                     for e in range(self.ne):
                         if cd[k][i][j] <= cd_cover[k][e]:
                             b[k][i][j][e] = 1
+        self.cd_cover = cd_cover
         self.bije = b
 
     def cover_sub(self):  # COVER
@@ -320,16 +324,18 @@ class rflp:
         z = [[0 for e in range(self.ne[k])] for k in range(nk)]
         for k in range(self.nk):
             for e in range(self.ne[k]):
-                z_name = ''.join(['z[', str(k), ',', str(e),']'])
+                z_name = ''.join(['z[', str(k), ',', str(e), ']'])
                 z[k][e] = self.sub_dual.addVar(vtype=GRB.BINARY, name=z_name)
         y = self.sub_dual.addVars(self.nk, self.ni, vtype=GRB.BINARY, name="y")
-        L = self.sub_dual.addVars(self.nk, name="L")  # ??
+        L = self.sub_dual.addVars(
+            self.nk, lb=0, ub=GRB.INFINITY, vtype=GRB.CONTINUOUS, name="L")  # ??
         # Set objective to minimize
         self.sub_dual.modelSense = GRB.MINIMIZE
-        # Minimize :\sum_e \rho_e*z_e
-        self.sub_dual.setObjective(LinExpr(cd1, z.select()))
-        # (0) L(k) =
-        # (1) \sum_j a_ije*y_j >= z_e \forall nk,i,e
+        # Minimize: \sum L
+        self.sub_dual.setObjective(quicksum(L))
+        # (0) L(k) = \sum_e cd_cover[k][e]z[k][e]  \forall k
+        
+        # (1) \sum_j b_ije[k]*y_j >= z_e \forall nk,i,e
         for k in range(self.nk)
             for i in range(self.ni):
                 for e in range(self.ne):
@@ -338,12 +344,12 @@ class rflp:
                         sum_ay += a[k][i][j][e] * y[k][j]
                     m.addConstr(
                         (sum_ay >= z[k][e]),
-                        'ay>e' + str(i) + str(e))
-        # (2) \sum y_j = p
+                        'ay>e' + str(k) + str(i) + str(e))
+        # (2) \sum y_j[k] = p
         m.addConstr(
             (y[k].sum() == p),  # ???
             'sump')
-        # (3) \sum z_e = 1
+        # (3) \sum z_e[k] = 1 \forall k
         m.addConstr(
             (z[k].sum() == 1),
             'sumz')
