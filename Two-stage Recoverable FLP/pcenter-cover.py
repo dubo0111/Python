@@ -135,12 +135,12 @@ while len(y_set) < p:
     y_set.update({b})
 
 # Plan 2 (more than 2 times of optimality):
-# while len(y_set) < p:
-#     (a,b) = np.unravel_index(cd_matrix.argmax(), cd_matrix.shape) # index of maximum cost
-#     cd_matrix[a,b] = 0
-#     y_set.update({a,b})
-# if len(y_set) > p:
-#     y_set.remove(b)
+while len(y_set) < p:
+    (a,b) = np.unravel_index(cd_matrix.argmax(), cd_matrix.shape) # index of maximum cost
+    cd_matrix[a,b] = 0
+    y_set.update({a,b})
+if len(y_set) > p:
+    y_set.remove(b)
 
 for x in y_set:
     y_initial[x] = 1

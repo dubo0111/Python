@@ -308,11 +308,11 @@ class rflp:
         # Build all b_ije(k)
         b = [[[[0 for e in range(self.ne[k])] for j in range(self.ni)]
               for i in range(self.ni)] for k in range(self.nk)]
-        for k in range(self.nk)
+        for k in range(self.nk):  # !four layers
             for i in range(self.ni):
                 for j in range(self.ni):
-                    for e in range(self.ne):
-                        if cd[k][i][j] <= cd_cover[k][e]:
+                    for e in range(self.ne[k]):
+                        if self.cdk[k][i][j] <= cd_cover[k][e]:
                             b[k][i][j][e] = 1
         self.cd_cover = cd_cover
         self.bije = b
@@ -321,38 +321,73 @@ class rflp:
         # self.sub_dual = Model("p-center-cover")
         # Create variables
         # z:ordered cost, y:location
-        z = [[0 for e in range(self.ne[k])] for k in range(nk)]
+        z = [[0 for e in range(self.ne[k])] for k in range(self.nk)]
         for k in range(self.nk):
             for e in range(self.ne[k]):
                 z_name = ''.join(['z[', str(k), ',', str(e), ']'])
-                z[k][e] = self.sub_dual.addVar(vtype=GRB.BINARY, name=z_name)
-        y = self.sub_dual.addVars(self.nk, self.ni, vtype=GRB.BINARY, name="y")
-        L = self.sub_dual.addVars(
+                z[k][e] = self.sub_cover.addVar(vtype=GRB.BINARY, name=z_name)
+        y = self.sub_cover.addVars(self.nk, self.ni, vtype=GRB.BINARY, name="y")
+        L = self.sub_cover.addVars(
             self.nk, lb=0, ub=GRB.INFINITY, vtype=GRB.CONTINUOUS, name="L")  # ??
         # Set objective to minimize
-        self.sub_dual.modelSense = GRB.MINIMIZE
+        self.sub_cover.modelSense = GRB.MINIMIZE
         # Minimize: \sum L
-        self.sub_dual.setObjective(quicksum(L))
+        self.sub_cover.setObjective(quicksum(L))
+        # (00) Q = max(L(k)) # ???Will obj affect solution speed: Obj:max Q & max sum(L(k))
         # (0) L(k) = \sum_e cd_cover[k][e]z[k][e]  \forall k
-        
+        for k in range(self.nk):
+            sum_cdz = 0
+            for e in range(self.ne[k]):
+                sum_cdz += self.cd_cover[k][e] * z[k][e]
+            self.sub_cover.addConstr(
+                (L[k] == sum_cdz),
+                "L(k)=rho*z")
         # (1) \sum_j b_ije[k]*y_j >= z_e \forall nk,i,e
-        for k in range(self.nk)
+        for k in range(self.nk): # !
             for i in range(self.ni):
-                for e in range(self.ne):
+                for e in range(self.ne[k]):
                     sum_ay = 0
                     for j in range(self.ni):
-                        sum_ay += a[k][i][j][e] * y[k][j]
-                    m.addConstr(
+                        sum_ay += self.bije[k][i][j][e] * y[k,j]
+                    self.sub_cover.addConstr(
                         (sum_ay >= z[k][e]),
                         'ay>e' + str(k) + str(i) + str(e))
-        # (2) \sum y_j[k] = p
-        m.addConstr(
-            (y[k].sum() == p),  # ???
-            'sump')
-        # (3) \sum z_e[k] = 1 \forall k
-        m.addConstr(
-            (z[k].sum() == 1),
-            'sumz')
+        # (2) \sum y_j[k] = p \forall k
+        self.sub_cover.update() # ?
+        self.sub_cover.addConstrs((y.sum(k,'*') == self.p for k in range(self.nk)),'sump')
+        # (3) \sum_e z_e[k] = 1 \forall k
+        self.sub_cover.addConstrs((quicksum(z[k]) == 1 for k in range(self.nk)),'sumz')
+        self.sub_cover.update() #
+
+        # fix varibale: sk
+        for k in range(self.nk):
+            for j in range(self.ni):
+                if self.sk[k][j] == 1:
+                    y_name = ''.join(['y[',str(k),',', str(j), ']'])
+                    self.sub_cover.getVarByName(y_name).lb = 0
+                    self.sub_cover.getVarByName(y_name).ub = 0
+
+    def cover_bound(self): #COVER
+        # process value_y (variable) & sk(fixed)
+        survived = [[0 for j in range(self.ni)] for k in range(self.nk)]
+        tabu = [[0 for j in range(self.ni)] for k in range(self.nk)]
+        for k in range(self.sk):
+            tabu[k] = [x + y for x, y in zip(self.value_y, self.sk[k])]
+            for j in range(self.ni):
+                if self.value_y[j]-self.sk[k][j] > 0:
+                    survived[k][j] = 1
+        # Find UB1
+        for k in range(self.nk):
+            y_initial = [0 for i in range(ni)] # y
+            y_set = set()
+            n = self.p # counter
+            cd_matrix = np.array(self.cdk[k])
+            cd_matrix_1 = np.copy(cd_matrix) # deep copy
+            for j in range(self.ni):
+
+        # UB1
+        # UB2
+        # LB
 
     def sub_dual_obj(self):  # Caculate objective function
         def c_constr1():

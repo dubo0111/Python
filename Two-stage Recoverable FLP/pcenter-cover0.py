@@ -133,7 +133,7 @@ n = p # counter
 cd_matrix = np.array(cd)
 cd_matrix_1 = np.copy(cd_matrix) # deep copy
 # Find y heuristically
-# Plan 1 : (L no more than 2 times of optimality)
+# Plan 1 : (L no more than 2 times of optimality?)
 (a,b) = np.unravel_index(cd_matrix.argmax(), cd_matrix.shape) # index of maximum cost
 y_set.update({a,b})
 cd_matrix[a,b] = 0
@@ -146,12 +146,12 @@ while len(y_set) < p:
     y_set.update({b})
 
 # Plan 2 (more than 2 times of optimality):
-# while len(y_set) < p:
-#     (a,b) = np.unravel_index(cd_matrix.argmax(), cd_matrix.shape) # index of maximum cost
-#     cd_matrix[a,b] = 0
-#     y_set.update({a,b})
-# if len(y_set) > p:
-#     y_set.remove(b)
+while len(y_set) < p:
+    (a,b) = np.unravel_index(cd_matrix.argmax(), cd_matrix.shape) # index of maximum cost
+    cd_matrix[a,b] = 0
+    y_set.update({a,b})
+if len(y_set) > p:
+    y_set.remove(b)
 
 for x in y_set:
     y_initial[x] = 1
@@ -183,6 +183,7 @@ for i in range(p):
 UB2 = max(L_cluster)
 print("Find UB2--- %s seconds ---" % round((time.time() - t1), 5))
 
+# Find LB
 t2 = time.time()
 # LB2 = UB1/2  # Wrong Lower Bound
 LB2,_ = p_center(cd,p,1)

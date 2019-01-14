@@ -69,7 +69,7 @@ def bra_cut(p,cd,cdk,sk,a1):
         # setting algorithm environment
         TSRFLP.dual = 1
         TSRFLP.intSP = 1.0
-        # TSRFLP.lift = 0
+        TSRFLP.lift = 0
         TSRFLP.zero_half = 0
         #
         gap = 1 #
@@ -87,6 +87,8 @@ def bra_cut(p,cd,cdk,sk,a1):
         TSRFLP.sub(callback=1) #
         # print("BUILDING SUB--- %s seconds ---" % round((time.time() - build), 2))
 
+        # COVER
+        TSRFLP.cover_pre()
         TSRFLP.cover_sub() # COVER initialization
 
         # warm_t = time.time()
