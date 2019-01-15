@@ -9,7 +9,7 @@ Created on Tue Dec 03 2018
 * selected nodes (variable each iteration) and forbidden nodes (same each iteration)
 """
 import data_generator0 as dg0
-data = dg0.data_gen(20,1) # ni,nk,randomseed
+data = dg0.data_gen(10,1) # ni,nk,randomseed
 p,cd,_,_ = data.data()
 from gurobipy import *
 import numpy as np
@@ -145,13 +145,7 @@ while len(y_set) < p:
     cd_matrix[y_curr[a],b] = 0
     y_set.update({b})
 
-# Plan 2 (more than 2 times of optimality):
-while len(y_set) < p:
-    (a,b) = np.unravel_index(cd_matrix.argmax(), cd_matrix.shape) # index of maximum cost
-    cd_matrix[a,b] = 0
-    y_set.update({a,b})
-if len(y_set) > p:
-    y_set.remove(b)
+# Plan 2 (more than 2 times of optimality)?
 
 for x in y_set:
     y_initial[x] = 1

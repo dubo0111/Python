@@ -27,6 +27,10 @@ import numpy as np
 #m.update()
 #print(m.getVars())
 
-test = np.array([[[1,2], 2], [3, 4], [5, 6]])
-#test[:,0] = 0
-print(test[0,0])
+#test = np.array([[[1,2], 2], [3, 4], [5, 6]])
+##test[:,0] = 0
+#print(test[0,0])
+y=set()
+y.update({0,2})
+y_now = [1 for j in range(3) if j in y]
+print(y_now)

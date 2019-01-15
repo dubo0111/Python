@@ -314,7 +314,7 @@ class rflp:
                     for e in range(self.ne[k]):
                         if self.cdk[k][i][j] <= cd_cover[k][e]:
                             b[k][i][j][e] = 1
-        self.cd_cover = cd_cover
+        self.cd_cover = cd_cover #
         self.bije = b
 
     def cover_sub(self):  # COVER
@@ -368,26 +368,96 @@ class rflp:
                     self.sub_cover.getVarByName(y_name).ub = 0
 
     def cover_bound(self): #COVER
-        # process value_y (variable) & sk(fixed)
-        survived = [[0 for j in range(self.ni)] for k in range(self.nk)]
-        tabu = [[0 for j in range(self.ni)] for k in range(self.nk)]
-        for k in range(self.sk):
-            tabu[k] = [x + y for x, y in zip(self.value_y, self.sk[k])]
+        # Input: value_y (variable) & sk(fixed)
+        # Find UB1
+        # Exclude unavailable nodes and Find 'farthest' nodes (for each k)
+
+        # survived = [[0 for j in range(self.ni)] for k in range(self.nk)]
+        # tabu = [[0 for j in range(self.ni)] for k in range(self.nk)]
+        y_set = [set() for k in range(self.nk)] # store open facilies
+        y_now = [0 for k in range(self.nk)]
+        cd_matrix = [[] for k in range(self.nk)]
+        cd_matrix1 = [[] for k in range(self.nk)]
+        x = [[[0 for j in range(ni)] for i in range(ni)] for k in range(self.nk)]
+        for k in range(self.nk):
+            # tabu[k] = [x + y for x, y in zip(self.value_y, self.sk[k])]
+            cd_matrix[k] = np.array(self.cdk[k])
+            cd_matrix_1[k] = np.array(self.cdk[k])
             for j in range(self.ni):
                 if self.value_y[j]-self.sk[k][j] > 0:
-                    survived[k][j] = 1
-        # Find UB1
-        for k in range(self.nk):
-            y_initial = [0 for i in range(ni)] # y
-            y_set = set()
-            n = self.p # counter
-            cd_matrix = np.array(self.cdk[k])
-            cd_matrix_1 = np.copy(cd_matrix) # deep copy
+                    # survived[k][j] = 1
+                    y_set[k].update({j})
+                if self.sk[k][j] == 1:
+                    cd_matrix[k][:,j] = 0
+            while len(y_set[k]) < p:
+                y_curr = list(y_set[k])
+                cd_temp = cd_matrix[k][y_curr,:] #
+                (a,b) = np.unravel_index(cd_temp.argmax(), cd_temp.shape)
+                cd_matrix[k][y_curr[a],b] = 0
+                y_set[k].update({b})
+            y_now[k] = [0 for j in range(self.ni)]
+            for x in y_set[k]:
+                y_now[k][x] = 1
+            # Find closest facility for each demand
             for j in range(self.ni):
-
-        # UB1
-        # UB2
-        # LB
+                if y_now[k][j] == 0:
+                    cd_matrix_1[k][:,j] = 1e8 # set j column to Big M
+            facility = np.argmin(cd_matrix_1[k], axis=1) # index of maximum value in each row
+            cost = cd_matrix_1[np.arange(cd_matrix_1[k].shape[0]),facility] # advanced index returning maximum value of each row
+            UB1 = max(cost) # Upper Bound UB1
+            # Find UB2
+            cluster = [[] for n in range(self.p)]
+            y_idx = list(y_set[k])
+            for i in range(self.p):
+                cluster[i] = np.argwhere(facility == y_idx[i]).ravel()#.tolist()
+            cd_array = np.array(cdk[k])
+            L_cluster = [0 for i in range(self.p)]
+            for i in range(self.p):
+                L_cluster[i],_ = p_center(cd_array[cluster[i][:,None],cluster[i]]) #
+            UB2 = max(L_cluster)
+            # LB
+            LB2,_ = p_center(cd,p,1)
+            # Use UB & LB to restrict y in self.sub_cover
+            
+        # Function for a simple p-center problem
+        def p_center(cd,p=1,LP=0):
+            m = Model("p-center")
+            # Number of nodes
+            ni = len(cd)
+            # p = 1
+            # Create variables
+            # x:allocations y:location L:auxiliary variable
+            x = m.addVars(ni,ni,vtype=GRB.CONTINUOUS, name="x")
+            if LP == 0:
+                y = m.addVars(ni,vtype=GRB.BINARY, name="y")
+            elif LP == 1:
+                y = m.addVars(ni,vtype=GRB.CONTINUOUS, name="y")
+            L = m.addVar(vtype=GRB.CONTINUOUS,obj=1,name="L")
+            # Set objective to minimize
+            m.modelSense = GRB.MINIMIZE
+            # (1) Maximum cost constraints (objective): L>sum(cdx) forall i
+            cdx = x.copy()
+            for i in range(ni):
+                for j in range(ni):
+                   cdx[i,j]=cd[i][j]
+            m.addConstrs(
+                    (x.prod(cdx,i,'*') <= L for i in range(ni)),
+                    "epigraph")
+            # (2) Constraints sum(y)=p
+            m.addConstr(
+                    (y.sum() == p),
+                    "p")
+            # (3) x<=y forall i,j
+            m.addConstrs(
+                    (x[i,j] <= y[j] for i in range(ni) for j in range(ni)),
+                    "x<y")
+            # (4) sum(x)=1 forall i
+            m.addConstrs(
+                    (x.sum(i,'*') == 1 for i in range(ni)),
+                    "sumx")
+            m.params.OutputFlag = 0
+            m.optimize()
+            return m.objVal,m.Runtime
 
     def sub_dual_obj(self):  # Caculate objective function
         def c_constr1():
