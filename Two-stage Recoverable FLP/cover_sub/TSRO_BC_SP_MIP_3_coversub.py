@@ -9,6 +9,7 @@ Du Bo
 import model_rflp as mr
 from gurobipy import *
 import time
+import sys
 def bra_cut(p,cd,cdk,sk,a1):
     # Number of nodes
     ni = len(cd)
@@ -44,16 +45,46 @@ def bra_cut(p,cd,cdk,sk,a1):
                     # print("callback--- %s seconds ---" % round((time.time() - time1), 2))
                 else: # ----integer cut----
                     TSRFLP.update_sub(callback=1)
-                    # time_sub = time.time()
+                    time_sub = time.time()
                     TSRFLP.sub_model.optimize()
-                    # print("PRIMAL_SUB_callback--- %s seconds ---" % round((time.time() - time_sub), 2))
-                    TSRFLP.worst_scenario(1) # calculate max L3
+                    print("PRIMAL_SUB_callback--- %s seconds ---" % round((time.time() - time_sub), 2))
+                    max1 = TSRFLP.worst_scenario(1) # calculate max L3
                     TSRFLP.gap_calculation(1) # calculate int_gap
                     # print('----Integer gap:',TSRFLP.int_gap)
+                    # COVER
+                    time_cover = time.time()
+                    TSRFLP.cover_bound() #
+                    print("PRIMAL_BOUND_callback--- %s seconds ---" % round((time.time() - time_cover), 2))
+                    TSRFLP.sub_cover.optimize()
+                    print("PRIMAL_SUBCOVER_callback--- %s seconds ---" % round((time.time() - time_cover), 2))
+                    max2 = TSRFLP.worst_scenario(1,1) #
+                    TSRFLP.gap_calculation(1,0,1)
+                    print('max1 ',max1)
+                    print('max2 ',max2)
+                    # print(TSRFLP.sub_model.objVal)
+                    # print(TSRFLP.sub_cover.objVal)
+                    # Debug ------------------------
+                    # value_L3 = []
+                    # value_L = []
+                    # for k in range(TSRFLP.nk):
+                    #     L3_name = ''.join(['L3[', str(k), ']'])
+                    #     L_name = ''.join(['L[', str(k), ']'])
+                    #     value_L3.append(TSRFLP.sub_model.getVarByName(L3_name).x)
+                    #     value_L.append(TSRFLP.sub_cover.getVarByName(L_name).x)
+                    # print(value_L3)
+                    # print(value_L)
+
+                    # sys.stdout = open("sub.txt", "w")
+                    # print(TSRFLP.sub_model.getVars())
+                    # sys.stdout = open("cover.txt", "w")
+                    # print(TSRFLP.sub_cover.getVars())
+                    # sys.stdout = sys.__stdout__
+
+                    # ----------------------
                     if TSRFLP.int_gap >= 1e-4:
                         # cut incumbent solution
-                        TSRFLP.update_integer_cut()
-                        model.cbLazy(TSRFLP.omega >= TSRFLP.integer_cut)
+                        TSRFLP.update_integer_cut(1) #cover=0(sub_model)/1(sub_cover)
+                        model.cbLazy(TSRFLP.omega  >= TSRFLP.integer_cut)
                     # COVER
             if where == GRB.Callback.MESSAGE: # lazy constraints
                 # Message callback
@@ -89,7 +120,7 @@ def bra_cut(p,cd,cdk,sk,a1):
 
         # COVER
         TSRFLP.cover_pre()
-        TSRFLP.cover_sub() # COVER initialization
+        TSRFLP.cover_sub() # sub_cover Model initialization
 
         # warm_t = time.time()
         TSRFLP.warm_start(1)

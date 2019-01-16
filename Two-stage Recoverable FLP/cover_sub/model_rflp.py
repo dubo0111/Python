@@ -203,7 +203,7 @@ class rflp:
         self.sub_model.modelSense = GRB.MINIMIZE
         # (5) eta == sum(L3(k)) forall k
         self.sub_model.addConstr(
-            (eta == L3.sum()),
+            (eta == quicksum(L3)),
             "eta=sumL")
         # (6) L3(k) >= c'd'v(k) forall i,k
         cdv = v.copy()
@@ -359,76 +359,14 @@ class rflp:
         self.sub_cover.addConstrs((quicksum(z[k]) == 1 for k in range(self.nk)),'sumz')
         self.sub_cover.update() #
         # fix varibale: sk
-        for k in range(self.nk):
-            for j in range(self.ni):
-                if self.sk[k][j] == 1:
-                    y_name = ''.join(['y[',str(k),',', str(j), ']'])
-                    self.sub_cover.getVarByName(y_name).lb = 0
-                    self.sub_cover.getVarByName(y_name).ub = 0
+        # for k in range(self.nk):
+        #     for j in range(self.ni):
+        #         if self.sk[k][j] == 1:
+        #             y_name = ''.join(['y[',str(k),',', str(j), ']'])
+        #             self.sub_cover.getVarByName(y_name).lb = 0
+        #             self.sub_cover.getVarByName(y_name).ub = 0
 
     def cover_bound(self): # COVER
-        # For each iteration,
-        # Input: value_y (variable) & sk(fixed)
-        # Find UB1
-        # Exclude unavailable nodes and Find 'farthest' nodes (for each k)
-        y_set = [set() for k in range(self.nk)] # store open facilies
-        y_now = [0 for k in range(self.nk)]
-        cd_matrix = [[] for k in range(self.nk)]
-        cd_matrix1 = [[] for k in range(self.nk)]
-        x = [[[0 for j in range(ni)] for i in range(ni)] for k in range(self.nk)]
-        for k in range(self.nk):
-            cd_matrix[k] = np.array(self.cdk[k])
-            cd_matrix_1[k] = np.array(self.cdk[k])
-            y_name = ''.join(['y[',str(k),',', str(j), ']'])
-            for j in range(self.ni):
-                y_name = ''.join(['y[',str(k),',', str(j), ']']) # Find and fix y
-                if self.value_y[j]-self.sk[k][j] > 0:
-                    self.sub_cover.getVarByName(y_name).lb = 1
-                    self.sub_cover.getVarByName(y_name).ub = 1
-                    y_set[k].update({j})
-                else:
-                    self.sub_cover.getVarByName(y_name).lb = 0
-                    self.sub_cover.getVarByName(y_name).ub = 1
-                if self.sk[k][j] == 1:
-                    cd_matrix[k][:,j] = 0
-            while len(y_set[k]) < p:
-                y_curr = list(y_set[k])
-                cd_temp = cd_matrix[k][y_curr,:] #
-                (a,b) = np.unravel_index(cd_temp.argmax(), cd_temp.shape)
-                cd_matrix[k][y_curr[a],b] = 0
-                y_set[k].update({b})
-            y_now[k] = [0 for j in range(self.ni)]
-            for x in y_set[k]:
-                y_now[k][x] = 1
-            # Find closest facility for each demand
-            for j in range(self.ni):
-                if y_now[k][j] == 0:
-                    cd_matrix_1[k][:,j] = 1e8 # set j column to Big M
-            facility = np.argmin(cd_matrix_1[k], axis=1) # index of maximum value in each row
-            cost = cd_matrix_1[np.arange(cd_matrix_1[k].shape[0]),facility] # advanced index returning maximum value of each row
-            UB1 = max(cost) # Upper Bound UB1
-            # Find UB2
-            cluster = [[] for n in range(self.p)]
-            y_idx = list(y_set[k])
-            for i in range(self.p):
-                cluster[i] = np.argwhere(facility == y_idx[i]).ravel()#.tolist()
-            cd_array = np.array(cdk[k])
-            L_cluster = [0 for i in range(self.p)]
-            for i in range(self.p):
-                L_cluster[i],_ = p_center(cd_array[cluster[i][:,None],cluster[i]]) #
-            UB2 = max(L_cluster)
-            # LB
-            LB2,_ = p_center(cd,p,1)
-            # Use UB & LB to restrict 'z' in self.sub_cover; Input self.cd_cover
-            # z = [[0 for e in range(self.ne[k])] for k in range(self.nk)]
-            for e in range(self.ne[k]):
-                z_name = ''.join(['z[', str(k), ',', str(e), ']'])
-                if self.cd_cover[k][e] < LB2 and self.cd_cover[k][e] > UB2:
-                    # self.sub_cover.getVarByName(z_name).lb = 0
-                    self.sub_cover.getVarByName(z_name).ub = 0
-                else:
-                    # self.sub_cover.getVarByName(z_name).lb = 0
-                    self.sub_cover.getVarByName(z_name).ub = 1
         # Function for a simple p-center problem
         def p_center(cd,p=1,LP=0):
             m = Model("p-center")
@@ -468,6 +406,74 @@ class rflp:
             m.params.OutputFlag = 0
             m.optimize()
             return m.objVal,m.Runtime
+        # For each iteration,
+        # Input: value_y (variable) & sk(fixed)
+        # Find UB1
+        # Exclude unavailable nodes and Find 'farthest' nodes (for each k)
+        y_set = [set() for k in range(self.nk)] # Store open facilies
+        y_now = [0 for k in range(self.nk)]
+        cd_matrix = [[] for k in range(self.nk)]
+        cd_matrix_1 = [[] for k in range(self.nk)]
+        x = [[[0 for j in range(self.ni)] for i in range(self.ni)] for k in range(self.nk)]
+        for k in range(self.nk):
+            cd_matrix[k] = np.array(self.cdk[k])
+            cd_matrix_1[k] = np.array(self.cdk[k])
+            for j in range(self.ni):
+                y_name = ''.join(['y[',str(k),',', str(j), ']']) # Find and fix y
+                if self.value_y[j]-self.sk[k][j] > 0:
+                    self.sub_cover.getVarByName(y_name).lb = 1
+                    self.sub_cover.getVarByName(y_name).ub = 1
+                    y_set[k].update({j})
+                elif self.sk[k][j]==1:
+                    self.sub_cover.getVarByName(y_name).lb = 0
+                    self.sub_cover.getVarByName(y_name).ub = 0
+                else:
+                    self.sub_cover.getVarByName(y_name).lb = 0
+                    self.sub_cover.getVarByName(y_name).ub = 1
+                if self.sk[k][j] == 1:
+                    cd_matrix[k][:,j] = 0
+            while len(y_set[k]) < self.p:
+                y_curr = list(y_set[k])
+                cd_temp = cd_matrix[k][y_curr,:] #
+                (a,b) = np.unravel_index(cd_temp.argmax(), cd_temp.shape)
+                cd_matrix[k][y_curr[a],b] = 0
+                y_set[k].update({b})
+            y_now[k] = [0 for j in range(self.ni)]
+            for x in y_set[k]:
+                y_now[k][x] = 1
+            # Find closest facility for each demand
+            for j in range(self.ni):
+                if y_now[k][j] == 0:
+                    cd_matrix_1[k][:,j] = 1e8 # set j column to Big M
+            facility = np.argmin(cd_matrix_1[k], axis=1) # index of maximum value in each row
+            cost = cd_matrix_1[k][np.arange(cd_matrix_1[k].shape[0]),facility] # advanced index returning maximum value of each row
+            UB1 = max(cost) # Upper Bound UB1
+            # Find UB2
+            cluster = [[] for n in range(self.p)]
+            y_idx = list(y_set[k])
+            for i in range(self.p):
+                cluster[i] = np.argwhere(facility == y_idx[i]).ravel()#.tolist()
+            cd_array = np.array(self.cdk[k])
+            L_cluster = [0 for i in range(self.p)]
+            for i in range(self.p):
+                L_cluster[i],_ = p_center(cd_array[cluster[i][:,None],cluster[i]]) #
+            UB2 = max(L_cluster)
+            # LB
+            LB2,_ = p_center(self.cdk[k],self.p,1)
+            # print('Bounds:',UB1)
+            # print(UB2)
+            # print(LB2)
+            # Use UB & LB to restrict 'z' in self.sub_cover; Input self.cd_cover
+            # z = [[0 for e in range(self.ne[k])] for k in range(self.nk)]
+            for e in range(self.ne[k]):
+                z_name = ''.join(['z[', str(k), ',', str(e), ']'])
+                if self.cd_cover[k][e] < LB2 and self.cd_cover[k][e] > UB2:
+                    # self.sub_cover.getVarByName(z_name).lb = 0
+                    self.sub_cover.getVarByName(z_name).ub = 0
+                else:
+                    # self.sub_cover.getVarByName(z_name).lb = 0
+                    self.sub_cover.getVarByName(z_name).ub = 1
+
 
     def sub_dual_obj(self):  # Caculate objective function
         def c_constr1():
@@ -645,7 +651,7 @@ class rflp:
         # update cut to be added to master problem in each iteration
         self.constr_y = c_y + constant
 
-    def update_integer_cut(self):
+    def update_integer_cut(self,cover=0):
         # simplified cut (use no dual information)
         sum_c_y = LinExpr()
         for i in range(self.ni):
@@ -654,14 +660,20 @@ class rflp:
             elif self.value_y[i] == 0:
                 sum_c_y += -self.y[i]
         sum_c_y += 1
-        max_Lk = self.worst_scenario(1)
+        if cover == 0:
+            max_Lk = self.worst_scenario(1)
+        else:
+            max_Lk = self.worst_scenario(1,1)
         self.integer_cut = max_Lk[0] * sum_c_y
 
-    def gap_calculation(self, MIP_SP=0, Check_optimal=0):
+    def gap_calculation(self, MIP_SP=0, Check_optimal=0,cover=0):
         if MIP_SP == 1:  # in mycallback
             # vals = self.master_model.cbGetSolution(self.master_model._vars)
-            #value_L = vals(-2)
-            max_Lk = self.worst_scenario(1)
+            # value_L = vals(-2)
+            if cover == 0:
+                max_Lk = self.worst_scenario(1)
+            else:
+                max_Lk = self.worst_scenario(1,1)
             self.int_gap = max_Lk[0] - self.value_omega
            # print('max_Lk:',max_Lk[0])
         else:
@@ -680,26 +692,32 @@ class rflp:
             self.gap = (self.UB - self.LB) / self.LB
         # return self.gap
 
-    def worst_scenario(self, MIP_SP=0):
-        if self.dual == 0 or MIP_SP == 1:
-            value_L3 = []
+    def worst_scenario(self, MIP_SP=0, cover=0):
+        if cover == 0:
+            if self.dual == 0 or MIP_SP == 1:
+                value_L3 = []
+                for k in range(self.nk):
+                    L3_name = ''.join(['L3[', str(k), ']'])
+                    L3_temp = self.sub_model.getVarByName(L3_name)
+                    value_L3.append(L3_temp.x)
+                # maximum L3 and its index (worst k)
+                max_Lk = max([[v, i] for i, v in enumerate(value_L3)])
+            elif self.dual == 1 and MIP_SP != 1:
+                value_Qk = []
+                for k in range(self.nk):
+                    Qk_name = ''.join(['Qk[', str(k), ']'])
+                    Qk_temp = self.sub_dual.getVarByName(Qk_name)
+                    value_Qk.append(Qk_temp.x)
+                # maximum Qk and its index (worst k)
+                max_Lk = max([[v, i] for i, v in enumerate(value_Qk)])
+            self.max_k = max_Lk[1]
+        elif cover == 1:
+            value_L = []
             for k in range(self.nk):
-                L3_name = ''.join(['L3[', str(k), ']'])
-                L3_temp = self.sub_model.getVarByName(L3_name)
-                value_L3.append(L3_temp.x)
-            # maximum L3 and its index (worst k)
-            max_Lk = max([[v, i] for i, v in enumerate(value_L3)])
-        elif self.dual == 1 and MIP_SP != 1:
-            value_Qk = []
-            # if self.sub_dual.Status != 2:
-            #     aaa = 1
-            for k in range(self.nk):
-                Qk_name = ''.join(['Qk[', str(k), ']'])
-                Qk_temp = self.sub_dual.getVarByName(Qk_name)
-                value_Qk.append(Qk_temp.x)
-            # maximum Qk and its index (worst k)
-            max_Lk = max([[v, i] for i, v in enumerate(value_Qk)])
-        self.max_k = max_Lk[1]
+                L_name = ''.join(['L[', str(k), ']'])
+                value_L.append(self.sub_cover.getVarByName(L_name).x)
+            max_Lk = max([[v, i] for i, v in enumerate(value_L)])
+            self.max_k = max_Lk[1]
         return max_Lk
 
     def update_status(self):
@@ -731,9 +749,9 @@ class rflp:
         # tune parameters to avoid numerical issues for subproblem
         # wrong optimal solutions appear for both sub&dual_sub
         self.master_model.params.OutputFlag = 0
-        self.sub_model.params.OutputFlag = 0
+        self.sub_model.params.OutputFlag = 1
         self.sub_dual.params.OutputFlag = 0
-        self.sub_cover.params.OutputFlag = 0
+        self.sub_cover.params.OutputFlag = 1
         # self.master_model.params.PreCrush = 1
         # self.master_model.params.Cuts = 0
         if accu == 1:

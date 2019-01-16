@@ -9,7 +9,7 @@ Created on Tue Dec 03 2018
 * selected nodes (variable each iteration) and forbidden nodes (same each iteration)
 """
 import data_generator0 as dg0
-data = dg0.data_gen(10,1) # ni,nk,randomseed
+data = dg0.data_gen(50,1) # ni,nk,randomseed
 p,cd,_,_ = data.data()
 from gurobipy import *
 import numpy as np
@@ -64,7 +64,10 @@ def p_center(cd,p=1,LP=0):
             "sumx")
     # save model and optimize
     # m.write('.\model\pcenter.lp')
-    m.params.OutputFlag = 0
+    if LP == 0:
+        m.params.OutputFlag = 1
+    else:
+        m.params.OutputFlag = 0
     # m._vars = m.getVars()
     m.optimize()
     # Output
@@ -109,7 +112,7 @@ def cover_p_center(a,cd1,ni,ne,p):
 
     # save model and optimize
     # m.write('.\model\pcenter.lp')
-    m.params.OutputFlag = 0
+    m.params.OutputFlag = 1
     # m._vars = m.getVars()
     m.optimize()
 

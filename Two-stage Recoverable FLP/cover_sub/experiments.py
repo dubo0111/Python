@@ -14,7 +14,7 @@ import data_generator0 as dg0
 #import email_self as em
 
 ex_N = [10]  # number of vertexes
-ex_k = [10,20,30,40,50] # number of scenarios
+ex_k = [50,20,30,40,50] # number of scenarios
 ex_all = 10 # number of experiments for each combination
 ## bug
 # 10,30,46
@@ -33,9 +33,9 @@ try:
                 rnd_seed += 1
                 while rnd_seed in bug:
                     rnd_seed += 1
-                print(rnd_seed)
+                # print(rnd_seed)
                 ###
-                y1,t1, cut1, opt1, val1, gap1 = bc.bra_cut(p, cd, cdk, sk, a1)
+#                y1,t1, cut1, opt1, val1, gap1 = bc.bra_cut(p, cd, cdk, sk, a1)
                 y1c,t1c, cut1c, opt1c, val1c, gap1c = bc_cover.bra_cut(p, cd, cdk, sk, a1)
 #                t2, cut2, opt2, val2, gap2 = bd.benders_deco(p, cd, cdk, sk, a1)
                 # y3,t3, opt3, val3, gap3 = lip.LIP(p, cd, cdk, sk, a1)
