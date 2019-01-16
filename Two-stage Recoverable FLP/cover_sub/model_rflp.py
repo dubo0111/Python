@@ -358,7 +358,6 @@ class rflp:
         # (3) \sum_e z_e[k] = 1 \forall k
         self.sub_cover.addConstrs((quicksum(z[k]) == 1 for k in range(self.nk)),'sumz')
         self.sub_cover.update() #
-
         # fix varibale: sk
         for k in range(self.nk):
             for j in range(self.ni):
@@ -367,26 +366,29 @@ class rflp:
                     self.sub_cover.getVarByName(y_name).lb = 0
                     self.sub_cover.getVarByName(y_name).ub = 0
 
-    def cover_bound(self): #COVER
+    def cover_bound(self): # COVER
+        # For each iteration,
         # Input: value_y (variable) & sk(fixed)
         # Find UB1
         # Exclude unavailable nodes and Find 'farthest' nodes (for each k)
-
-        # survived = [[0 for j in range(self.ni)] for k in range(self.nk)]
-        # tabu = [[0 for j in range(self.ni)] for k in range(self.nk)]
         y_set = [set() for k in range(self.nk)] # store open facilies
         y_now = [0 for k in range(self.nk)]
         cd_matrix = [[] for k in range(self.nk)]
         cd_matrix1 = [[] for k in range(self.nk)]
         x = [[[0 for j in range(ni)] for i in range(ni)] for k in range(self.nk)]
         for k in range(self.nk):
-            # tabu[k] = [x + y for x, y in zip(self.value_y, self.sk[k])]
             cd_matrix[k] = np.array(self.cdk[k])
             cd_matrix_1[k] = np.array(self.cdk[k])
+            y_name = ''.join(['y[',str(k),',', str(j), ']'])
             for j in range(self.ni):
+                y_name = ''.join(['y[',str(k),',', str(j), ']']) # Find and fix y
                 if self.value_y[j]-self.sk[k][j] > 0:
-                    # survived[k][j] = 1
+                    self.sub_cover.getVarByName(y_name).lb = 1
+                    self.sub_cover.getVarByName(y_name).ub = 1
                     y_set[k].update({j})
+                else:
+                    self.sub_cover.getVarByName(y_name).lb = 0
+                    self.sub_cover.getVarByName(y_name).ub = 1
                 if self.sk[k][j] == 1:
                     cd_matrix[k][:,j] = 0
             while len(y_set[k]) < p:
@@ -417,8 +419,16 @@ class rflp:
             UB2 = max(L_cluster)
             # LB
             LB2,_ = p_center(cd,p,1)
-            # Use UB & LB to restrict y in self.sub_cover
-            
+            # Use UB & LB to restrict 'z' in self.sub_cover; Input self.cd_cover
+            # z = [[0 for e in range(self.ne[k])] for k in range(self.nk)]
+            for e in range(self.ne[k]):
+                z_name = ''.join(['z[', str(k), ',', str(e), ']'])
+                if self.cd_cover[k][e] < LB2 and self.cd_cover[k][e] > UB2:
+                    # self.sub_cover.getVarByName(z_name).lb = 0
+                    self.sub_cover.getVarByName(z_name).ub = 0
+                else:
+                    # self.sub_cover.getVarByName(z_name).lb = 0
+                    self.sub_cover.getVarByName(z_name).ub = 1
         # Function for a simple p-center problem
         def p_center(cd,p=1,LP=0):
             m = Model("p-center")
