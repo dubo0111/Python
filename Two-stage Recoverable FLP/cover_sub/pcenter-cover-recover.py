@@ -9,13 +9,22 @@ Created on Tue Dec 03 2018
 * selected nodes (variable each iteration) and forbidden nodes (same each iteration)
 """
 import data_generator0 as dg0
-data = dg0.data_gen(10,1) # ni,nk,randomseed
-p,cd,_,_ = data.data()
 from gurobipy import *
 import numpy as np
 import itertools
 import sys
 import time
+import math
+import copy
+
+ni = 70
+data = dg0.data_gen(ni,1) # ni,nk,randomseed
+p,cd,_,_ = data.data()
+# Input value_y & sk
+value_y = [0 for j in range(ni)]
+for j in range(math.ceil(p/3)):
+    value_y[j] = 1
+sk = [0 for j in range(ni)]
 
 
 # a_ije
@@ -27,7 +36,7 @@ import time
 #                 if cd[i][j] <= cd1[e]:
 #                     A[i][j][e] = 1
 
-def p_center(cd,p=1,LP=0):
+def p_center(cd,p=1,LP=0,value_y=0):
     m = Model("p-center")
     # Number of nodes
     ni = len(cd)
@@ -64,11 +73,17 @@ def p_center(cd,p=1,LP=0):
             "sumx")
     # save model and optimize
     # m.write('.\model\pcenter.lp')
-    if LP == 0:
+    if LP == 0 and p!=1:
         m.params.OutputFlag = 0
     else:
         m.params.OutputFlag = 0
     # m._vars = m.getVars()
+    if value_y != 0:
+        m.update()
+        for j in range(ni):
+            if value_y[j] == 1:
+                y_name = ''.join(['y[',str(j), ']'])
+                m.getVarByName(y_name).lb = 1
     m.optimize()
     # Output
     #    for v in m.getVars():
@@ -77,7 +92,7 @@ def p_center(cd,p=1,LP=0):
     # print('Runtime: %g' % m.Runtime)
     return m.objVal,m.Runtime
 
-def cover_p_center(a,cd1,ni,ne,p):
+def cover_p_center(a,cd1,ni,ne,p,value_y=0):
     # Create a new model
     m = Model("p-center-cover")
 
@@ -113,6 +128,12 @@ def cover_p_center(a,cd1,ni,ne,p):
     # save model and optimize
     # m.write('.\model\pcenter.lp')
     m.params.OutputFlag = 0
+    if value_y != 0:
+        m.update()
+        for j in range(ni):
+            if value_y[j] == 1:
+                y_name = ''.join(['y[',str(j), ']'])
+                m.getVarByName(y_name).lb = 1
     # m._vars = m.getVars()
     m.optimize()
 
@@ -130,16 +151,19 @@ ni = len(cd)
 
 t0 = time.time()
 # Find UB1
-y_initial = [0 for i in range(ni)] # y
+y_initial = copy.deepcopy(value_y)
 y_set = set()
-n = p # counter
+for j in range(ni):
+    if value_y[j] == 1:
+        y_set.update({j})
+# n = p # counter
 cd_matrix = np.array(cd)
 cd_matrix_1 = np.copy(cd_matrix) # deep copy
 # Find y heuristically
 # Plan 1 : (L no more than 2 times of optimality)
-(a,b) = np.unravel_index(cd_matrix.argmax(), cd_matrix.shape) # index of maximum cost
-y_set.update({a,b})
-cd_matrix[a,b] = 0
+# (a,b) = np.unravel_index(cd_matrix.argmax(), cd_matrix.shape) # index of maximum cost
+# y_set.update({a,b})
+# cd_matrix[a,b] = 0
 # find maximum cost to node in y_set
 while len(y_set) < p:
     y_curr = list(y_set)
@@ -182,7 +206,8 @@ print("Find UB2--- %s seconds ---" % round((time.time() - t1), 5))
 
 t2 = time.time()
 # LB2 = UB1/2  # Wrong Lower Bound
-LB2,_ = p_center(cd,p,1)
+#LB2,_ = p_center(cd,p,1)
+LB2=0
 print("Find LB--- %s seconds ---" % round((time.time() - t2), 5))
 
 print(UB1)
@@ -197,8 +222,8 @@ for i in range(ni):
         for e in range(ne):
             if cd[i][j] <= cd1[e]:
                 A[i][j][e] = 1
-cover_p_center(A,cd1,ni,ne,p)
-obj1,T1 = p_center(cd,p)
+cover_p_center(A,cd1,ni,ne,p,value_y) #
+obj1,T1 = p_center(cd,p,0,value_y) #
 print('Obj: %g' % obj1)
 print('Runtime: %g' % T1)
 print(y_set)

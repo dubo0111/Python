@@ -4,9 +4,8 @@ Created on Tue Dec 03 2018
 
 @author: DUBO
 
-* Conditional p-center model (cover formulation)
-* Giving value_y and sk (and nk scenarios):
-* selected nodes (variable each iteration) and forbidden nodes (same each iteration)
+* p-center model (cover formulation)
+
 """
 import data_generator0 as dg0
 data = dg0.data_gen(10,1) # ni,nk,randomseed

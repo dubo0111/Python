@@ -44,12 +44,12 @@ def bra_cut(p,cd,cdk,sk,a1):
                     TSRFLP.update_multiple_scenario()
                     # print("callback--- %s seconds ---" % round((time.time() - time1), 2))
                 else: # ----integer cut----
-                    # TSRFLP.update_sub(callback=1)
-                    # time_sub = time.time()
-                    # TSRFLP.sub_model.optimize()
-                    # print("PRIMAL_SUB_callback--- %s seconds ---" % round((time.time() - time_sub), 2))
-                    # max1 = TSRFLP.worst_scenario(1) # calculate max L3
-                    # TSRFLP.gap_calculation(1) # calculate int_gap
+                    time_sub = time.time()
+                    TSRFLP.update_sub(callback=1)
+                    TSRFLP.sub_model.optimize()
+                    print("PRIMAL_SUB_callback--- %s seconds ---" % round((time.time() - time_sub), 2))
+                    max1 = TSRFLP.worst_scenario(1) # calculate max L3
+                    TSRFLP.gap_calculation(1) # calculate int_gap
                     # print('----Integer gap:',TSRFLP.int_gap)
                     # COVER
                     time_cover = time.time()
@@ -61,8 +61,8 @@ def bra_cut(p,cd,cdk,sk,a1):
                     TSRFLP.gap_calculation(1,0,1)
                     # print('max1 ',max1)
                     # print('max2 ',max2)
-                    # print(TSRFLP.sub_model.objVal)
-                    # print(TSRFLP.sub_cover.objVal)
+                    print(TSRFLP.sub_model.objVal)
+                    print(TSRFLP.sub_cover.objVal)
                     # Debug ------------------------
                     # value_L3 = []
                     # value_L = []

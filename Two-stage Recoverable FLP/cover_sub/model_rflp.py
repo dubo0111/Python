@@ -415,7 +415,7 @@ class rflp:
         cd_matrix = [[] for k in range(self.nk)]
         cd_matrix_1 = [[] for k in range(self.nk)]
         x = [[[0 for j in range(self.ni)] for i in range(self.ni)] for k in range(self.nk)]
-        t1 = time.time()
+        # t1 = time.time()
         for k in range(self.nk):
             cd_matrix[k] = np.array(self.cdk[k])
             cd_matrix_1[k] = np.array(self.cdk[k])
@@ -474,9 +474,9 @@ class rflp:
                 else:
                     # self.sub_cover.getVarByName(z_name).lb = 0
                     self.sub_cover.getVarByName(z_name).ub = 1
-        t2= time.time()-t1
-        print('bound time')
-        print(round(t2,2))
+        # t2= time.time()-t1
+        # print('bound time')
+        #print(round(t2,2))
 
     def sub_dual_obj(self):  # Caculate objective function
         def c_constr1():
