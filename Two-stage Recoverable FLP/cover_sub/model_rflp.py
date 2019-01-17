@@ -415,6 +415,7 @@ class rflp:
         cd_matrix = [[] for k in range(self.nk)]
         cd_matrix_1 = [[] for k in range(self.nk)]
         x = [[[0 for j in range(self.ni)] for i in range(self.ni)] for k in range(self.nk)]
+        t1 = time.time()
         for k in range(self.nk):
             cd_matrix[k] = np.array(self.cdk[k])
             cd_matrix_1[k] = np.array(self.cdk[k])
@@ -473,7 +474,9 @@ class rflp:
                 else:
                     # self.sub_cover.getVarByName(z_name).lb = 0
                     self.sub_cover.getVarByName(z_name).ub = 1
-
+        t2= time.time()-t1
+        print('bound time')
+        print(round(t2,2))
 
     def sub_dual_obj(self):  # Caculate objective function
         def c_constr1():
@@ -749,9 +752,9 @@ class rflp:
         # tune parameters to avoid numerical issues for subproblem
         # wrong optimal solutions appear for both sub&dual_sub
         self.master_model.params.OutputFlag = 0
-        self.sub_model.params.OutputFlag = 1
+        self.sub_model.params.OutputFlag = 0
         self.sub_dual.params.OutputFlag = 0
-        self.sub_cover.params.OutputFlag = 1
+        self.sub_cover.params.OutputFlag = 0
         # self.master_model.params.PreCrush = 1
         # self.master_model.params.Cuts = 0
         if accu == 1:
@@ -760,16 +763,16 @@ class rflp:
             # self.sub_dual.params.Cuts = 0
 
             self.master_model.params.Presolve = 0
-            self.master_model.params.ScaleFlag = 3
-            self.master_model.params.NumericFocus = 3
+            self.master_model.params.ScaleFlag = 0
+            self.master_model.params.NumericFocus = 0
 
             self.sub_model.params.Presolve = 0
-            self.sub_model.params.ScaleFlag = 3
-            self.sub_model.params.NumericFocus = 3
+            self.sub_model.params.ScaleFlag = 0
+            self.sub_model.params.NumericFocus = 0
 
             self.sub_dual.params.Presolve = 0
-            self.sub_dual.params.ScaleFlag = 3
-            self.sub_dual.params.NumericFocus = 3
+            self.sub_dual.params.ScaleFlag = 0
+            self.sub_dual.params.NumericFocus = 0
 
     def error_check(self):
         if self.gap <= -0.1:
