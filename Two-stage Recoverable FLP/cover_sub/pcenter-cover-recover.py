@@ -17,7 +17,7 @@ import time
 import math
 import copy
 
-ni = 70
+ni = 10
 data = dg0.data_gen(ni,1) # ni,nk,randomseed
 p,cd,_,_ = data.data()
 # Input value_y & sk
