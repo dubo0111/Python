@@ -72,6 +72,9 @@ class rflp:
     LB_terminate = 0
     LB_branch = 0
     LB_cuts = []
+    LB_root = 0 #
+    LB_value_y = []
+    LB_omega = []
 
 
     def __init__(self, p, ni, nk, a1, a2, cd, cdk, sk):
@@ -152,6 +155,9 @@ class rflp:
         self.LB_terminate = 0
         self.LB_branch = 0
         self.LB_cuts = []
+        self.LB_root = 0
+        self.LB_value_y = []
+        self.LB_omega = []
 
     def master(self, relax=0):
         # Create variables
@@ -918,7 +924,7 @@ class rflp:
             new_y[rank[j]] = 1
         return new_y
 
-    def add_LB(self): # add Hanmming constraints in master_model
+    def add_LB(self, neighbourhood = 0): # add Hanmming constraints in master_model
         # Input: y(var); value_y
         # Delta(y_new,y_now) = [value_y - y]
         delta_y = 0
@@ -928,7 +934,9 @@ class rflp:
             else:
                 delta_y += self.y[j]
         self.master_model.addConstr(delta_y >= 1)
-        self.master_model.addConstr(delta_y <= 2)
+        if neighbourhood == 0:
+            neighbourhood = self.p/2
+        self.master_model.addConstr(delta_y <= neighbourhood)
 
 
 

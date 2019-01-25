@@ -6,21 +6,21 @@ import numpy as np
 import pandas as pd
 #import TSRO_BC_SP_MIP_3 as bc
 import TSRO_BC_SP_MIP_3_0 as bc
-import TSRO_BC_SP_MIP_3_LB as bc0
-#import TSRO_BC_SP_MIP_3_coversub as bc_cover
+import TSRO_BC_SP_LB as bc0
+import TSRO_BC_SP_LB0 as bc1
 import TSRO_BD_DualSP_INT as bd
 import TSRO_LIP as lip
 import data_generator0 as dg0
 #import email_self as em
 
 ex_N = [30]  # number of vertexes
-ex_k = [10,20,30,40,50] # number of scenarios
+ex_k = [30,20,30,40,50] # number of scenarios
 ex_all = 10 # number of experiments for each combination
 ## bug
 # 10,30,46
 ##
 a1 = 0.5
-rnd_seed = 7  # 17 # starting random seed
+rnd_seed = 11# 17 # starting random seed
 bug = []
 
 try:
@@ -36,7 +36,8 @@ try:
                 # print(rnd_seed)
                 ###
 #                y1,t1, cut1, opt1, val1, gap1 = bc.bra_cut(p, cd, cdk, sk, a1)
-                y10,t10, cut10, opt10, val10, gap10 = bc0.bra_cut(p, cd, cdk, sk, a1)
+#                y10,t10, cut10, opt10, val10, gap10 = bc0.bra_cut(p, cd, cdk, sk, a1)
+                y11,t11, cut11, opt11, val11, gap11 = bc1.bra_cut(p, cd, cdk, sk, a1)
 #                t2, cut2, opt2, val2, gap2 = bd.benders_deco(p, cd, cdk, sk, a1)
 #                y3,t3, opt3, val3, gap3 = lip.LIP(p, cd, cdk, sk, a1)
                 ###

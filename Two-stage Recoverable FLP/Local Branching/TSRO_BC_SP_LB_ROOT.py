@@ -2,7 +2,8 @@
 Benders' Decomposition:
  Branch and cut
  Multiple scenario generation
- !Improved Integer cut generation
+ Improved Integer cut generation
+ Local Branching (Root Nodes)
 
 Du Bo
 '''
@@ -19,21 +20,28 @@ def bra_cut(p,cd,cdk,sk,a1):
         def mycallback(model, where): # callback fuction: benders cut & integer cut
             # time1 = time.time()
             if where == GRB.Callback.MIPSOL:
-                # status output
-                # nodecnt = model.cbGet(GRB.Callback.MIPSOL_NODCNT)
-                # obj = model.cbGet(GRB.Callback.MIPSOL_OBJ)
-                # solcnt = model.cbGet(GRB.Callback.MIPSOL_SOLCNT)
-                # objbst = model.cbGet(GRB.Callback.MIPSOL_OBJBST)
-                # objbnd = model.cbGet(GRB.Callback.MIPSOL_OBJBND)
-                # gap_mipsol = abs(objbst - objbnd)/(1.0 + abs(objbst))
-                # #print('**** New solution at node %d, obj %g, sol %d, '
+                # Status output
+                nodecnt = model.cbGet(GRB.Callback.MIPSOL_NODCNT)
+                obj = model.cbGet(GRB.Callback.MIPSOL_OBJ)
+                solcnt = model.cbGet(GRB.Callback.MIPSOL_SOLCNT)
+                objbst = model.cbGet(GRB.Callback.MIPSOL_OBJBST)
+                objbnd = model.cbGet(GRB.Callback.MIPSOL_OBJBND)
+                gap_mipsol = abs(objbst - objbnd)/(1.0 + abs(objbst))
+                # print('**** New solution at node %d, obj %g, sol %d, '
                 #       'gap = %g ****' % (nodecnt, obj, solcnt, gap_mipsol))
+                # print(nodecnt)
                 vals = model.cbGetSolution(model._vars)
                 TSRFLP.value_y = vals[-2 - ni:-2]
                 # print(TSRFLP.value_y)
                 if TSRFLP.warm == 'over':
                     TSRFLP.value_y = [round(x) for x in TSRFLP.value_y] # make sure y are binary
                 TSRFLP.value_omega = vals[-1]
+                # Local Branching
+                if TSRFLP.LB_root == 0 and nodecnt == 0:
+                    model.terminate()
+                elif TSRFLP.LB_root == 0 and nodecnt > 0:
+                    TSRFLP.LB_terminate = 1
+                    model.terminate()
                 TSRFLP.update_sub_dual(callback=1)
                 time_subdual = time.time()
                 TSRFLP.sub_dual.optimize()
@@ -54,15 +62,21 @@ def bra_cut(p,cd,cdk,sk,a1):
                         # cut incumbent solution
                         TSRFLP.update_integer_cut()
                         model.cbLazy(TSRFLP.omega >= TSRFLP.integer_cut)
-            if where == GRB.Callback.MESSAGE: # lazy constraints
+                if TSRFLP.LB_root == 1:
+                    if time.time() - start_time >= 5:
+                        model.terminate()
+                if time.time() - start_time >= 1000: # Stop criteria
+                    model.terminate()
+
+            if where == GRB.Callback.MESSAGE: # Record lazy constraints
                 # Message callback
                 msg = model.cbGet(GRB.Callback.MSG_STRING)
                 cutname = 'Lazy constraints'
                 if cutname in msg:
                     TSRFLP.num_cut += int(msg[20:-1])
             # print(time.time() - start_time)
-            if time.time() - start_time >= 1000:
-                model.terminate()
+
+
 
         TSRFLP = mr.rflp(p, ni, nk, a1, a2, cd, cdk, sk) # instantiate class
         # setting algorithm environment
@@ -87,7 +101,7 @@ def bra_cut(p,cd,cdk,sk,a1):
         # print("BUILDING SUB--- %s seconds ---" % round((time.time() - build), 2))
 
         # warm_t = time.time()
-        TSRFLP.warm_start(1)
+        TSRFLP.warm_start(1) # 1:no warm start 0: warm start
         # print("Warm time %s seconds" % round((time.time() - warm_t), 2))
 
         TSRFLP.params_tuneup()
@@ -98,7 +112,30 @@ def bra_cut(p,cd,cdk,sk,a1):
         TSRFLP.master_model._vars = TSRFLP.master_model.getVars()
         TSRFLP.master_model.Params.lazyConstraints = 1
         #
+        # TSRFLP.master_model.optimize(mycallback)
+        # TSRFLP.add_LB()
+        master_model_branch = TSRFLP.master_model.copy()
+        while TSRFLP.LB_terminate == 0:
+            TSRFLP.LB_root = 0 #
+            TSRFLP.master_model.optimize(mycallback)
+            TSRFLP.add_LB()
+            TSRFLP.LB_root = 1 #
+            master_model_branch.optimize(mycallback) #
+            TSRFLP.master_model.remove(TSRFLP.master_model.getConstrs()[-1])
+            TSRFLP.master_model.remove(TSRFLP.master_model.getConstrs()[-2])
+        # TSRFLP.master_model.optimize(mycallback)
+        # TSRFLP.LB_branch = 1
+        # remove Hanmming constraints
+        # TSRFLP.master_model.remove(TSRFLP.master_model.getConstrs()[-1])
+        # TSRFLP.master_model.remove(TSRFLP.master_model.getConstrs()[-2])
+        # add all lazy cuts
+        print('********Cuts to be added:   ',len(TSRFLP.LB_cuts))
+        for x in TSRFLP.LB_cuts:
+            TSRFLP.master_model.addConstr(TSRFLP.omega >= x)
+            TSRFLP.master_model.getConstrs()[-1].Lazy = 1
+        # final optimization
         TSRFLP.master_model.optimize(mycallback)
+
     except GurobiError as e:
         print('Error code ' + str(e.errno) + ": " + str(e))
     except AttributeError:

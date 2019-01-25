@@ -3,7 +3,7 @@ Benders' Decomposition:
  Branch and cut
  Multiple scenario generation
  Improved Integer cut generation
- Local Branching for root node incumbent
+ Variable Neighbourhood Branching (After Root Nodes)
 
 Du Bo
 '''
@@ -19,6 +19,12 @@ def bra_cut(p,cd,cdk,sk,a1):
     try:
         def mycallback(model, where): # callback fuction: benders cut & integer cut
             # time1 = time.time()
+            if where ==GRB.Callback.MIP:
+                if TSRFLP.LB_terminate == 1 and TSRFLP.LB_branch == 0:
+                    if time.time() - start_time >= 10:
+                        model.terminate()
+                if time.time() - start_time >= 1000: # Stop criteria
+                    model.terminate()
             if where == GRB.Callback.MIPSOL:
                 # Status output
                 nodecnt = model.cbGet(GRB.Callback.MIPSOL_NODCNT)
@@ -68,11 +74,6 @@ def bra_cut(p,cd,cdk,sk,a1):
                 if cutname in msg:
                     TSRFLP.num_cut += int(msg[20:-1])
             # print(time.time() - start_time)
-            if TSRFLP.LB_terminate == 1 and TSRFLP.LB_branch == 0:
-                if time.time() - start_time >= 5:
-                    model.terminate()
-            if time.time() - start_time >= 2000: # Stop criteria
-                model.terminate()
 
 
         TSRFLP = mr.rflp(p, ni, nk, a1, a2, cd, cdk, sk) # instantiate class
@@ -111,9 +112,9 @@ def bra_cut(p,cd,cdk,sk,a1):
         #
         # while TSRFLP.LB_terminate == 0:
         #     TSRFLP.master_model.optimize(callback_LB) #
-
+        # 
         TSRFLP.master_model.optimize(mycallback) # terminate after root node
-        # Hanmming Distance
+        neib_time = time.time()
         TSRFLP.add_LB()
         TSRFLP.master_model.optimize(mycallback)
         TSRFLP.LB_branch = 1
