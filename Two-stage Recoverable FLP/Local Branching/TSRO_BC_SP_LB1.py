@@ -21,7 +21,7 @@ def bra_cut(p,cd,cdk,sk,a1):
             # time1 = time.time()
             if where ==GRB.Callback.MIP:
                 if TSRFLP.LB_terminate == 1 and TSRFLP.LB_branch == 0:
-                    if time.time() - start_time >= 10:
+                    if time.time() - LB_time >= 5:
                         model.terminate()
                 if time.time() - start_time >= 1000: # Stop criteria
                     model.terminate()
@@ -112,15 +112,18 @@ def bra_cut(p,cd,cdk,sk,a1):
         #
         # while TSRFLP.LB_terminate == 0:
         #     TSRFLP.master_model.optimize(callback_LB) #
-        # 
+        #
         TSRFLP.master_model.optimize(mycallback) # terminate after root node
-        neib_time = time.time()
-        TSRFLP.add_LB()
-        TSRFLP.master_model.optimize(mycallback)
+        vn_time = time.time()
+        while time.time()-vn_time < 10:
+            LB_time = time.time()
+            TSRFLP.add_LB()
+            TSRFLP.master_model.optimize(mycallback)
+            TSRFLP.master_model.remove(TSRFLP.master_model.getConstrs()[-1])
+            TSRFLP.master_model.remove(TSRFLP.master_model.getConstrs()[-2])
+
         TSRFLP.LB_branch = 1
-        # remove Hanmming constraints
-        TSRFLP.master_model.remove(TSRFLP.master_model.getConstrs()[-1])
-        TSRFLP.master_model.remove(TSRFLP.master_model.getConstrs()[-2])
+
         # add all lazy cuts
         print('Cuts to be added:   ',len(TSRFLP.LB_cuts))
         for x in TSRFLP.LB_cuts:
