@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 """
-Created on Tue Dec 03 2018
+Created on Wed Feb 27 2019
 
 @author: DUBO
 
+* Experiments
 * Conditional p-center model (cover formulation)
 * Giving value_y and sk (and nk scenarios):
 * selected nodes (variable each iteration) and forbidden nodes (same each iteration)
@@ -17,7 +18,9 @@ import time
 import math
 import copy
 
-ni = 10
+#---------------------- Problem setting -----------------------
+
+ni = 50
 data = dg0.data_gen(ni,1) # ni,nk,randomseed
 p,cd,_,_ = data.data()
 # Input value_y & sk
@@ -205,8 +208,8 @@ print("Find UB2--- %s seconds ---" % round((time.time() - t1), 5))
 
 t2 = time.time()
 # LB2 = UB1/2  # Wrong Lower Bound
-#LB2,_ = p_center(cd,p,1)
-LB2=0
+LB2,_ = p_center(cd,p,1)
+# LB2=0
 print("Find LB--- %s seconds ---" % round((time.time() - t2), 5))
 
 print(UB1)
