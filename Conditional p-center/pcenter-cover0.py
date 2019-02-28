@@ -8,7 +8,7 @@ Created on Tue Dec 03 2018
 
 """
 import data_generator0 as dg0
-data = dg0.data_gen(10,1) # ni,nk,randomseed
+data = dg0.data_gen(50,1) # ni,nk,randomseed
 p,cd,_,_ = data.data()
 from gurobipy import *
 import numpy as np
