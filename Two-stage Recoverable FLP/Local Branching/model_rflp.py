@@ -684,6 +684,7 @@ class rflp:
             max_Lk = self.worst_scenario(1,1)
         self.integer_cut = max_Lk[0] * sum_c_y
         self.LB_cuts.append(self.integer_cut)
+        print('integer cut')
 
     def gap_calculation(self, MIP_SP=0, Check_optimal=0,cover=0):
         if MIP_SP == 1:  # in mycallback

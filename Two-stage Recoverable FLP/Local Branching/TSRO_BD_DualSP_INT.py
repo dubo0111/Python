@@ -71,7 +71,7 @@ def benders_deco(p,cd,cdk,sk,a1):
         # Integer L-shaped cut
         TSRFLP.update_integer_cut()
         TSRFLP.master_model.addConstr(TSRFLP.omega >= TSRFLP.integer_cut)
-        # Benders' cut
+        # Benders' cut  ??????????????????????
         TSRFLP.update_sub_dual()
         TSRFLP.sub_dual.optimize()
         TSRFLP.update_cut()
