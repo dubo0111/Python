@@ -115,12 +115,13 @@ def bra_cut(p,cd,cdk,sk,a1):
         #
         TSRFLP.master_model.optimize(mycallback) # terminate after root node
         vn_time = time.time()
-        while time.time()-vn_time < 10:
-            LB_time = time.time()
+        while time.time()-vn_time < 10: # VNSB total time Limits
+            LB_time = time.time() # time Limits for one neighbourhood
             TSRFLP.add_LB()
             TSRFLP.master_model.optimize(mycallback)
             TSRFLP.master_model.remove(TSRFLP.master_model.getConstrs()[-1])
             TSRFLP.master_model.remove(TSRFLP.master_model.getConstrs()[-2])
+            # value_y change automatically within optimize()
 
         TSRFLP.LB_branch = 1
 

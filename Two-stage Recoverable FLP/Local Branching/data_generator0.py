@@ -21,11 +21,11 @@ class data_gen:
         self.cdk = [[[0 for j in range(ni)]
                      for i in range(ni)] for k in range(nk)]
         self.sk = [[0 for i in range(ni)] for k in range(nk)]
-        self.p = round(ni / 3)
+        self.p = round(ni / 3) #
         if self.p == 1:
             self.sum_k = 1
         else:
-            self.sum_k = int(round(self.p*0.5))
+            self.sum_k = int(round(self.p*0.5)) #
 
     def ins(self):
         np.random.seed(self.rnd)

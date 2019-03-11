@@ -21,7 +21,7 @@ def bra_cut(p,cd,cdk,sk,a1):
             # time1 = time.time()
             if where ==GRB.Callback.MIP:
                 if TSRFLP.LB_terminate == 1 and TSRFLP.LB_branch == 0:
-                    if time.time() - start_time >= 10:
+                    if time.time() - start_time >= 10: # time Limits
                         model.terminate()
                 if time.time() - start_time >= 1000: # Stop criteria
                     model.terminate()

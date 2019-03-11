@@ -3,7 +3,7 @@ Benders' Decomposition:
  Branch and cut
  Multiple scenario generation
  Improved Integer cut generation
- Local Branching (After Root Nodes)
+ Local Branching (each Root Nodes)
 
 Du Bo
 '''
@@ -21,7 +21,7 @@ def bra_cut(p,cd,cdk,sk,a1):
             # time1 = time.time()
             if where ==GRB.Callback.MIP:
                 if TSRFLP.LB_terminate == 1 and TSRFLP.LB_branch == 0:
-                    if time.time() - LB_time >= 5:
+                    if time.time() - LB_time >= 5: # time Limits for each
                         model.terminate()
                 if time.time() - start_time >= 1000: # Stop criteria
                     model.terminate()

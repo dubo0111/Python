@@ -1,7 +1,7 @@
 # class for:
-# bulid or update specific model
+# bulid or update specific models
 # get variables,dual variables
-# VERSION: 1.cover subproblem；
+# VERSION: 1.for local branching
 #          2.for iterative experiments: added reset function
 import copy
 import math
@@ -311,7 +311,7 @@ class rflp:
             "L3")
         self.sub_dual.update()  # build dual subproblem model
 
-    def cover_pre(self):  # COVER
+    #def cover_pre(self):  # COVER
         # preprocessing cdk
         cd_cover = [[] for k in range(self.nk)]
         self.ne = [0 for k in range(self.nk)]
@@ -332,7 +332,7 @@ class rflp:
         self.cd_cover = cd_cover #
         self.bije = b
 
-    def cover_sub(self):  # COVER
+    #def cover_sub(self):  # COVER
         # self.sub_dual = Model("p-center-cover")
         # Create variables
         # z:ordered cost, y:location
@@ -381,7 +381,7 @@ class rflp:
         #             self.sub_cover.getVarByName(y_name).lb = 0
         #             self.sub_cover.getVarByName(y_name).ub = 0
 
-    def cover_bound(self): # COVER
+    #def cover_bound(self): # COVER
         # Function for a simple p-center problem
         def p_center(cd,p=1,LP=0):
             m = Model("p-center")
@@ -936,7 +936,7 @@ class rflp:
                 delta_y += self.y[j]
         self.master_model.addConstr(delta_y >= 1)
         if neighbourhood == 0:
-            neighbourhood = self.p/2
+            neighbourhood = self.p/2 #
         self.master_model.addConstr(delta_y <= neighbourhood)
 
 
