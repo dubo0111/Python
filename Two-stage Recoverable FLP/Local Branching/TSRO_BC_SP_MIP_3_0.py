@@ -10,6 +10,7 @@ import model_rflp as mr
 from gurobipy import *
 import time
 def bra_cut(p,cd,cdk,sk,a1):
+    convergence = []
     # Number of nodes
     ni = len(cd)
     nk = len(cdk)
@@ -18,6 +19,11 @@ def bra_cut(p,cd,cdk,sk,a1):
     try:
         def mycallback(model, where): # callback fuction: benders cut & integer cut
             # time1 = time.time()
+            if where ==GRB.Callback.MIP:
+                objbst = model.cbGet(GRB.Callback.MIP_OBJBST)
+                objbnd = model.cbGet(GRB.Callback.MIP_OBJBND)
+                if objbst < 1e10:
+                    convergence.append([objbst,objbnd,time.time()-start_time])
             if where == GRB.Callback.MIPSOL:
                 # status output
                 # nodecnt = model.cbGet(GRB.Callback.MIPSOL_NODCNT)
@@ -25,6 +31,7 @@ def bra_cut(p,cd,cdk,sk,a1):
                 # solcnt = model.cbGet(GRB.Callback.MIPSOL_SOLCNT)
                 # objbst = model.cbGet(GRB.Callback.MIPSOL_OBJBST)
                 # objbnd = model.cbGet(GRB.Callback.MIPSOL_OBJBND)
+                # convergence.append([objbst,objbnd,time.time()-start_time])
                 # gap_mipsol = abs(objbst - objbnd)/(1.0 + abs(objbst))
                 # #print('**** New solution at node %d, obj %g, sol %d, '
                 #       'gap = %g ****' % (nodecnt, obj, solcnt, gap_mipsol))
@@ -119,5 +126,5 @@ def bra_cut(p,cd,cdk,sk,a1):
         y_name = ''.join(['y[', str(j), ']'])
         y_temp = TSRFLP.master_model.getVarByName(y_name)
         var_y.append(y_temp.x)
-
-    return var_y,runtime,TSRFLP.num_cut,TSRFLP.opt,objval,gap
+    convergence = [*zip(*convergence)]
+    return var_y,runtime,TSRFLP.num_cut,TSRFLP.opt,objval,gap,convergence

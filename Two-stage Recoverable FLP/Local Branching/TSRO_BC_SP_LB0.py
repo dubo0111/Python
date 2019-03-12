@@ -11,6 +11,7 @@ import model_rflp as mr
 from gurobipy import *
 import time
 def bra_cut(p,cd,cdk,sk,a1):
+    convergence = []
     # Number of nodes
     ni = len(cd)
     nk = len(cdk)
@@ -23,16 +24,21 @@ def bra_cut(p,cd,cdk,sk,a1):
                 if TSRFLP.LB_terminate == 1 and TSRFLP.LB_branch == 0:
                     if time.time() - LB_time >= 5: # time Limits for each
                         model.terminate()
+                if TSRFLP.LB_branch == 1:
+                    objbst = model.cbGet(GRB.Callback.MIP_OBJBST)
+                    objbnd = model.cbGet(GRB.Callback.MIP_OBJBND)
+                    if objbst < 1e10:
+                        convergence.append([objbst,objbnd,time.time()-start_time])
                 if time.time() - start_time >= 1000: # Stop criteria
                     model.terminate()
             if where == GRB.Callback.MIPSOL:
                 # Status output
                 nodecnt = model.cbGet(GRB.Callback.MIPSOL_NODCNT)
-                obj = model.cbGet(GRB.Callback.MIPSOL_OBJ)
-                solcnt = model.cbGet(GRB.Callback.MIPSOL_SOLCNT)
-                objbst = model.cbGet(GRB.Callback.MIPSOL_OBJBST)
-                objbnd = model.cbGet(GRB.Callback.MIPSOL_OBJBND)
-                gap_mipsol = abs(objbst - objbnd)/(1.0 + abs(objbst))
+                # obj = model.cbGet(GRB.Callback.MIPSOL_OBJ)
+                # solcnt = model.cbGet(GRB.Callback.MIPSOL_SOLCNT)
+                # objbst = model.cbGet(GRB.Callback.MIPSOL_OBJBST)
+                # objbnd = model.cbGet(GRB.Callback.MIPSOL_OBJBND)
+                # gap_mipsol = abs(objbst - objbnd)/(1.0 + abs(objbst))
                 # print('**** New solution at node %d, obj %g, sol %d, '
                 #       'gap = %g ****' % (nodecnt, obj, solcnt, gap_mipsol))
                 # print(nodecnt)
@@ -158,5 +164,5 @@ def bra_cut(p,cd,cdk,sk,a1):
         y_name = ''.join(['y[', str(j), ']'])
         y_temp = TSRFLP.master_model.getVarByName(y_name)
         var_y.append(y_temp.x)
-
-    return var_y,runtime,TSRFLP.num_cut,TSRFLP.opt,objval,gap
+    convergence = [*zip(*convergence)]
+    return var_y,runtime,TSRFLP.num_cut,TSRFLP.opt,objval,gap,convergence

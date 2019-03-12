@@ -12,7 +12,17 @@ import data_generator0 as dg0
 from gurobipy import *
 
 def LIP(p,cd,cdk,sk,a1):
+    convergence = []
     try:
+        def mycallback(model, where): # callback fuction: benders cut & integer cut
+            # time1 = time.time()
+            if where == GRB.Callback.MIP:
+                # status output
+                objbst = model.cbGet(GRB.Callback.MIP_OBJBST)
+                objbnd = model.cbGet(GRB.Callback.MIP_OBJBND)
+                if objbst < 1e10:
+                    convergence.append([objbst,objbnd,time.time()-start_time])
+
         # Create a new model
         m = Model("p-center")
 
@@ -109,7 +119,8 @@ def LIP(p,cd,cdk,sk,a1):
         # m.params.Presolve = 0
         # m.params.ScaleFlag = 2
         # m.params.NumericFocus = 2
-        m.optimize()
+
+        m.optimize(mycallback)
 
         #Output
     #    for v in m.getVars():
@@ -146,5 +157,5 @@ def LIP(p,cd,cdk,sk,a1):
         y_name = ''.join(['y[', str(j), ']'])
         y_temp = m.getVarByName(y_name)
         var_y.append(y_temp.x)
-
-    return var_y,runtime,opt,objval,gap
+    convergence = [*zip(*convergence)] # transpose
+    return var_y,runtime,opt,objval,gap,convergence

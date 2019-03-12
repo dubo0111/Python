@@ -8,6 +8,7 @@ from gurobipy import *
 import time
 
 def benders_deco(p,cd,cdk,sk,a1):
+    convergence = []
     # Number of nodes
     ni = len(cd)
     nk = len(cdk)
@@ -47,7 +48,8 @@ def benders_deco(p,cd,cdk,sk,a1):
             # print('OPTIMAL SOLUTION FOUND !')
             # print('Optimal Objective Value = ', str(TSRFLP.UB))
         iteration += 1
-        runtime =  round((time.time() - start_time), 2)
+        runtime = time.time() - start_time
+        convergence.append([TSRFLP.UB,TSRFLP.LB,runtime])
         time_limit = 0
         if runtime >= 2000:
             time_limit = 1
@@ -87,7 +89,9 @@ def benders_deco(p,cd,cdk,sk,a1):
         TSRFLP.gap_calculation(0,1) # calculate gap
         TSRFLP.update_status() #
         iteration += 1
-        runtime =  round((time.time() - start_time), 2)
+        runtime = time.time() - start_time
+        convergence.append([TSRFLP.UB,TSRFLP.LB,runtime])
+        print(convergence)
         if runtime >= 2000:
             break
     # print('Optimal Objective Value = ', str(TSRFLP.UB))
@@ -100,4 +104,5 @@ def benders_deco(p,cd,cdk,sk,a1):
         TSRFLP.opt = 1
         gap = 0
     objval = round(TSRFLP.UB,2)
-    return runtime,iteration,TSRFLP.opt,objval,gap
+    convergence = [*zip(*convergence)]
+    return runtime,iteration,TSRFLP.opt,objval,gap,convergence

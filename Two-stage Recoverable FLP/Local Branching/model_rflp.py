@@ -46,6 +46,7 @@ class rflp:
     Benders_cut = 0
     Integer_cut = 0
     warm = 0
+    convergence = []
     # cuts adding
     violation = []
     freq = []
@@ -129,6 +130,7 @@ class rflp:
         self.Benders_cut_call = 0
         self.Integer_cut = 0
         self.warm = 0
+        self.convergence = []
         # cuts adding
         self.violation = []
         self.freq = []
@@ -311,7 +313,7 @@ class rflp:
             "L3")
         self.sub_dual.update()  # build dual subproblem model
 
-    #def cover_pre(self):  # COVER
+    def cover_pre(self):  # COVER
         # preprocessing cdk
         cd_cover = [[] for k in range(self.nk)]
         self.ne = [0 for k in range(self.nk)]
@@ -332,7 +334,7 @@ class rflp:
         self.cd_cover = cd_cover #
         self.bije = b
 
-    #def cover_sub(self):  # COVER
+    def cover_sub(self):  # COVER
         # self.sub_dual = Model("p-center-cover")
         # Create variables
         # z:ordered cost, y:location
@@ -381,7 +383,7 @@ class rflp:
         #             self.sub_cover.getVarByName(y_name).lb = 0
         #             self.sub_cover.getVarByName(y_name).ub = 0
 
-    #def cover_bound(self): # COVER
+    def cover_bound(self): # COVER
         # Function for a simple p-center problem
         def p_center(cd,p=1,LP=0):
             m = Model("p-center")
@@ -768,7 +770,7 @@ class rflp:
         #m1.params.Presolve = 0
         # tune parameters to avoid numerical issues for subproblem
         # wrong optimal solutions appear for both sub&dual_sub
-        self.master_model.params.OutputFlag = 1
+        self.master_model.params.OutputFlag = 0
         self.sub_model.params.OutputFlag = 0
         self.sub_dual.params.OutputFlag = 0
         self.sub_cover.params.OutputFlag = 0
