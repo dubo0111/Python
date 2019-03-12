@@ -10,7 +10,7 @@ Du Bo
 import model_rflp as mr
 from gurobipy import *
 import time
-def bra_cut(p,cd,cdk,sk,a1):
+def bra_cut(p,cd,cdk,sk,a1,tl_total):
     convergence = []
     # Number of nodes
     ni = len(cd)
@@ -22,7 +22,7 @@ def bra_cut(p,cd,cdk,sk,a1):
             # time1 = time.time()
             if where ==GRB.Callback.MIP:
                 if TSRFLP.LB_terminate == 1 and TSRFLP.LB_branch == 0:
-                    if time.time() - start_time >= 10: # time Limits
+                    if time.time() - start_time >= tl_total: # time Limits
                         model.terminate()
                 if TSRFLP.LB_branch == 1:
                     objbst = model.cbGet(GRB.Callback.MIP_OBJBST)
@@ -126,7 +126,7 @@ def bra_cut(p,cd,cdk,sk,a1):
         TSRFLP.master_model.remove(TSRFLP.master_model.getConstrs()[-1])
         TSRFLP.master_model.remove(TSRFLP.master_model.getConstrs()[-2])
         # add all lazy cuts
-        print('Cuts to be added:   ',len(TSRFLP.LB_cuts))
+        # print('Cuts to be added:   ',len(TSRFLP.LB_cuts))
         for x in TSRFLP.LB_cuts:
             TSRFLP.master_model.addConstr(TSRFLP.omega >= x)
             TSRFLP.master_model.getConstrs()[-1].Lazy = 1

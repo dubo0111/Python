@@ -686,7 +686,7 @@ class rflp:
             max_Lk = self.worst_scenario(1,1)
         self.integer_cut = max_Lk[0] * sum_c_y
         self.LB_cuts.append(self.integer_cut)
-        print('integer cut')
+        # print('integer cut')
 
     def gap_calculation(self, MIP_SP=0, Check_optimal=0,cover=0):
         if MIP_SP == 1:  # in mycallback
@@ -745,11 +745,11 @@ class rflp:
     def update_status(self):
         self.add_cut_scen.append(self.max_k)
         self.iteration += 1
-        print('==========================================')
-        print('Current iteration:', str(self.iteration))
-        print('gap = ', str(self.gap))
+        # print('==========================================')
+        # print('Current iteration:', str(self.iteration))
+        # print('gap = ', str(self.gap))
         # print('int_gap = ',str(self.int_gap))
-        print('Cuts added form scenario:', str(self.add_cut_scen[0:-1]))
+        # print('Cuts added form scenario:', str(self.add_cut_scen[0:-1]))
 
     def params_tuneup(self, accu=0):
         # References:

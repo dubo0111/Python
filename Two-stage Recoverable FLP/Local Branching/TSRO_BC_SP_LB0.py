@@ -10,7 +10,7 @@ Du Bo
 import model_rflp as mr
 from gurobipy import *
 import time
-def bra_cut(p,cd,cdk,sk,a1):
+def bra_cut(p,cd,cdk,sk,a1, tl_total, tl_node):
     convergence = []
     # Number of nodes
     ni = len(cd)
@@ -22,7 +22,7 @@ def bra_cut(p,cd,cdk,sk,a1):
             # time1 = time.time()
             if where ==GRB.Callback.MIP:
                 if TSRFLP.LB_terminate == 1 and TSRFLP.LB_branch == 0:
-                    if time.time() - LB_time >= 5: # time Limits for each
+                    if time.time() - LB_time >= tl_node: # time Limits for each
                         model.terminate()
                 if TSRFLP.LB_branch == 1:
                     objbst = model.cbGet(GRB.Callback.MIP_OBJBST)
@@ -124,7 +124,10 @@ def bra_cut(p,cd,cdk,sk,a1):
 
         TSRFLP.master_model.optimize(mycallback) # terminate after root node
 #        TSRFLP.LB_value_y = list(set(TSRFLP.LB_value_y))
+        LB_time0 = time.time()
         for n in range(len(TSRFLP.LB_value_y)):
+            if time.time() - LB_time0 > tl_total:
+                break
             LB_time = time.time()
             TSRFLP.value_y = TSRFLP.LB_value_y[n]
             TSRFLP.value_omega = TSRFLP.LB_omega[n]
@@ -137,7 +140,7 @@ def bra_cut(p,cd,cdk,sk,a1):
         TSRFLP.LB_branch = 1
 
         # add all lazy cuts
-        print('Cuts to be added:   ',len(TSRFLP.LB_cuts))
+        # print('Cuts to be added:   ',len(TSRFLP.LB_cuts))
         for x in TSRFLP.LB_cuts:
             TSRFLP.master_model.addConstr(TSRFLP.omega >= x)
             TSRFLP.master_model.getConstrs()[-1].Lazy = 1
