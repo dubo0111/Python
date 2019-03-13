@@ -91,8 +91,8 @@ def benders_deco(p,cd,cdk,sk,a1):
         iteration += 1
         runtime = time.time() - start_time
         convergence.append([TSRFLP.UB,TSRFLP.LB,runtime])
-        print(convergence)
-        if runtime >= 2000:
+        # print(convergence)
+        if runtime >= 1000:
             break
     # print('Optimal Objective Value = ', str(TSRFLP.UB))
     # print("--- %s seconds ---" % runtime)

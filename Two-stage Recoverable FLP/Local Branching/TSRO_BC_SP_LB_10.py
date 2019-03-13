@@ -3,7 +3,7 @@ Benders' Decomposition:
  Branch and cut
  Multiple scenario generation
  Improved Integer cut generation
- Variable Neighbourhood Branching (After Root Nodes) Version 2
+ Variable Neighbourhood Branching (After Root Nodes) Backup
 
 Du Bo
 '''
@@ -53,8 +53,7 @@ def bra_cut(p,cd,cdk,sk,a1, tl_total, tl_node,branch_step):
                     TSRFLP.LB_terminate = 1
                     model.terminate()
                 #
-                if TSRFLP.value_y not in TSRFLP.tabu:
-                    TSRFLP.tabu.append(TSRFLP.value_y)
+                TSRFLP.tabu.append(TSRFLP.value_y)
                 TSRFLP.update_sub_dual(callback=1)
                 # time_subdual = time.time()
                 TSRFLP.sub_dual.optimize()
@@ -125,32 +124,22 @@ def bra_cut(p,cd,cdk,sk,a1, tl_total, tl_node,branch_step):
         #
         TSRFLP.master_model.optimize(mycallback) # terminate after root node
         vn_time = time.time()
-        Branching_record = [1e6,[]]
         while time.time()-vn_time < tl_total: # VNSB total time Limits
             LB_time = time.time() # time Limits for one neighbourhood
             TSRFLP.add_LB(branch_step)
             TSRFLP.master_model.optimize(mycallback)
-            best_incumbent = []
-            if TSRFLP.master_model.Objval < Branching_record[0]:
-                Vars = TSRFLP.master_model.getVars()
-                for n in Vars:
-                    best_incumbent.append(n.x)
-                Branching_record = [TSRFLP.master_model.Objval,best_incumbent]
             TSRFLP.master_model.remove(TSRFLP.master_model.getConstrs()[-1])
             TSRFLP.master_model.remove(TSRFLP.master_model.getConstrs()[-2])
             # value_y change automatically within optimize()
 
         TSRFLP.LB_branch = 1
 
+        # TSRFLP.master_model.reset()
         # add all lazy cuts
         # print('Cuts to be added:   ',len(TSRFLP.LB_cuts))
-        # time_cut= time.time()
         for x in TSRFLP.LB_cuts:
             TSRFLP.master_model.addConstr(TSRFLP.omega >= x)
             TSRFLP.master_model.getConstrs()[-1].Lazy = 1
-
-        # TSRFLP.add_master_bound(Branching_record[0])
-        TSRFLP.set_initial(Branching_record[1])
         # final optimization
         TSRFLP.master_model.optimize(mycallback)
 

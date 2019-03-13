@@ -10,7 +10,7 @@ Du Bo
 import model_rflp as mr
 from gurobipy import *
 import time
-def bra_cut(p,cd,cdk,sk,a1,tl_total):
+def bra_cut(p,cd,cdk,sk,a1,tl_total,branch_step):
     convergence = []
     # Number of nodes
     ni = len(cd)
@@ -73,10 +73,11 @@ def bra_cut(p,cd,cdk,sk,a1,tl_total):
 
             if where == GRB.Callback.MESSAGE: # Record lazy constraints
                 # Message callback
-                msg = model.cbGet(GRB.Callback.MSG_STRING)
-                cutname = 'Lazy constraints'
-                if cutname in msg:
-                    TSRFLP.num_cut += int(msg[20:-1])
+                if TSRFLP.LB_branch == 1:
+                    msg = model.cbGet(GRB.Callback.MSG_STRING)
+                    cutname = 'Lazy constraints'
+                    if cutname in msg:
+                        TSRFLP.num_cut += int(msg[20:-1])
             # print(time.time() - start_time)
 
 
@@ -119,7 +120,7 @@ def bra_cut(p,cd,cdk,sk,a1,tl_total):
 
         TSRFLP.master_model.optimize(mycallback) # terminate after root node
         # Hanmming Distance
-        TSRFLP.add_LB()
+        TSRFLP.add_LB(branch_step)
         TSRFLP.master_model.optimize(mycallback)
         TSRFLP.LB_branch = 1
         # remove Hanmming constraints

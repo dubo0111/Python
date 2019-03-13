@@ -25,6 +25,7 @@ class rflp:
     LB = -float('inf')
     y = []
     omega = []
+    L=[]
     Qk = []
     beta = 0
     gamma = 0
@@ -76,6 +77,7 @@ class rflp:
     LB_root = 0 #
     LB_value_y = []
     LB_omega = []
+    tabu = []
 
 
     def __init__(self, p, ni, nk, a1, a2, cd, cdk, sk):
@@ -108,6 +110,7 @@ class rflp:
         self.UB = float('inf')
         self.LB = -float('inf')
         self.y = []
+        self.L=[]
         self.omega = []
         self.Qk = []
         self.beta = 0
@@ -160,6 +163,7 @@ class rflp:
         self.LB_root = 0
         self.LB_value_y = []
         self.LB_omega = []
+        self.tabu = []
 
     def master(self, relax=0):
         # Create variables
@@ -172,7 +176,7 @@ class rflp:
         else:
             self.y = self.master_model.addVars(
                 self.ni, vtype=GRB.CONTINUOUS, name="y")
-        L = self.master_model.addVar(
+        self.L = self.master_model.addVar(
             vtype=GRB.CONTINUOUS, obj=self.a1, name="L")
         self.omega = self.master_model.addVar(lb=0, ub=float(
             'inf'), vtype=GRB.CONTINUOUS, obj=self.a2, name="omega")
@@ -184,7 +188,7 @@ class rflp:
             for j in range(self.ni):
                 cdx[i, j] = self.cd[i][j]
         self.master_model.addConstrs(
-            (x.prod(cdx, i, '*') <= L for i in range(self.ni)),
+            (x.prod(cdx, i, '*') <= self.L for i in range(self.ni)),
             "epigraph")
         # (2) Constraints sum(y)=p
         self.master_model.addConstr(
@@ -770,7 +774,7 @@ class rflp:
         #m1.params.Presolve = 0
         # tune parameters to avoid numerical issues for subproblem
         # wrong optimal solutions appear for both sub&dual_sub
-        self.master_model.params.OutputFlag = 0
+        self.master_model.params.OutputFlag = 1
         self.sub_model.params.OutputFlag = 0
         self.sub_dual.params.OutputFlag = 0
         self.sub_cover.params.OutputFlag = 0
@@ -940,6 +944,31 @@ class rflp:
         if neighbourhood == 0:
             neighbourhood = self.p/2 #
         self.master_model.addConstr(delta_y <= neighbourhood)
+
+    def add_master_bound(self,bestobj):
+        self.master_model.addConstr(self.a1*self.L+self.a2*self.omega <= bestobj)
+
+    def set_initial(self,value):
+        Vars = self.master_model.getVars()
+        for n in range(len(Vars)):
+            Vars[n].Start = value[n]
+        # for j in range(self.ni):
+        #     y_name = ''.join(['y[', str(j), ']'])
+        #     self.master_model.getVarByName(y_name).Start = value[j]
+
+    def add_proximity(self,Branching_record,impro = 0.05):
+        delta_y = 0
+        for j in range(self.ni):
+            if self.value_y[j] == 1:
+                delta_y += 1 - self.y[j]
+            else:
+                delta_y += self.y[j]
+        self.master_model.setObjective(delta_y) # set obj
+        self.master_model.addConstr(self.a1*self.L+self.a2*self.omega <= Branching_record[0]*impro)
+
+    def remove_proximity(self):
+        self.master_model.setObjective(self.a1*self.L+self.a2*self.omega)
+
 
 
 

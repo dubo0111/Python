@@ -13,7 +13,7 @@ class data_gen:
     p = 0
     sum_k = 0
 
-    def __init__(self, ni, nk, rnd=None):
+    def __init__(self, ni, nk, sumk, rnd=None):
         self.ni = ni
         self.nk = nk
         self.rnd = rnd
@@ -22,10 +22,11 @@ class data_gen:
                      for i in range(ni)] for k in range(nk)]
         self.sk = [[0 for i in range(ni)] for k in range(nk)]
         self.p = round(ni / 3) #
-        if self.p == 1:
-            self.sum_k = 1
-        else:
-            self.sum_k = int(round(self.p*0.5)) #
+        self.sum_k = sumk
+        # if self.p == 1:
+        #     self.sum_k = 1
+        # else:
+        #     self.sum_k = int(round(self.p*0.5)) #
 
     def ins(self):
         np.random.seed(self.rnd)

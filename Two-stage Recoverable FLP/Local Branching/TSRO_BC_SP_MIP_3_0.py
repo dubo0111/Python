@@ -24,6 +24,8 @@ def bra_cut(p,cd,cdk,sk,a1):
                 objbnd = model.cbGet(GRB.Callback.MIP_OBJBND)
                 if objbst < 1e10:
                     convergence.append([objbst,objbnd,time.time()-start_time])
+                if time.time() - start_time >= 1000:
+                    model.terminate()
             if where == GRB.Callback.MIPSOL:
                 # status output
                 # nodecnt = model.cbGet(GRB.Callback.MIPSOL_NODCNT)
@@ -68,8 +70,7 @@ def bra_cut(p,cd,cdk,sk,a1):
                 if cutname in msg:
                     TSRFLP.num_cut += int(msg[20:-1])
             # print(time.time() - start_time)
-            if time.time() - start_time >= 1000:
-                model.terminate()
+
 
         TSRFLP = mr.rflp(p, ni, nk, a1, a2, cd, cdk, sk) # instantiate class
         # setting algorithm environment

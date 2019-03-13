@@ -114,8 +114,8 @@ def LIP(p,cd,cdk,sk,a1):
                 "2S-p")
 
         start_time = time.time()
-        m.Params.TimeLimit = 2000
-        # m.OutputFlag = 1
+        m.Params.TimeLimit = 1000
+        m.params.OutputFlag = 1
         # m.params.Presolve = 0
         # m.params.ScaleFlag = 2
         # m.params.NumericFocus = 2
