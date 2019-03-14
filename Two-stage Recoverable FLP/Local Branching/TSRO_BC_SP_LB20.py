@@ -3,8 +3,8 @@ Benders' Decomposition:
  Branch and cut
  Multiple scenario generation
  Improved Integer cut generation
- Variable Neighbourhood Branching (After Root Nodes) Version 2
- Proximity search
+ Variable Neighbourhood Branching (After Root Nodes) Version 3
+ Proximity search: branch_step strategy?
 
 Du Bo
 '''
@@ -13,7 +13,6 @@ from gurobipy import *
 import time
 def bra_cut(p,cd,cdk,sk,a1, tl_total, tl_node,branch_step):
     convergence = []
-    bestbound = [0] # record lower bound
     # Number of nodes
     ni = len(cd)
     nk = len(cdk)
@@ -26,18 +25,16 @@ def bra_cut(p,cd,cdk,sk,a1, tl_total, tl_node,branch_step):
                 if TSRFLP.LB_terminate == 1 and TSRFLP.LB_branch == 0:
                     if time.time() - LB_time >= tl_node:
                         model.terminate()
-                objbnd = model.cbGet(GRB.Callback.MIP_OBJBND)
-#                if objbnd > bestbound:
-#                    bestbound = objbnd
                 if TSRFLP.LB_branch == 1:
                     objbst = model.cbGet(GRB.Callback.MIP_OBJBST)
-#                    objbnd = model.cbGet(GRB.Callback.MIP_OBJBND)
+                    objbnd = model.cbGet(GRB.Callback.MIP_OBJBND)
                     if objbst < 1e10:
                         convergence.append([objbst,objbnd,time.time()-start_time])
                 if time.time() - start_time >= 1000: # Stop criteria
                     model.terminate()
             if where == GRB.Callback.MIPSOL:
                 nodecnt = model.cbGet(GRB.Callback.MIPSOL_NODCNT)
+                objbnd = model.cbGet(GRB.Callback.MIPSOL_OBJBND)
                 vals = model.cbGetSolution(model._vars)
                 TSRFLP.value_y = vals[-2 - ni:-2]
                 if TSRFLP.warm == 'over':

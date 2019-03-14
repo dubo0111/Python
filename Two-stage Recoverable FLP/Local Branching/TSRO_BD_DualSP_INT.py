@@ -105,4 +105,5 @@ def benders_deco(p,cd,cdk,sk,a1):
         gap = 0
     objval = round(TSRFLP.UB,2)
     convergence = [*zip(*convergence)]
+    runtime = round(runtime,2)
     return runtime,iteration,TSRFLP.opt,objval,gap,convergence

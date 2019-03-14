@@ -120,9 +120,6 @@ def bra_cut(p,cd,cdk,sk,a1, tl_total, tl_node,branch_step):
         TSRFLP.master_model._vars = TSRFLP.master_model.getVars()
         TSRFLP.master_model.Params.lazyConstraints = 1
         #
-        # while TSRFLP.LB_terminate == 0:
-        #     TSRFLP.master_model.optimize(callback_LB) #
-        #
         TSRFLP.master_model.optimize(mycallback) # terminate after root node
         vn_time = time.time()
         Branching_record = [1e6,[]]

@@ -774,12 +774,13 @@ class rflp:
         #m1.params.Presolve = 0
         # tune parameters to avoid numerical issues for subproblem
         # wrong optimal solutions appear for both sub&dual_sub
-        self.master_model.params.OutputFlag = 0
+        self.master_model.params.OutputFlag = 1
         self.sub_model.params.OutputFlag = 0
         self.sub_dual.params.OutputFlag = 0
         self.sub_cover.params.OutputFlag = 0
-        # self.master_model.params.PreCrush = 1
         # self.master_model.params.Cuts = 0
+        # self.master_model.params.Presolve = 0
+        # self.master_model.params.Heuristics = 0
         if accu == 1:
             # self.master_model.params.Cuts = 0
             # self.sub_model.params.Cuts = 0
@@ -945,8 +946,8 @@ class rflp:
             neighbourhood = self.p/2 #
         self.master_model.addConstr(delta_y <= neighbourhood)
 
-    def add_master_bound(self,bestobj):
-        self.master_model.addConstr(self.a1*self.L+self.a2*self.omega <= bestobj)
+    def add_master_bound(self,UB=0,LB=0):
+        self.master_model.addConstr(self.a1*self.L+self.a2*self.omega <= UB)
 
     def set_initial(self,value):
         Vars = self.master_model.getVars()
@@ -956,7 +957,8 @@ class rflp:
         #     y_name = ''.join(['y[', str(j), ']'])
         #     self.master_model.getVarByName(y_name).Start = value[j]
 
-    def add_proximity(self,Branching_record,impro = 0.05):
+    def add_proximity(self,Branching_record,impro = 0.05,soft = 0):
+        bigM = 1e5 # soft
         delta_y = 0
         for j in range(self.ni):
             if self.value_y[j] == 1:

@@ -10,7 +10,7 @@ Du Bo
 import model_rflp as mr
 from gurobipy import *
 import time
-def bra_cut(p,cd,cdk,sk,a1,tl_total,branch_step):
+def bra_cut(p,cd,cdk,sk,a1,tl_total,tl_node,branch_step):
     convergence = []
     # Number of nodes
     ni = len(cd)
@@ -22,7 +22,7 @@ def bra_cut(p,cd,cdk,sk,a1,tl_total,branch_step):
             # time1 = time.time()
             if where ==GRB.Callback.MIP:
                 if TSRFLP.LB_terminate == 1 and TSRFLP.LB_branch == 0:
-                    if time.time() - start_time >= tl_total: # time Limits
+                    if time.time() - start_time >= tl_node: # time Limits
                         model.terminate()
                 if TSRFLP.LB_branch == 1:
                     objbst = model.cbGet(GRB.Callback.MIP_OBJBST)
@@ -114,25 +114,35 @@ def bra_cut(p,cd,cdk,sk,a1,tl_total,branch_step):
         # TSRFLP.master_model._lastnode = -GRB.INFINITY
         TSRFLP.master_model._vars = TSRFLP.master_model.getVars()
         TSRFLP.master_model.Params.lazyConstraints = 1
-        #
-        # while TSRFLP.LB_terminate == 0:
-        #     TSRFLP.master_model.optimize(callback_LB) #
 
         TSRFLP.master_model.optimize(mycallback) # terminate after root node
-        # Hanmming Distance
-        TSRFLP.add_LB(branch_step)
-        TSRFLP.master_model.optimize(mycallback)
-        TSRFLP.LB_branch = 1
-        # remove Hanmming constraints
+        LB_total_time = time.time()
+        Branching_record = [1e6,[]]
+        TSRFLP.add_LB(branch_step) # y not change like in VNS
+        while time.time() - LB_total_time < tl_total:
+            TSRFLP.master_model.optimize(mycallback)
+            best_incumbent = []
+            if TSRFLP.master_model.Objval < Branching_record[0]:
+                Vars = TSRFLP.master_model.getVars()
+                for n in Vars:
+                    best_incumbent.append(n.x)
+                Branching_record = [TSRFLP.master_model.Objval,best_incumbent]
+            if TSRFLP.master_model.Status in [2,11]:
+                branch_step += 2 #
+                TSRFLP.master_model.getConstrs()[-2].rhs = branch_step-1
+                TSRFLP.master_model.getConstrs()[-1].rhs = branch_step
+            if branch_step > TSRFLP.p: # farthest neighbourhood
+                break
         TSRFLP.master_model.remove(TSRFLP.master_model.getConstrs()[-1])
         TSRFLP.master_model.remove(TSRFLP.master_model.getConstrs()[-2])
+        TSRFLP.LB_branch = 1
         # add all lazy cuts
         # print('Cuts to be added:   ',len(TSRFLP.LB_cuts))
         for x in TSRFLP.LB_cuts:
             TSRFLP.master_model.addConstr(TSRFLP.omega >= x)
             TSRFLP.master_model.getConstrs()[-1].Lazy = 1
-        # final optimization
-        TSRFLP.master_model.optimize(mycallback)
+        TSRFLP.set_initial(Branching_record[1])
+        TSRFLP.master_model.optimize(mycallback) # final optimization
 
     except GurobiError as e:
         print('Error code ' + str(e.errno) + ": " + str(e))
