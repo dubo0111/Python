@@ -5,13 +5,13 @@ Benders' Decomposition:
  Improved Integer cut generation
  Variable Neighbourhood Branching (After Root Nodes) Version 2
  Proximity search
-
+ Backup 0316
 Du Bo
 '''
 import model_rflp as mr
 from gurobipy import *
 import time
-def bra_cut(p,cd,cdk,sk,a1, tl_total, tl_node,tl_pr_node,tl_pr_total,branch_step,stop_gap):
+def bra_cut(p,cd,cdk,sk,a1, tl_total, tl_node,tl_pr_node,tl_pr_total,branch_step):
     convergence = []
     # Number of nodes
     ni = len(cd)
@@ -93,36 +93,27 @@ def bra_cut(p,cd,cdk,sk,a1, tl_total, tl_node,tl_pr_node,tl_pr_total,branch_step
         TSRFLP.master_model._vars = TSRFLP.master_model.getVars()
         TSRFLP.master_model.Params.lazyConstraints = 1
         TSRFLP.master_model.optimize(mycallback) # terminate after root node
-        Branching_record = [1e6,[]]
-        Branching_record,better_sol = TSRFLP.record_best_sol(Branching_record)
-        TSRFLP.add_LB(Branching_record,branch_step,1)
-        LB_cut = 2
         vn_time = time.time()
+        # pr_time = 0
+        # pr_node_time = 0
+        Branching_record = [1e6,[]] # best objval; best solution;
         # Branching
-        sol_count = 0
         while TSRFLP.vn_end == 0: #
             LB_time = time.time() # time Limits for one neighbourhood
+            TSRFLP.add_LB(branch_step)
             TSRFLP.master_model.optimize(mycallback)
-            Branching_record,better_sol = TSRFLP.record_best_sol(Branching_record)
-            if better_sol == 1:
-                if TSRFLP.master_model.getConstrs()[-1].sense == '<':
-                    TSRFLP.master_model.getConstrs()[-1].sense = '>'
-                TSRFLP.add_LB(Branching_record,branch_step)
-                LB_cut += 1
-            else:
-                sol_count += 1
-                if TSRFLP.master_model.getConstrs()[-1].rhs < TSRFLP.p*2:
-                    TSRFLP.master_model.getConstrs()[-1].rhs += 2
-                else:
-                    break
-            # if sol_count >= 2:
-            #     break
-        for n in range(LB_cut):
-            TSRFLP.master_model.remove(TSRFLP.master_model.getConstrs()[-n-1])
+            best_incumbent = []
+            if TSRFLP.master_model.Objval < Branching_record[0]:
+                Vars = TSRFLP.master_model.getVars()
+                for n in Vars:
+                    best_incumbent.append(n.x)
+                Branching_record = [TSRFLP.master_model.Objval,best_incumbent]
+            TSRFLP.master_model.remove(TSRFLP.master_model.getConstrs()[-1])
+            TSRFLP.master_model.remove(TSRFLP.master_model.getConstrs()[-2])
         # Proximity search
         pr_time = time.time()
         pr_gap = 1
-        while TSRFLP.pr_end == 0 and pr_gap > stop_gap:
+        while TSRFLP.pr_end == 0 and pr_gap > 0.2:
             pr_node_time = time.time()
             rhs,soft_rhs=TSRFLP.add_proximity(Branching_record)
             TSRFLP.master_model.optimize(mycallback)
@@ -131,6 +122,7 @@ def bra_cut(p,cd,cdk,sk,a1, tl_total, tl_node,tl_pr_node,tl_pr_total,branch_step
                     best_incumbent = []
                     obj_now = TSRFLP.a1*TSRFLP.L.x+TSRFLP.a2*TSRFLP.omega.x
                     if obj_now < Branching_record[0]:
+                        # print(obj_now)
                         Vars = TSRFLP.master_model.getVars()
                         for n in Vars:
                             best_incumbent.append(n.x)
@@ -142,10 +134,9 @@ def bra_cut(p,cd,cdk,sk,a1, tl_total, tl_node,tl_pr_node,tl_pr_total,branch_step
             elif TSRFLP.master_model.Status in [3,4,5]: #infeasible
                 TSRFLP.bestbound = Branching_record[0]-(Branching_record[0]-TSRFLP.bestbound)/4
             pr_gap = (Branching_record[0]-TSRFLP.bestbound)/(1+Branching_record[0])
-            print('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
-            print('gap: ',pr_gap,' UB= ',Branching_record[0],' LB= ',TSRFLP.bestbound)
+            # print('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
+            # print('gap: ',pr_gap,' UB= ',Branching_record[0],' LB= ',TSRFLP.bestbound)
             TSRFLP.master_model.remove(TSRFLP.master_model.getConstrs()[-1])
-            TSRFLP.master_model.remove(TSRFLP.master_model.getConstrs()[-2])
         TSRFLP.remove_proximity()
         TSRFLP.LB_branch = 1
         for x in TSRFLP.LB_cuts:

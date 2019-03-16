@@ -81,29 +81,24 @@ def bra_cut(p,cd,cdk,sk,a1,tl_total,branch_step):
         TSRFLP.master_model._vars = TSRFLP.master_model.getVars()
         TSRFLP.master_model.Params.lazyConstraints = 1
         TSRFLP.master_model.optimize(mycallback) # terminate after root node
-
-        LB_total_time = time.time()
         Branching_record = [1e6,[]]
-        TSRFLP.add_LB(branch_step) # y not change like in VNS
+        Branching_record,better_sol = TSRFLP.record_best_sol(Branching_record)
+        LB_total_time = time.time()
+        TSRFLP.add_LB(branch_step)
         while time.time() - LB_total_time < 2000: # tl_total
             TSRFLP.master_model.optimize(mycallback)
-            best_incumbent = []
-            if TSRFLP.master_model.Objval < Branching_record[0]: # infeasible
-                Vars = TSRFLP.master_model.getVars()
-                for n in Vars:
-                    best_incumbent.append(n.x)
-                Branching_record = [TSRFLP.master_model.Objval,best_incumbent]
+            Branching_record,better_sol = TSRFLP.record_best_sol(Branching_record)
             if TSRFLP.master_model.Status in [2]:
                 branch_step += 2 #
-                # TSRFLP.master_model.getConstrs()[-2].rhs = branch_step-1 #
+                TSRFLP.master_model.getConstrs()[-2].rhs = branch_step-2 #
                 TSRFLP.master_model.getConstrs()[-1].rhs = branch_step
+                # print('+++++++++++++++++branch_step: ',branch_step)
             if branch_step > TSRFLP.p*2 or TSRFLP.master_model.Status in [11]:
                 break
         TSRFLP.master_model.remove(TSRFLP.master_model.getConstrs()[-1])
         TSRFLP.master_model.remove(TSRFLP.master_model.getConstrs()[-2])
         TSRFLP.LB_branch = 1
-        # add all lazy cuts
-        # print('Cuts to be added:   ',len(TSRFLP.LB_cuts))
+
         for x in TSRFLP.LB_cuts:
             TSRFLP.master_model.addConstr(TSRFLP.omega >= x)
             TSRFLP.master_model.getConstrs()[-1].Lazy = 1

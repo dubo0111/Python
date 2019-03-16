@@ -21,13 +21,14 @@ ex_k = [50] # number of scenarios
 ex_all = 5 # number of experiments for each combination
 # problem parameters
 a1 = 0.5
-rnd_seed = 1 # starting random seed
+rnd_seed = 14 # starting random seed
 # algorithm parameters (LB)
-tl_node = 2
-tl_total = 10
+tl_node = 5
+tl_total = 5
 tl_pr_node = 200
-tl_pr_total = 1000
+tl_pr_total = 100
 branch_step = 2
+pr_gap = 0.05
 
 try:
     result = []
@@ -48,14 +49,14 @@ try:
                 ###
 #                y1,t1, cut1, opt1, val1, gap1, conv1 = bc.bra_cut(
 #                        p, cd, cdk, sk, a1) # branch and cut
-#                y10,t10, cut10, opt10, val10, gap10, conv10 = bc_LB.bra_cut(
-#                         p, cd, cdk, sk, a1, tl_total,branch_step) # LB
-#                y12,t12, cut12, opt12, val12, gap12, conv12, pool12 = bc_VN.bra_cut(
-#                         p,cd, cdk, sk, a1, tl_total, tl_node,branch_step) # variable neighbourhood branching
+                y12,t12, cut12, opt12, val12, gap12, conv12, pool12 = bc_VN.bra_cut(
+                         p,cd, cdk, sk, a1, tl_total, tl_node,branch_step) # variable neighbourhood branching
                 y13,t13, cut13, opt13, val13, gap13, conv13, pool13 = bc_PR.bra_cut(
-                         p, cd, cdk, sk, a1, tl_total, tl_node,tl_pr_node,tl_pr_total,branch_step) # Proximity
-                # t2, cut2, opt2, val2, gap2,conv2 = bd.benders_deco(p, cd, cdk, sk, a1)
-#                y3, t3, opt3, val3, gap3, conv3 = lip.LIP(p, cd, cdk, sk, a1)
+                         p, cd, cdk, sk, a1, tl_total, tl_node,tl_pr_node,tl_pr_total,branch_step,pr_gap) # Proximity
+#                t2, cut2, opt2, val2, gap2,conv2 = bd.benders_deco(
+#                        p, cd, cdk, sk, a1)
+#                y3, t3, opt3, val3, gap3, conv3 = lip.LIP(
+#                        p, cd, cdk, sk, a1)
 
 #                if abs(val1-val10) > 1e-5:
 #                    print('!!!!!!!!!!!!!!')

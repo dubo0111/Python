@@ -942,17 +942,20 @@ class rflp:
             new_y[rank[j]] = 1
         return new_y
 
-    def add_LB(self, neighbourhood = 0): # add Hanmming constraints in master_model
+    def add_LB(self, Branching_record,neighbourhood,initial=0): # add Hanmming constraints in master_model
         # Input: y(var); value_y
         # Delta(y_new,y_now) = [value_y - y]
         delta_y = 0
+        bst_value_y = Branching_record[1][-3 - self.ni:-3]
         for j in range(self.ni):
-            if self.value_y[j] == 1: #???
+            if bst_value_y[j] == 1:
                 delta_y += 1 - self.y[j]
             else:
                 delta_y += self.y[j]
-        self.master_model.addConstr(delta_y >= 1)
+        if initial == 1:
+            self.master_model.addConstr(delta_y >= 2)
         self.master_model.addConstr(delta_y <= neighbourhood)
+        self.master_model.update() #
 
     def add_master_bound(self,UB=0,LB=0):
         self.master_model.addConstr(self.a1*self.L+self.a2*self.omega <= UB)
@@ -979,25 +982,25 @@ class rflp:
             else:
                 delta_y += self.y[j]
         self.master_model.setObjective(delta_y+self.soft*bigM) # set obj
+        self.master_model.addConstr(delta_y>=2)
         self.master_model.addConstr(
             self.a1*self.L+self.a2*self.omega <= rhs+self.soft*((UB-rhs)/2))
-        print('+++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
-        print('rhs = ',rhs,' soft rhs= ',rhs+((UB-rhs)/2))
+        # print('+++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
+        # print('rhs = ',rhs,' soft rhs= ',rhs+((UB-rhs)/2))
         return rhs,soft_rhs
+
     def remove_proximity(self):
         self.master_model.setObjective(self.a1*self.L+self.a2*self.omega)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-    #asdasdasd
+    def record_best_sol(self,Branching_record):
+        best_incumbent = []
+        improve = 0
+        if self.master_model.Objval < Branching_record[0]:
+            improve = 1
+            Vars = self.master_model.getVars()
+            for n in Vars:
+                best_incumbent.append(n.x)
+            Branching_record = [self.master_model.Objval,best_incumbent]
+        # else:
+        #     Branching_record = Branching_record
+        return Branching_record,improve
