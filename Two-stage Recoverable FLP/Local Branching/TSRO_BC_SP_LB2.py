@@ -11,9 +11,8 @@ Du Bo
 import model_rflp as mr
 from gurobipy import *
 import time
-def bra_cut(p,cd,cdk,sk,a1, tl_total, tl_node,branch_step):
+def bra_cut(p,cd,cdk,sk,a1, tl_total, tl_node,tl_pr_node,tl_pr_total,branch_step):
     convergence = []
-    bestbound = [0] # record lower bound
     # Number of nodes
     ni = len(cd)
     nk = len(cdk)
@@ -21,33 +20,41 @@ def bra_cut(p,cd,cdk,sk,a1, tl_total, tl_node,branch_step):
     a2 = 1 - a1
     try:
         def mycallback(model, where): # callback fuction: benders cut & integer cut
-            # time1 = time.time()
             if where ==GRB.Callback.MIP:
                 if TSRFLP.LB_terminate == 1 and TSRFLP.LB_branch == 0:
-                    if time.time() - LB_time >= tl_node:
-                        model.terminate()
-                objbnd = model.cbGet(GRB.Callback.MIP_OBJBND)
-#                if objbnd > bestbound:
-#                    bestbound = objbnd
+                    if TSRFLP.vn_end == 1:
+                        if time.time()-pr_node_time>=tl_pr_node:
+                            model.terminate()
+                        if time.time()-pr_time>=tl_pr_total:
+                            model.terminate()
+                            TSRFLP.pr_end = 1
+                    else:
+                        if time.time()-LB_time>=tl_node:
+                            model.terminate()
+                        if time.time()-vn_time>=tl_total:
+                            model.terminate()
+                            TSRFLP.vn_end = 1
                 if TSRFLP.LB_branch == 1:
                     objbst = model.cbGet(GRB.Callback.MIP_OBJBST)
-#                    objbnd = model.cbGet(GRB.Callback.MIP_OBJBND)
+                    objbnd = model.cbGet(GRB.Callback.MIP_OBJBND)
                     if objbst < 1e10:
                         convergence.append([objbst,objbnd,time.time()-start_time])
                 if time.time() - start_time >= 1000: # Stop criteria
                     model.terminate()
             if where == GRB.Callback.MIPSOL:
                 nodecnt = model.cbGet(GRB.Callback.MIPSOL_NODCNT)
+                objbnd = model.cbGet(GRB.Callback.MIPSOL_OBJBND)
                 vals = model.cbGetSolution(model._vars)
-                TSRFLP.value_y = vals[-2 - ni:-2]
+                TSRFLP.value_y = vals[-3 - ni:-3]
                 if TSRFLP.warm == 'over':
                     TSRFLP.value_y = [round(x) for x in TSRFLP.value_y] # make sure y are binary
                 TSRFLP.value_omega = vals[-1]
                 if nodecnt > 0 and TSRFLP.LB_terminate == 0: # LB right after root node
                     TSRFLP.LB_terminate = 1
+                    TSRFLP.bestbound = objbnd
                     model.terminate()
-                if TSRFLP.value_y not in TSRFLP.tabu: # save best incumbent
-                    TSRFLP.tabu.append(TSRFLP.value_y)
+                # if TSRFLP.value_y not in TSRFLP.tabu: # save best incumbent
+                #     TSRFLP.tabu.append(TSRFLP.value_y)
                 TSRFLP.update_sub_dual(callback=1)
                 TSRFLP.sub_dual.optimize()
                 max_Lk = TSRFLP.worst_scenario()
@@ -87,9 +94,11 @@ def bra_cut(p,cd,cdk,sk,a1, tl_total, tl_node,branch_step):
         TSRFLP.master_model.Params.lazyConstraints = 1
         TSRFLP.master_model.optimize(mycallback) # terminate after root node
         vn_time = time.time()
+        # pr_time = 0
+        # pr_node_time = 0
         Branching_record = [1e6,[]] # best objval; best solution;
         # Branching
-        while time.time()-vn_time < tl_total/2: # VNSB total time Limits; value_y change within callback
+        while TSRFLP.vn_end == 0: #
             LB_time = time.time() # time Limits for one neighbourhood
             TSRFLP.add_LB(branch_step)
             TSRFLP.master_model.optimize(mycallback)
@@ -103,29 +112,38 @@ def bra_cut(p,cd,cdk,sk,a1, tl_total, tl_node,branch_step):
             TSRFLP.master_model.remove(TSRFLP.master_model.getConstrs()[-2])
         # Proximity search
         pr_time = time.time()
-        impro = 0.1
-        while time.time() - pr_time < tl_total/2:
-            LB_time = time.time()
-            TSRFLP.add_proximity(Branching_record,1-impro)
+        pr_gap = 1
+        while TSRFLP.pr_end == 0 and pr_gap > 0.2:
+            pr_node_time = time.time()
+            rhs,soft_rhs=TSRFLP.add_proximity(Branching_record)
             TSRFLP.master_model.optimize(mycallback)
             if TSRFLP.master_model.Status in [2,11]: # optimal or interrupted
-                best_incumbent = []
-                obj_now = TSRFLP.a1*TSRFLP.L.x+TSRFLP.a2*TSRFLP.omega.x
-                if obj_now < Branching_record[0]:
-                    print(obj_now)
-                    Vars = TSRFLP.master_model.getVars()
-                    for n in Vars:
-                        best_incumbent.append(n.x)
-                    Branching_record = [obj_now,best_incumbent]
+                if TSRFLP.master_model.ObjVal < 1e10: # optimal or feasible
+                    best_incumbent = []
+                    obj_now = TSRFLP.a1*TSRFLP.L.x+TSRFLP.a2*TSRFLP.omega.x
+                    if obj_now < Branching_record[0]:
+                        # print(obj_now)
+                        Vars = TSRFLP.master_model.getVars()
+                        for n in Vars:
+                            best_incumbent.append(n.x)
+                        Branching_record = [obj_now,best_incumbent]
+                    if abs(soft_rhs-obj_now) < 0.01:
+                        TSRFLP.bestbound = rhs
+                else: # cannot find feasible solution
+                    TSRFLP.pr_end == 1 # stop
             elif TSRFLP.master_model.Status in [3,4,5]: #infeasible
-                impro = impro/2
+                TSRFLP.bestbound = Branching_record[0]-(Branching_record[0]-TSRFLP.bestbound)/4
+            pr_gap = (Branching_record[0]-TSRFLP.bestbound)/(1+Branching_record[0])
+            print('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
+            print('gap: ',pr_gap,' UB= ',Branching_record[0],' LB= ',TSRFLP.bestbound)
             TSRFLP.master_model.remove(TSRFLP.master_model.getConstrs()[-1])
-        TSRFLP.LB_branch = 1
         TSRFLP.remove_proximity()
+        TSRFLP.LB_branch = 1
         for x in TSRFLP.LB_cuts:
             TSRFLP.master_model.addConstr(TSRFLP.omega >= x)
             TSRFLP.master_model.getConstrs()[-1].Lazy = 1
-        TSRFLP.set_initial(Branching_record[1])
+        if Branching_record[1] != []:
+            TSRFLP.set_initial(Branching_record[1])
         TSRFLP.master_model.optimize(mycallback) # final optimization
     except GurobiError as e:
         print('Error code ' + str(e.errno) + ": " + str(e))

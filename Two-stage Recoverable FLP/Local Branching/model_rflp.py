@@ -26,6 +26,7 @@ class rflp:
     y = []
     omega = []
     L=[]
+    soft = []
     Qk = []
     beta = 0
     gamma = 0
@@ -78,7 +79,9 @@ class rflp:
     LB_value_y = []
     LB_omega = []
     tabu = []
-
+    bestbound = 0
+    vn_end = 0
+    pr_end = 0
 
     def __init__(self, p, ni, nk, a1, a2, cd, cdk, sk):
         self.reset()
@@ -112,6 +115,7 @@ class rflp:
         self.y = []
         self.L=[]
         self.omega = []
+        self.soft = []
         self.Qk = []
         self.beta = 0
         self.gamma = 0
@@ -164,6 +168,9 @@ class rflp:
         self.LB_value_y = []
         self.LB_omega = []
         self.tabu = []
+        self.bestbound = 0
+        self.vn_end = 0
+        self.pr_end = 0
 
     def master(self, relax=0):
         # Create variables
@@ -176,10 +183,13 @@ class rflp:
         else:
             self.y = self.master_model.addVars(
                 self.ni, vtype=GRB.CONTINUOUS, name="y")
+        self.soft=self.master_model.addVar(
+            vtype=GRB.BINARY, name = "soft")
         self.L = self.master_model.addVar(
             vtype=GRB.CONTINUOUS, obj=self.a1, name="L")
         self.omega = self.master_model.addVar(lb=0, ub=float(
             'inf'), vtype=GRB.CONTINUOUS, obj=self.a2, name="omega")
+
         # Set objective to minimize
         self.master_model.modelSense = GRB.MINIMIZE
         # (1) Maximum cost constraints (objective): L>sum(cdx) forall i
@@ -937,13 +947,11 @@ class rflp:
         # Delta(y_new,y_now) = [value_y - y]
         delta_y = 0
         for j in range(self.ni):
-            if self.value_y[j] == 1:
+            if self.value_y[j] == 1: #???
                 delta_y += 1 - self.y[j]
             else:
                 delta_y += self.y[j]
         self.master_model.addConstr(delta_y >= 1)
-        if neighbourhood == 0:
-            neighbourhood = self.p/2 #
         self.master_model.addConstr(delta_y <= neighbourhood)
 
     def add_master_bound(self,UB=0,LB=0):
@@ -957,17 +965,25 @@ class rflp:
         #     y_name = ''.join(['y[', str(j), ']'])
         #     self.master_model.getVarByName(y_name).Start = value[j]
 
-    def add_proximity(self,Branching_record,impro = 0.05,soft = 0):
+    def add_proximity(self,Branching_record,impro = 0,soft = 0):
         bigM = 1e5 # soft
         delta_y = 0
+        bst_value_y = Branching_record[1][-3 - self.ni:-3]
+        UB = Branching_record[0]
+        LB = self.bestbound
+        rhs = (UB + LB)/2
+        soft_rhs = rhs+(UB-rhs)/2
         for j in range(self.ni):
-            if self.value_y[j] == 1:
+            if bst_value_y[j] == 1:
                 delta_y += 1 - self.y[j]
             else:
                 delta_y += self.y[j]
-        self.master_model.setObjective(delta_y) # set obj
-        self.master_model.addConstr(self.a1*self.L+self.a2*self.omega <= Branching_record[0]*impro)
-
+        self.master_model.setObjective(delta_y+self.soft*bigM) # set obj
+        self.master_model.addConstr(
+            self.a1*self.L+self.a2*self.omega <= rhs+self.soft*((UB-rhs)/2))
+        print('+++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
+        print('rhs = ',rhs,' soft rhs= ',rhs+((UB-rhs)/2))
+        return rhs,soft_rhs
     def remove_proximity(self):
         self.master_model.setObjective(self.a1*self.L+self.a2*self.omega)
 
@@ -978,4 +994,10 @@ class rflp:
 
 
 
-        #asdasdasd
+
+
+
+
+
+
+    #asdasdasd

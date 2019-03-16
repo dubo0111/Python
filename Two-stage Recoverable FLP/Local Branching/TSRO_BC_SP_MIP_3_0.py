@@ -38,7 +38,7 @@ def bra_cut(p,cd,cdk,sk,a1):
                 # #print('**** New solution at node %d, obj %g, sol %d, '
                 #       'gap = %g ****' % (nodecnt, obj, solcnt, gap_mipsol))
                 vals = model.cbGetSolution(model._vars)
-                TSRFLP.value_y = vals[-2 - ni:-2]
+                TSRFLP.value_y = vals[-3 - ni:-3]
                 # print(TSRFLP.value_y)
                 if TSRFLP.warm == 'over':
                     TSRFLP.value_y = [round(x) for x in TSRFLP.value_y] # make sure y are binary
