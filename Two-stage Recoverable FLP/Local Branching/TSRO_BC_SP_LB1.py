@@ -88,26 +88,31 @@ def bra_cut(p,cd,cdk,sk,a1, tl_total, tl_node,branch_step):
         TSRFLP.master_model.Params.lazyConstraints = 1
         TSRFLP.master_model.optimize(mycallback) # terminate after root node
         Branching_record = [1e6,[]]
-        Branching_record,better_sol = TSRFLP.record_best_sol(Branching_record)
+        Branching_record,better_sol = TSRFLP.record_best_sol(Branching_record,start_time)
         TSRFLP.add_LB(Branching_record,branch_step,1)
         LB_cut = 2
         VN_time = time.time()
         while TSRFLP.vn_end == 0: #
             LB_time = time.time() # time Limits for one neighbourhood
             TSRFLP.master_model.optimize(mycallback)
-            Branching_record,better_sol = TSRFLP.record_best_sol(Branching_record)
+            if TSRFLP.master_model.status in [3,4,5]:
+                break
+            Branching_record,better_sol = TSRFLP.record_best_sol(Branching_record,start_time)
             if better_sol == 1:
                 if TSRFLP.master_model.getConstrs()[-1].sense == '<':
                     TSRFLP.master_model.getConstrs()[-1].sense = '>'
-                    # TSRFLP.master_model.remove(TSRFLP.master_model.getConstrs()[-2])
                 TSRFLP.add_LB(Branching_record,branch_step)
+                # print('++++++++++++++++++++++++++++++++++++++++++++++++')
                 LB_cut += 1
             else:
                 if TSRFLP.master_model.getConstrs()[-1].sense == '<':
                     if TSRFLP.master_model.getConstrs()[-1].rhs < TSRFLP.p*2-2:
                         TSRFLP.master_model.getConstrs()[-1].rhs += 2
+                        # print('------------------------------------------')
                     else:
+                        # print('*******************************************')
                         break
+        Heu_sol = [round(Branching_record[0],2),round(Branching_record[2],2)]
         for n in range(LB_cut):
             TSRFLP.master_model.remove(TSRFLP.master_model.getConstrs()[-n-1])
         TSRFLP.LB_branch = 1
@@ -139,4 +144,5 @@ def bra_cut(p,cd,cdk,sk,a1, tl_total, tl_node,branch_step):
         y_temp = TSRFLP.master_model.getVarByName(y_name)
         var_y.append(y_temp.x)
     convergence = [*zip(*convergence)]
-    return var_y,runtime,TSRFLP.num_cut,TSRFLP.opt,objval,gap,convergence,len(TSRFLP.LB_cuts)
+    Heu_sol.append(round(((Heu_sol[0]-TSRFLP.master_model.Objval)/(1+TSRFLP.master_model.Objval)),2))
+    return var_y,runtime,TSRFLP.num_cut,TSRFLP.opt,objval,gap,convergence,len(TSRFLP.LB_cuts),Heu_sol

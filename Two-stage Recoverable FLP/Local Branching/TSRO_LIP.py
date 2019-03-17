@@ -112,11 +112,11 @@ def LIP(p,cd,cdk,sk,a1):
                 "2S-p")
 
         start_time = time.time()
+        m.params.OutputFlag = 0
         m.Params.TimeLimit = 1000
-        m.params.OutputFlag = 1
         # m.params.Cuts = 0
         # m.params.Presolve = 0
-        # m.params.Heuristics = 0   
+        # m.params.Heuristics = 0
         # m.params.ScaleFlag = 2
         # m.params.NumericFocus = 2
 
@@ -158,4 +158,5 @@ def LIP(p,cd,cdk,sk,a1):
         y_temp = m.getVarByName(y_name)
         var_y.append(y_temp.x)
     convergence = [*zip(*convergence)] # transpose
+    gap = round(gap,2)
     return var_y,runtime,opt,objval,gap,convergence

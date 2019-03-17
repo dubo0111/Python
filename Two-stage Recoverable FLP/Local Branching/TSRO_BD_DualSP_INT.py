@@ -51,7 +51,7 @@ def benders_deco(p,cd,cdk,sk,a1):
         runtime = time.time() - start_time
         convergence.append([TSRFLP.UB,TSRFLP.LB,runtime])
         time_limit = 0
-        if runtime >= 2000:
+        if runtime >= 1000:
             time_limit = 1
             break
     # ------------Integer cut --------------
@@ -106,4 +106,5 @@ def benders_deco(p,cd,cdk,sk,a1):
     objval = round(TSRFLP.UB,2)
     convergence = [*zip(*convergence)]
     runtime = round(runtime,2)
+    gap = round(gap,2)
     return runtime,iteration,TSRFLP.opt,objval,gap,convergence

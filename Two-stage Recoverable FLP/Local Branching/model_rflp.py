@@ -5,6 +5,7 @@
 #          2.for iterative experiments: added reset function
 import copy
 import math
+import time
 import numpy as np
 from gurobipy import *
 
@@ -784,7 +785,7 @@ class rflp:
         #m1.params.Presolve = 0
         # tune parameters to avoid numerical issues for subproblem
         # wrong optimal solutions appear for both sub&dual_sub
-        self.master_model.params.OutputFlag = 1
+        self.master_model.params.OutputFlag = 0
         self.sub_model.params.OutputFlag = 0
         self.sub_dual.params.OutputFlag = 0
         self.sub_cover.params.OutputFlag = 0
@@ -992,7 +993,7 @@ class rflp:
     def remove_proximity(self):
         self.master_model.setObjective(self.a1*self.L+self.a2*self.omega)
 
-    def record_best_sol(self,Branching_record):
+    def record_best_sol(self,Branching_record,start_time):
         best_incumbent = []
         improve = 0
         if self.master_model.Objval < Branching_record[0]:
@@ -1000,7 +1001,7 @@ class rflp:
             Vars = self.master_model.getVars()
             for n in Vars:
                 best_incumbent.append(n.x)
-            Branching_record = [self.master_model.Objval,best_incumbent]
+            Branching_record = [self.master_model.Objval,best_incumbent,time.time()-start_time]
         # else:
         #     Branching_record = Branching_record
         return Branching_record,improve
