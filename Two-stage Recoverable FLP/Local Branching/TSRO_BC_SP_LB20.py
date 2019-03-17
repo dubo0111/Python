@@ -52,52 +52,52 @@ def bra_cut(p,cd,cdk,sk,a1, tl_total, tl_node,tl_pr_node,tl_pr_total,branch_step
                     TSRFLP.LB_terminate = 1
                     TSRFLP.bestbound = objbnd
                     model.terminate()
-                # if TSRFLP.value_y not in TSRFLP.LB_cuts_y:
-                TSRFLP.update_sub_dual(callback=1)
-                TSRFLP.sub_dual.optimize()
-                max_Lk = TSRFLP.worst_scenario()
-                if max_Lk[0] - TSRFLP.value_omega >=1e-4: # ----benders cut----
-                    TSRFLP.update_multiple_scenario()
-                else: # ----integer cut----
-                    TSRFLP.update_sub(callback=1)
-                    TSRFLP.sub_model.optimize()
-                    TSRFLP.worst_scenario(1) # calculate max L3
-                    TSRFLP.gap_calculation(1) # calculate int_gap
-                    if TSRFLP.int_gap >= 1e-4:
-                        # cut incumbent solution
-                        TSRFLP.update_integer_cut()
-                        model.cbLazy(TSRFLP.omega >= TSRFLP.integer_cut)
-                    else: # incumbent has not been cut
-                        if TSRFLP.pr_end == 0 and TSRFLP.vn_end ==1:
-                            if objbst< 1e5: # terninate at hard incumbent
-                                model.terminate()
-                        uncut_value = TSRFLP.a1*vals[-1]+TSRFLP.a2*vals[-2]
-                        if TSRFLP.LB_terminate == 1 and TSRFLP.LB_branch == 0:
-                            if uncut_value <= convergence[-1][0]:
-                                convergence.append([convergence[-1][0],convergence[-1][1],time.time()-start_time])
-                                convergence.append([uncut_value,TSRFLP.bestbound,time.time()-start_time])
-                            else:
-                                convergence.append([convergence[-1][0],convergence[-1][1],time.time()-start_time])
-                        elif TSRFLP.LB_terminate == 0:
-                            if convergence == []:
-                                convergence.append([uncut_value,objbnd,time.time()-start_time])
-                            else:
-                                if uncut_value <= convergence[-1][0]:
-                                    convergence.append([convergence[-1][0],convergence[-1][1],time.time()-start_time])
-                                    convergence.append([uncut_value,objbnd,time.time()-start_time])
-                                else:
-                                    convergence.append([convergence[-1][0],convergence[-1][1],time.time()-start_time])
-                        elif TSRFLP.LB_branch == 1:
-                            if objbst < 1e10 and objbst <= convergence[-1][0] and objbnd > 0:
-                                convergence.append([convergence[-1][0],convergence[-1][1],time.time()-start_time])
-                                convergence.append([objbst,objbnd,time.time()-start_time])
-                            else:
-                                convergence.append([convergence[-1][0],convergence[-1][1],time.time()-start_time])
-#                else:
-#                        print('sadasdadsasdadasdadsasdadasdadsasd')
-#                        indices = [i for i, x in enumerate(TSRFLP.LB_cuts_y) if x == TSRFLP.value_y]
-#                        for n in indices:
-#                            model.cbLazy(TSRFLP.omega >= TSRFLP.LB_cuts[n])
+                if TSRFLP.value_y not in TSRFLP.LB_cuts_y:
+                    TSRFLP.update_sub_dual(callback=1)
+                    TSRFLP.sub_dual.optimize()
+                    max_Lk = TSRFLP.worst_scenario()
+                    if max_Lk[0] - TSRFLP.value_omega >=1e-4: # ----benders cut----
+                        TSRFLP.update_multiple_scenario()
+                    else: # ----integer cut----
+                        TSRFLP.update_sub(callback=1)
+                        TSRFLP.sub_model.optimize()
+                        TSRFLP.worst_scenario(1) # calculate max L3
+                        TSRFLP.gap_calculation(1) # calculate int_gap
+                        if TSRFLP.int_gap >= 1e-4:
+                            # cut incumbent solution
+                            TSRFLP.update_integer_cut()
+                            model.cbLazy(TSRFLP.omega >= TSRFLP.integer_cut)
+#                        else: # incumbent has not been cut
+#                            if TSRFLP.pr_end == 0 and TSRFLP.vn_end ==1:
+#                                if objbst< 1e5: # terninate at hard incumbent
+#                                    model.terminate()
+#                            uncut_value = TSRFLP.a1*vals[-1]+TSRFLP.a2*vals[-2]
+#                            if TSRFLP.LB_terminate == 1 and TSRFLP.LB_branch == 0:
+#                                if uncut_value <= convergence[-1][0]:
+#                                    convergence.append([convergence[-1][0],convergence[-1][1],time.time()-start_time])
+#                                    convergence.append([uncut_value,TSRFLP.bestbound,time.time()-start_time])
+#                                else:
+#                                    convergence.append([convergence[-1][0],convergence[-1][1],time.time()-start_time])
+#                            elif TSRFLP.LB_terminate == 0:
+#                                if convergence == []:
+#                                    convergence.append([uncut_value,objbnd,time.time()-start_time])
+#                                else:
+#                                    if uncut_value <= convergence[-1][0]:
+#                                        convergence.append([convergence[-1][0],convergence[-1][1],time.time()-start_time])
+#                                        convergence.append([uncut_value,objbnd,time.time()-start_time])
+#                                    else:
+#                                        convergence.append([convergence[-1][0],convergence[-1][1],time.time()-start_time])
+#                            elif TSRFLP.LB_branch == 1:
+#                                if objbst < 1e10 and objbst <= convergence[-1][0] and objbnd > 0:
+#                                    convergence.append([convergence[-1][0],convergence[-1][1],time.time()-start_time])
+#                                    convergence.append([objbst,objbnd,time.time()-start_time])
+#                                else:
+#                                    convergence.append([convergence[-1][0],convergence[-1][1],time.time()-start_time])
+                else:
+                    print('sadasdadsasdadasdadsasdadasdadsasd')
+                    indices = [i for i, x in enumerate(TSRFLP.LB_cuts_y) if x == TSRFLP.value_y]
+                    for n in indices:
+                        model.cbLazy(TSRFLP.omega >= TSRFLP.LB_cuts[n])
             if where == GRB.Callback.MESSAGE: # Record lazy constraints
                 if TSRFLP.LB_branch == 1:
                     msg = model.cbGet(GRB.Callback.MSG_STRING)

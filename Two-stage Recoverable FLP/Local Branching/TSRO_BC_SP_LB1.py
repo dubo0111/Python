@@ -144,5 +144,6 @@ def bra_cut(p,cd,cdk,sk,a1, tl_total, tl_node,branch_step):
         y_temp = TSRFLP.master_model.getVarByName(y_name)
         var_y.append(y_temp.x)
     convergence = [*zip(*convergence)]
-    Heu_sol.append(round(((Heu_sol[0]-TSRFLP.master_model.Objval)/(1+TSRFLP.master_model.Objval)),2))
+    gap=round(gap,2)
+    Heu_sol.append(round(((Heu_sol[0]-TSRFLP.master_model.Objval)/(1+Heu_sol[0])),2))
     return var_y,runtime,TSRFLP.num_cut,TSRFLP.opt,objval,gap,convergence,len(TSRFLP.LB_cuts),Heu_sol

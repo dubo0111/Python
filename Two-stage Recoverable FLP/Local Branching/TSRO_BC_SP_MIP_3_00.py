@@ -27,31 +27,42 @@ def bra_cut(p,cd,cdk,sk,a1):
                 if time.time() - start_time >= 1000:
                     model.terminate()
             if where == GRB.Callback.MIPSOL:
+                # status output
+                # nodecnt = model.cbGet(GRB.Callback.MIPSOL_NODCNT)
+                # obj = model.cbGet(GRB.Callback.MIPSOL_OBJ)
+                # solcnt = model.cbGet(GRB.Callback.MIPSOL_SOLCNT)
+                # objbst = model.cbGet(GRB.Callback.MIPSOL_OBJBST)
+                # objbnd = model.cbGet(GRB.Callback.MIPSOL_OBJBND)
+                # convergence.append([objbst,objbnd,time.time()-start_time])
+                # gap_mipsol = abs(objbst - objbnd)/(1.0 + abs(objbst))
+                # #print('**** New solution at node %d, obj %g, sol %d, '
+                #       'gap = %g ****' % (nodecnt, obj, solcnt, gap_mipsol))
                 vals = model.cbGetSolution(model._vars)
                 TSRFLP.value_y = vals[-3 - ni:-3]
+                # print(TSRFLP.value_y)
                 if TSRFLP.warm == 'over':
                     TSRFLP.value_y = [round(x) for x in TSRFLP.value_y] # make sure y are binary
                 TSRFLP.value_omega = vals[-1]
-                # if TSRFLP.value_y not in TSRFLP.LB_cuts_y:
-                if 1 == 1:
-                    TSRFLP.update_sub_dual(callback=1)
-                    TSRFLP.sub_dual.optimize()
-                    max_Lk = TSRFLP.worst_scenario()
-                    if max_Lk[0] - TSRFLP.value_omega >=1e-4: # ----benders cut----
-                        TSRFLP.update_multiple_scenario()
-                    else: # ----integer cut----
-                        TSRFLP.update_sub(callback=1)
-                        TSRFLP.sub_model.optimize()
-                        TSRFLP.worst_scenario(1) # calculate max L3
-                        TSRFLP.gap_calculation(1) # calculate int_gap
-                        if TSRFLP.int_gap >= 1e-4:
-                            TSRFLP.update_integer_cut()
-                            model.cbLazy(TSRFLP.omega >= TSRFLP.integer_cut)
-                else:
-                    print('sadasdadsasdadasdadsasdadasdadsasd')
-                    indices = [i for i, x in enumerate(TSRFLP.LB_cuts_y) if x == TSRFLP.value_y]
-                    for n in indices:
-                        model.cbLazy(TSRFLP.omega >= TSRFLP.LB_cuts[n])
+                TSRFLP.update_sub_dual(callback=1)
+                time_subdual = time.time()
+                TSRFLP.sub_dual.optimize()
+                max_Lk = TSRFLP.worst_scenario()
+                # print("DUAL_SUB_callback--- %s seconds ---" % round((time.time() - time_subdual), 2))
+                if max_Lk[0] - TSRFLP.value_omega >=1e-4: # ----benders cut----
+                    TSRFLP.update_multiple_scenario()
+                    # print("callback--- %s seconds ---" % round((time.time() - time1), 2))
+                else: # ----integer cut----
+                    TSRFLP.update_sub(callback=1)
+                    time_sub = time.time()
+                    TSRFLP.sub_model.optimize()
+                    # print("PRIMAL_SUB_callback--- %s seconds ---" % round((time.time() - time_sub), 2))
+                    TSRFLP.worst_scenario(1) # calculate max L3
+                    TSRFLP.gap_calculation(1) # calculate int_gap
+                    # print('----Integer gap:',TSRFLP.int_gap)
+                    if TSRFLP.int_gap >= 1e-4:
+                        # cut incumbent solution
+                        TSRFLP.update_integer_cut()
+                        model.cbLazy(TSRFLP.omega >= TSRFLP.integer_cut)
             if where == GRB.Callback.MESSAGE: # lazy constraints
                 # Message callback
                 msg = model.cbGet(GRB.Callback.MSG_STRING)

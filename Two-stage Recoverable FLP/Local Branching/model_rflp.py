@@ -76,6 +76,7 @@ class rflp:
     LB_terminate = 0
     LB_branch = 0
     LB_cuts = []
+    LB_cuts_y = []
     LB_root = 0 #
     LB_value_y = []
     LB_omega = []
@@ -165,6 +166,7 @@ class rflp:
         self.LB_terminate = 0
         self.LB_branch = 0
         self.LB_cuts = []
+        self.LB_cuts_y = []
         self.LB_root = 0
         self.LB_value_y = []
         self.LB_omega = []
@@ -701,6 +703,7 @@ class rflp:
             max_Lk = self.worst_scenario(1,1)
         self.integer_cut = max_Lk[0] * sum_c_y
         self.LB_cuts.append(self.integer_cut)
+        self.LB_cuts_y.append(self.value_y)
         # print('integer cut')
 
     def gap_calculation(self, MIP_SP=0, Check_optimal=0,cover=0):
@@ -785,7 +788,7 @@ class rflp:
         #m1.params.Presolve = 0
         # tune parameters to avoid numerical issues for subproblem
         # wrong optimal solutions appear for both sub&dual_sub
-        self.master_model.params.OutputFlag = 0
+        self.master_model.params.OutputFlag = 1
         self.sub_model.params.OutputFlag = 0
         self.sub_dual.params.OutputFlag = 0
         self.sub_cover.params.OutputFlag = 0
@@ -846,6 +849,7 @@ class rflp:
 #                    print(self.master_model)
 #                    self.master_model.update()
                     self.LB_cuts.append(self.constr_y)
+                    self.LB_cuts_y.append(self.value_y)
                     self.Benders_cut += 1
                 # elif self.zero_half == 1:
                 #     if n == 0:
