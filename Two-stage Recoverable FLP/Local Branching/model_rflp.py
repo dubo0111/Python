@@ -27,6 +27,7 @@ class rflp:
     y = []
     omega = []
     L=[]
+    value_L=[]
     soft = []
     Qk = []
     beta = 0
@@ -121,6 +122,7 @@ class rflp:
         self.LB = -float('inf')
         self.y = []
         self.L=[]
+        self.value_L=[]
         self.omega = []
         self.soft = []
         self.Qk = []
@@ -847,7 +849,7 @@ class rflp:
         #m1.params.Presolve = 0
         # tune parameters to avoid numerical issues for subproblem
         # wrong optimal solutions appear for both sub&dual_sub
-        self.master_model.params.OutputFlag = 1
+        self.master_model.params.OutputFlag = 0
         self.sub_model.params.OutputFlag = 0
         self.sub_dual.params.OutputFlag = 0
         self.sub_cover.params.OutputFlag = 0

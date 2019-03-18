@@ -41,6 +41,8 @@ def benders_deco(p,cd,cdk,sk,a1):
         TSRFLP.update_status()
         iteration += 1
         runtime = time.time() - start_time
+        if convergence != []:
+            convergence.append([convergence[-1][0],convergence[-1][1],time.time()-start_time])
         convergence.append([TSRFLP.UB,TSRFLP.LB,runtime])
         time_limit = 0
         if runtime >= 1000:
@@ -75,6 +77,7 @@ def benders_deco(p,cd,cdk,sk,a1):
         TSRFLP.update_status() #
         iteration += 1
         runtime = time.time() - start_time
+        convergence.append([convergence[-1][0],convergence[-1][1],time.time()-start_time])
         convergence.append([TSRFLP.UB,TSRFLP.LB,runtime])
         if runtime >= 1000:
             break

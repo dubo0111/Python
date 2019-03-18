@@ -21,7 +21,14 @@ def LIP(p,cd,cdk,sk,a1):
                 objbst = model.cbGet(GRB.Callback.MIP_OBJBST)
                 objbnd = model.cbGet(GRB.Callback.MIP_OBJBND)
                 if objbst < 1e10:
-                    convergence.append([objbst,objbnd,time.time()-start_time])
+                    if convergence != []:
+                        if objbst < convergence[-1][0] :
+                            convergence.append([convergence[-1][0],convergence[-1][1],time.time()-start_time])
+                            convergence.append([objbst,objbnd,time.time()-start_time])
+                        else:
+                            convergence.append([objbst,objbnd,time.time()-start_time])
+                    else:
+                        convergence.append([objbst,objbnd,time.time()-start_time])
 
         # Create a new model
         m = Model("p-center")

@@ -11,7 +11,7 @@ Du Bo
 import model_rflp as mr
 from gurobipy import *
 import time
-def bra_cut(p,cd,cdk,sk,a1, tl_total, tl_node,tl_pr_node,tl_pr_total,branch_step,stop_gap):
+def bra_cut(p,cd,cdk,sk,a1, tl_total, tl_node,tl_pr_node,tl_pr_total,branch_step,stop_gap,pr_terminate):
     convergence = []
     # Number of nodes
     ni = len(cd)
@@ -36,6 +36,11 @@ def bra_cut(p,cd,cdk,sk,a1, tl_total, tl_node,tl_pr_node,tl_pr_total,branch_step
                             TSRFLP.vn_end = 1
                 objbst = model.cbGet(GRB.Callback.MIP_OBJBST)
                 objbnd = model.cbGet(GRB.Callback.MIP_OBJBND)
+                # if TSRFLP.LB_terminate == 1 and TSRFLP.LB_branch == 0:
+                #     if uncut_value <= convergence[-1][0]:
+                #         convergence.append([convergence[-1][0],convergence[-1][1],time.time()-start_time])
+                #         convergence.append([uncut_value,TSRFLP.bestbound,time.time()-start_time])
+                # vals = model.cbGetSolution(model._vars)
 
                 if time.time() - start_time >= 1000: # Stop criteria
                     model.terminate()
@@ -48,6 +53,7 @@ def bra_cut(p,cd,cdk,sk,a1, tl_total, tl_node,tl_pr_node,tl_pr_total,branch_step
                 if TSRFLP.warm == 'over':
                     TSRFLP.value_y = [round(x) for x in TSRFLP.value_y] # make sure y are binary
                 TSRFLP.value_omega = vals[-1]
+                TSRFLP.value_L = vals[-2]
                 if nodecnt > 0 and TSRFLP.LB_terminate == 0: # LB right after root node
                     TSRFLP.LB_terminate = 1
                     TSRFLP.bestbound = objbnd
@@ -72,6 +78,10 @@ def bra_cut(p,cd,cdk,sk,a1, tl_total, tl_node,tl_pr_node,tl_pr_total,branch_step
                         if TSRFLP.int_gap >= 1e-4:
                             TSRFLP.update_integer_cut()
                             model.cbLazy(TSRFLP.omega >= TSRFLP.integer_cut)
+                        else:
+                            if TSRFLP.pr_end == 0 and TSRFLP.vn_end ==1:
+                               if objbst<pr_terminate: # terninate at hard incumbent
+                                   model.terminate()
                 else:
                     save_index = [(i, x.index(TSRFLP.value_y)) for i, x in enumerate(TSRFLP.save_max_Lk_DualLP) if TSRFLP.value_y in x]
                     if TSRFLP.save_max_Lk_DualLP[save_index[0][0]][1][0] - TSRFLP.value_omega >=1e-4: # ----benders cut----
@@ -93,11 +103,10 @@ def bra_cut(p,cd,cdk,sk,a1, tl_total, tl_node,tl_pr_node,tl_pr_total,branch_step
                             if TSRFLP.int_gap >= 1e-4:
                                 TSRFLP.update_integer_cut()
                                 model.cbLazy(TSRFLP.omega >= TSRFLP.integer_cut)
-
-#                    else: # incumbent has not been cut
-#                        if TSRFLP.pr_end == 0 and TSRFLP.vn_end ==1:
-#                            if objbst< 1e5: # terninate at hard incumbent
-#                                model.terminate()
+                            else:
+                                if TSRFLP.pr_end == 0 and TSRFLP.vn_end ==1:
+                                   if objbst<pr_terminate: # terninate at hard incumbent
+                                       model.terminate()
 
                         # uncut_value = TSRFLP.a1*vals[-1]+TSRFLP.a2*vals[-2]
                         # if TSRFLP.LB_terminate == 1 and TSRFLP.LB_branch == 0:
@@ -151,26 +160,31 @@ def bra_cut(p,cd,cdk,sk,a1, tl_total, tl_node,tl_pr_node,tl_pr_total,branch_step
         LB_cut = 2
         vn_time = time.time()
         # Branching
-        sol_count = 0
         while TSRFLP.vn_end == 0: #
             LB_time = time.time() # time Limits for one neighbourhood
             TSRFLP.master_model.optimize(mycallback)
             if TSRFLP.master_model.status in [3,4,5]:
-                break
+                if TSRFLP.master_model.getConstrs()[-1].rhs >= TSRFLP.p*2:
+                    break
+                if TSRFLP.master_model.getConstrs()[-1].sense == '<':
+                    TSRFLP.master_model.getConstrs()[-1].sense = '>'
+                else:
+                    break
             Branching_record,better_sol = TSRFLP.record_best_sol(Branching_record,start_time)
             if better_sol == 1:
                 if TSRFLP.master_model.getConstrs()[-1].sense == '<':
                     TSRFLP.master_model.getConstrs()[-1].sense = '>'
+                    TSRFLP.master_model.getConstrs()[-1].rhs += 2
                 TSRFLP.add_LB(Branching_record,branch_step)
                 LB_cut += 1
             else:
-                sol_count += 1
-                if TSRFLP.master_model.getConstrs()[-1].rhs < TSRFLP.p*2:
+                if TSRFLP.master_model.getConstrs()[-1].sense == '<':
+                    TSRFLP.master_model.getConstrs()[-1].sense = '>'
+                    TSRFLP.add_LB(Branching_record,branch_step)
+                    LB_cut += 1
                     TSRFLP.master_model.getConstrs()[-1].rhs += 2
                 else:
                     break
-            # if sol_count >= 2:
-            #     break
         for n in range(LB_cut):
             TSRFLP.master_model.remove(TSRFLP.master_model.getConstrs()[-n-1])
         # Proximity search
@@ -198,8 +212,8 @@ def bra_cut(p,cd,cdk,sk,a1, tl_total, tl_node,tl_pr_node,tl_pr_total,branch_step
             pr_gap = (Branching_record[0]-TSRFLP.bestbound)/(1+Branching_record[0])
             if pr_gap <= stop_gap:
                 TSRFLP.pr_end = 1
-            print('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
-            print('gap: ',pr_gap,' UB= ',Branching_record[0],' LB= ',TSRFLP.bestbound)
+            # print('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
+            # print('gap: ',pr_gap,' UB= ',Branching_record[0],' LB= ',TSRFLP.bestbound)
             TSRFLP.master_model.remove(TSRFLP.master_model.getConstrs()[-1])
             TSRFLP.master_model.remove(TSRFLP.master_model.getConstrs()[-2])
         TSRFLP.remove_proximity()

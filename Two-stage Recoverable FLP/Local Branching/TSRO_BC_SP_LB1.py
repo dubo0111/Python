@@ -28,11 +28,13 @@ def bra_cut(p,cd,cdk,sk,a1, tl_total, tl_node,branch_step):
                     if time.time() - VN_time >= tl_total:
                         model.terminate()
                         TSRFLP.vn_end = 1
-                if TSRFLP.LB_branch == 1:
-                    objbst = model.cbGet(GRB.Callback.MIP_OBJBST)
-                    objbnd = model.cbGet(GRB.Callback.MIP_OBJBND)
-                    if objbst < 1e10:
-                        convergence.append([objbst,objbnd,time.time()-start_time])
+                # if TSRFLP.LB_branch == 1:
+                objbst = model.cbGet(GRB.Callback.MIP_OBJBST)
+                objbnd = model.cbGet(GRB.Callback.MIP_OBJBND)
+                if objbst < 1e10:
+                    if convergence != []:
+                        convergence.append([convergence[-1][0],convergence[-1][1],time.time()-start_time])
+                    convergence.append([objbst,objbnd,time.time()-start_time])
                 if time.time() - start_time >= 1000: # Stop criteria
                     model.terminate()
             if where == GRB.Callback.MIPSOL:
@@ -120,22 +122,27 @@ def bra_cut(p,cd,cdk,sk,a1, tl_total, tl_node,branch_step):
             LB_time = time.time() # time Limits for one neighbourhood
             TSRFLP.master_model.optimize(mycallback)
             if TSRFLP.master_model.status in [3,4,5]:
-                break
+                if TSRFLP.master_model.getConstrs()[-1].rhs >= TSRFLP.p*2:
+                    break
+                if TSRFLP.master_model.getConstrs()[-1].sense == '<':
+                    TSRFLP.master_model.getConstrs()[-1].sense = '>'
+                else:
+                    break
             Branching_record,better_sol = TSRFLP.record_best_sol(Branching_record,start_time)
             if better_sol == 1:
                 if TSRFLP.master_model.getConstrs()[-1].sense == '<':
                     TSRFLP.master_model.getConstrs()[-1].sense = '>'
+                    TSRFLP.master_model.getConstrs()[-1].rhs += 2
                 TSRFLP.add_LB(Branching_record,branch_step)
-                # print('++++++++++++++++++++++++++++++++++++++++++++++++')
                 LB_cut += 1
             else:
                 if TSRFLP.master_model.getConstrs()[-1].sense == '<':
-                    if TSRFLP.master_model.getConstrs()[-1].rhs < TSRFLP.p*2-2:
-                        TSRFLP.master_model.getConstrs()[-1].rhs += 2
-                        # print('------------------------------------------')
-                    else:
-                        # print('*******************************************')
-                        break
+                    TSRFLP.master_model.getConstrs()[-1].sense = '>'
+                    TSRFLP.add_LB(Branching_record,branch_step)
+                    LB_cut += 1
+                    TSRFLP.master_model.getConstrs()[-1].rhs += 2
+                else:
+                    break
         Heu_sol = [round(Branching_record[0],2),round(Branching_record[2],2)]
         for n in range(LB_cut):
             TSRFLP.master_model.remove(TSRFLP.master_model.getConstrs()[-n-1])
