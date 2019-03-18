@@ -1,0 +1,5 @@
+email_self.py
+*.log
+*.cpython-36.pyc
+*.pyc
+/__pycache__

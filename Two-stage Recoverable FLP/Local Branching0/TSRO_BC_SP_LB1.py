@@ -11,7 +11,6 @@ Du Bo
 import model_rflp as mr
 from gurobipy import *
 import time
-import copy
 def bra_cut(p,cd,cdk,sk,a1, tl_total, tl_node,branch_step):
     convergence = []
     # Number of nodes
@@ -45,47 +44,24 @@ def bra_cut(p,cd,cdk,sk,a1, tl_total, tl_node,branch_step):
                 if nodecnt > 0 and TSRFLP.LB_terminate == 0: # LB right after root node
                     TSRFLP.LB_terminate = 1
                     model.terminate()
-                if TSRFLP.value_y not in TSRFLP.save_y and TSRFLP.value_y not in TSRFLP.save_y_int:
-                    TSRFLP.update_sub_dual(callback=1)
-                    TSRFLP.sub_dual.optimize()
-                    max_Lk = TSRFLP.worst_scenario()
-                    SP_Qk = [i.x for i in TSRFLP.sub_dual.getVars()[-TSRFLP.nk:]]
-                    save_sub = TSRFLP.get_subdual_vals()
-                    TSRFLP.save_max_Lk_DualLP.append([TSRFLP.value_y,TSRFLP.max_Lk,SP_Qk,save_sub])
-                    TSRFLP.save_y.append(TSRFLP.value_y)
-                    if max_Lk[0] - TSRFLP.value_omega >=1e-4: # ----benders cut----
-                        TSRFLP.update_multiple_scenario(SP_Qk)
-                    else: # ----integer cut----
-                        TSRFLP.update_sub(callback=1)
-                        TSRFLP.sub_model.optimize()
-                        TSRFLP.worst_scenario(1) # calculate max L3
-                        TSRFLP.save_max_Lk_SP.append([TSRFLP.value_y,TSRFLP.max_Lk])
-                        TSRFLP.save_y_int.append(TSRFLP.value_y)
-                        TSRFLP.gap_calculation(1) # calculate int_gap
-                        if TSRFLP.int_gap >= 1e-4:
-                            TSRFLP.update_integer_cut()
-                            model.cbLazy(TSRFLP.omega >= TSRFLP.integer_cut)
-                else:
-                    save_index = [(i, x.index(TSRFLP.value_y)) for i, x in enumerate(TSRFLP.save_max_Lk_DualLP) if TSRFLP.value_y in x]
-                    if TSRFLP.save_max_Lk_DualLP[save_index[0][0]][1][0] - TSRFLP.value_omega >=1e-4: # ----benders cut----
-                        TSRFLP.update_multiple_scenario(TSRFLP.save_max_Lk_DualLP[save_index[0][0]][2],
-                                                        TSRFLP.save_max_Lk_DualLP[save_index[0][0]][3])
-                    else:
-                        save_index = [(i, x.index(TSRFLP.value_y)) for i, x in enumerate(TSRFLP.save_max_Lk_SP) if TSRFLP.value_y in x]
-                        if save_index != []:
-                            if TSRFLP.save_max_Lk_SP[save_index[0][0]][1][0]-TSRFLP.value_omega >= 1e-4:
-                                TSRFLP.update_integer_cut(0,TSRFLP.save_max_Lk_SP[save_index[0][0]][1])
-                                model.cbLazy(TSRFLP.omega >= TSRFLP.integer_cut)
-                        else:
-                            TSRFLP.update_sub(callback=1)
-                            TSRFLP.sub_model.optimize()
-                            TSRFLP.worst_scenario(1) # calculate max L3
-                            TSRFLP.save_max_Lk_SP.append([TSRFLP.value_y,TSRFLP.max_Lk])
-                            TSRFLP.save_y_int.append(TSRFLP.value_y)
-                            TSRFLP.gap_calculation(1) # calculate int_gap
-                            if TSRFLP.int_gap >= 1e-4:
-                                TSRFLP.update_integer_cut()
-                                model.cbLazy(TSRFLP.omega >= TSRFLP.integer_cut)
+                # if TSRFLP.value_y not in TSRFLP.tabu:
+                #     TSRFLP.tabu.append(TSRFLP.value_y)
+                TSRFLP.update_sub_dual(callback=1)
+                TSRFLP.sub_dual.optimize()
+                max_Lk = TSRFLP.worst_scenario()
+                if max_Lk[0] - TSRFLP.value_omega >=1e-4: # ----benders cut----
+                    TSRFLP.update_multiple_scenario()
+                else: # ----integer cut----
+                    TSRFLP.update_sub(callback=1)
+                    time_sub = time.time()
+                    TSRFLP.sub_model.optimize()
+                    TSRFLP.worst_scenario(1) # calculate max L3
+                    TSRFLP.gap_calculation(1) # calculate int_gap
+                    # print('----Integer gap:',TSRFLP.int_gap)
+                    if TSRFLP.int_gap >= 1e-4:
+                        TSRFLP.update_integer_cut()
+                        model.cbLazy(TSRFLP.omega >= TSRFLP.integer_cut)
+
             if where == GRB.Callback.MESSAGE: # Record lazy constraints
                 # Message callback
                 if TSRFLP.LB_branch == 1:

@@ -84,11 +84,6 @@ class rflp:
     bestbound = 0
     vn_end = 0
     pr_end = 0
-    # Avoid solving identical relaxed dual-sp and sp
-    save_max_Lk_DualLP = [] # for benders cut
-    save_max_Lk_SP = [] # for integer cut
-    save_y = []
-    save_y_int = []
 
     def __init__(self, p, ni, nk, a1, a2, cd, cdk, sk):
         self.reset()
@@ -171,6 +166,7 @@ class rflp:
         self.LB_terminate = 0
         self.LB_branch = 0
         self.LB_cuts = []
+        self.LB_cuts_y = []
         self.LB_root = 0
         self.LB_value_y = []
         self.LB_omega = []
@@ -178,12 +174,6 @@ class rflp:
         self.bestbound = 0
         self.vn_end = 0
         self.pr_end = 0
-
-        self.save_max_Lk_DualLP = [] # for benders cut
-        self.save_max_Lk_SP = [] # for integer cut
-        self.save_y = []
-        self.save_y_int = []
-
 
     def master(self, relax=0):
         # Create variables
@@ -598,79 +588,63 @@ class rflp:
         # update value of y for subproblem in each iteration
         self.value_y = [round(x) for x in self.value_y]
 
-    def update_cut(self, numk=None, lift=0,save = 0):
-        gamma = []
-        delta = []
-        epsilon = []
-        lamda = []
-        mu = []
-        beta = []
-        nu = []
+    def update_cut(self, numk=None, lift=0):
+        gamma = [[0 for j in range(self.ni)] for i in range(self.ni)]
+        delta = [[0 for j in range(self.ni)] for i in range(self.ni)]
+        epsilon = [0 for j in range(self.ni)]
+        lamda = [0 for j in range(self.ni)]
+        mu = [0 for j in range(self.ni)]
+        beta = [0 for j in range(self.ni)]
         if numk == None:
             numk = self.max_k
-        if save == 0:
-            gamma = [[0 for j in range(self.ni)] for i in range(self.ni)]
-            delta = [[0 for j in range(self.ni)] for i in range(self.ni)]
-            epsilon = [0 for j in range(self.ni)]
-            lamda = [0 for j in range(self.ni)]
-            mu = [0 for j in range(self.ni)]
-            beta = [0 for j in range(self.ni)]
-            if self.dual == 0:  # for primal sub problem
-                cm1 = self.sub_model.getConstrs()
-                num_c = len(cm1)
-                dual_value = []
-                constrname = []
-                for i in range(num_c):
-                    dual_value.append(cm1[i].getAttr('Pi'))
-                    constrname.append(cm1[i].getAttr('ConstrName'))
-                dual = dict(zip(constrname, dual_value))
-                for i in range(self.ni):
-                    for j in range(self.ni):
-                        gamma_name = ''.join(
-                            ['gamma[', str(numk), ',', str(i), ',', str(j), ']'])
-                        delta_name = ''.join(
-                            ['delta[', str(numk), ',', str(i), ',', str(j), ']'])
-                        gamma[i][j] = dual[gamma_name]
-                        delta[i][j] = dual[delta_name]
-                for n in range(self.ni):
-                    epsilon_name = ''.join(
-                        ['epsilon[', str(numk), ',', str(n), ']'])
-                    lamda_name = ''.join(['lamda[', str(numk), ',', str(n), ']'])
-                    mu_name = ''.join(['mu[', str(numk), ',', str(n), ']'])
-                    epsilon[n] = dual[epsilon_name]
-                    lamda[n] = dual[lamda_name]
-                    mu[n] = dual[mu_name]
-                nu_name = ''.join(['nu[', str(numk), ']'])
-                nu = dual[nu_name]
-            elif self.dual == 1:  # for dual sub problem
-                for i in range(self.ni):
-                    for j in range(self.ni):
-                        gamma_name = ''.join(
-                            ['gamma[', str(numk), ',', str(i), ',', str(j), ']'])
-                        delta_name = ''.join(
-                            ['delta[', str(numk), ',', str(i), ',', str(j), ']'])
-                        gamma[i][j] = self.sub_dual.getVarByName(gamma_name).x
-                        delta[i][j] = self.sub_dual.getVarByName(delta_name).x
-                for n in range(self.ni):
-                    beta_name = ''.join(['beta[', str(numk), ',', str(n), ']'])
-                    epsilon_name = ''.join(
-                        ['epsilon[', str(numk), ',', str(n), ']'])
-                    lamda_name = ''.join(['lamda[', str(numk), ',', str(n), ']'])
-                    mu_name = ''.join(['mu[', str(numk), ',', str(n), ']'])
-                    beta[n] = self.sub_dual.getVarByName(beta_name).x
-                    epsilon[n] = self.sub_dual.getVarByName(epsilon_name).x
-                    lamda[n] = self.sub_dual.getVarByName(lamda_name).x
-                    mu[n] = self.sub_dual.getVarByName(mu_name).x
-                nu_name = ''.join(['nu[', str(numk), ']'])
-                nu = self.sub_dual.getVarByName(nu_name).x
-        else:
-            gamma = save[0][numk]
-            delta = save[1][numk]
-            epsilon = save[2][numk]
-            lamda = save[3][numk]
-            mu = save[4][numk]
-            beta = save[5][numk]
-            nu = save[6][numk]
+        if self.dual == 0:  # for pirmal sub problem
+            cm1 = self.sub_model.getConstrs()
+            num_c = len(cm1)
+            dual_value = []
+            constrname = []
+            for i in range(num_c):
+                dual_value.append(cm1[i].getAttr('Pi'))
+                constrname.append(cm1[i].getAttr('ConstrName'))
+            dual = dict(zip(constrname, dual_value))
+            for i in range(self.ni):
+                for j in range(self.ni):
+                    gamma_name = ''.join(
+                        ['gamma[', str(numk), ',', str(i), ',', str(j), ']'])
+                    delta_name = ''.join(
+                        ['delta[', str(numk), ',', str(i), ',', str(j), ']'])
+                    gamma[i][j] = dual[gamma_name]
+                    delta[i][j] = dual[delta_name]
+            for n in range(self.ni):
+                epsilon_name = ''.join(
+                    ['epsilon[', str(numk), ',', str(n), ']'])
+                lamda_name = ''.join(['lamda[', str(numk), ',', str(n), ']'])
+                mu_name = ''.join(['mu[', str(numk), ',', str(n), ']'])
+                epsilon[n] = dual[epsilon_name]
+                lamda[n] = dual[lamda_name]
+                mu[n] = dual[mu_name]
+            nu_name = ''.join(['nu[', str(numk), ']'])
+            nu = dual[nu_name]
+        elif self.dual == 1:  # for dual sub problem
+            for i in range(self.ni):
+                for j in range(self.ni):
+                    gamma_name = ''.join(
+                        ['gamma[', str(numk), ',', str(i), ',', str(j), ']'])
+                    delta_name = ''.join(
+                        ['delta[', str(numk), ',', str(i), ',', str(j), ']'])
+                    gamma[i][j] = self.sub_dual.getVarByName(gamma_name).x
+                    delta[i][j] = self.sub_dual.getVarByName(delta_name).x
+            for n in range(self.ni):
+                beta_name = ''.join(['beta[', str(numk), ',', str(n), ']'])
+                epsilon_name = ''.join(
+                    ['epsilon[', str(numk), ',', str(n), ']'])
+                lamda_name = ''.join(['lamda[', str(numk), ',', str(n), ']'])
+                mu_name = ''.join(['mu[', str(numk), ',', str(n), ']'])
+                beta[n] = self.sub_dual.getVarByName(beta_name).x
+                epsilon[n] = self.sub_dual.getVarByName(epsilon_name).x
+                lamda[n] = self.sub_dual.getVarByName(lamda_name).x
+                mu[n] = self.sub_dual.getVarByName(mu_name).x
+            nu_name = ''.join(['nu[', str(numk), ']'])
+            nu = self.sub_dual.getVarByName(nu_name).x
         # dual_lifting
         # if lift == 1:
             # sum_gamma = [0 for i in range(self.ni)]
@@ -714,39 +688,7 @@ class rflp:
         # update cut to be added to master problem in each iteration
         self.constr_y = c_y + constant
 
-    def get_subdual_vals(self):
-        gamma = [[[0 for j in range(self.ni)] for i in range(self.ni)] for k in range(self.nk)]
-        delta = [[[0 for j in range(self.ni)] for i in range(self.ni)] for k in range(self.nk)]
-        epsilon = [[0 for j in range(self.ni)] for k in range(self.nk)]
-        lamda = [[0 for j in range(self.ni)] for k in range(self.nk)]
-        mu =[[0 for j in range(self.ni)] for k in range(self.nk)]
-        beta = [[0 for j in range(self.ni)] for k in range(self.nk)]
-        nu = [0 for k in range(self.nk)]
-        for numk in range(self.nk):
-            for i in range(self.ni):
-                for j in range(self.ni):
-                    gamma_name = ''.join(
-                        ['gamma[', str(numk), ',', str(i), ',', str(j), ']'])
-                    delta_name = ''.join(
-                        ['delta[', str(numk), ',', str(i), ',', str(j), ']'])
-                    gamma[numk][i][j] = self.sub_dual.getVarByName(gamma_name).x
-                    delta[numk][i][j] = self.sub_dual.getVarByName(delta_name).x
-            for n in range(self.ni):
-                beta_name = ''.join(['beta[', str(numk), ',', str(n), ']'])
-                epsilon_name = ''.join(
-                    ['epsilon[', str(numk), ',', str(n), ']'])
-                lamda_name = ''.join(['lamda[', str(numk), ',', str(n), ']'])
-                mu_name = ''.join(['mu[', str(numk), ',', str(n), ']'])
-                beta[numk][n] = self.sub_dual.getVarByName(beta_name).x
-                epsilon[numk][n] = self.sub_dual.getVarByName(epsilon_name).x
-                lamda[numk][n] = self.sub_dual.getVarByName(lamda_name).x
-                mu[numk][n] = self.sub_dual.getVarByName(mu_name).x
-            nu_name = ''.join(['nu[', str(numk), ']'])
-            nu[numk] = self.sub_dual.getVarByName(nu_name).x
-        save_subdual_vals = [gamma,delta,epsilon,lamda,mu,beta,nu]
-        return save_subdual_vals
-
-    def update_integer_cut(self,cover=0,save=0):
+    def update_integer_cut(self,cover=0):
         # simplified cut (use no dual information)
         sum_c_y = LinExpr()
         for i in range(self.ni):
@@ -755,14 +697,13 @@ class rflp:
             elif self.value_y[i] == 0:
                 sum_c_y += -self.y[i]
         sum_c_y += 1
-        if save!=0 and cover==0:
-            self.max_Lk = save
-        elif cover == 0 and save == 0:
-            self.max_Lk = self.worst_scenario(1)
+        if cover == 0:
+            max_Lk = self.worst_scenario(1)
         else:
-            self.max_Lk = self.worst_scenario(1,1)
-        self.integer_cut = self.max_Lk[0] * sum_c_y
+            max_Lk = self.worst_scenario(1,1)
+        self.integer_cut = max_Lk[0] * sum_c_y
         self.LB_cuts.append(self.integer_cut)
+        self.LB_cuts_y.append(self.value_y)
         # print('integer cut')
 
     def gap_calculation(self, MIP_SP=0, Check_optimal=0,cover=0):
@@ -770,11 +711,11 @@ class rflp:
             # vals = self.master_model.cbGetSolution(self.master_model._vars)
             # value_L = vals(-2)
             if cover == 0:
-                self.max_Lk = self.worst_scenario(1)
+                max_Lk = self.worst_scenario(1)
             else:
-                self.max_Lk = self.worst_scenario(1,1)
-            self.int_gap = self.max_Lk[0] - self.value_omega #
-           # print('self.max_Lk:',self.max_Lk[0])
+                max_Lk = self.worst_scenario(1,1)
+            self.int_gap = max_Lk[0] - self.value_omega #
+           # print('max_Lk:',max_Lk[0])
         else:
             # extract L
             var_L = self.master_model.getVarByName('L')
@@ -783,11 +724,11 @@ class rflp:
             obj_master = self.master_model.getObjective()
             self.LB = obj_master.getValue()
             if Check_optimal == 0:
-                self.max_Lk = self.worst_scenario()
+                max_Lk = self.worst_scenario()
             elif Check_optimal == 1:
-                self.max_Lk = self.worst_scenario(1)
+                max_Lk = self.worst_scenario(1)
             # update UB
-            self.UB = min([self.UB, self.a1 * value_L + self.a2 * self.max_Lk[0]])
+            self.UB = min([self.UB, self.a1 * value_L + self.a2 * max_Lk[0]])
             self.gap = (self.UB - self.LB) / self.LB
         # return self.gap
 
@@ -800,7 +741,7 @@ class rflp:
                     L3_temp = self.sub_model.getVarByName(L3_name)
                     value_L3.append(L3_temp.x)
                 # maximum L3 and its index (worst k)
-                self.max_Lk = max([[v, i] for i, v in enumerate(value_L3)])
+                max_Lk = max([[v, i] for i, v in enumerate(value_L3)])
             elif self.dual == 1 and MIP_SP != 1:
                 value_Qk = []
                 for k in range(self.nk):
@@ -808,16 +749,16 @@ class rflp:
                     Qk_temp = self.sub_dual.getVarByName(Qk_name)
                     value_Qk.append(Qk_temp.x)
                 # maximum Qk and its index (worst k)
-                self.max_Lk = max([[v, i] for i, v in enumerate(value_Qk)])
-            self.max_k = self.max_Lk[1]
+                max_Lk = max([[v, i] for i, v in enumerate(value_Qk)])
+            self.max_k = max_Lk[1]
         elif cover == 1:
             value_L = []
             for k in range(self.nk):
                 L_name = ''.join(['L[', str(k), ']'])
                 value_L.append(self.sub_cover.getVarByName(L_name).x)
-            self.max_Lk = max([[v, i] for i, v in enumerate(value_L)])
-            self.max_k = self.max_Lk[1]
-        return self.max_Lk
+            max_Lk = max([[v, i] for i, v in enumerate(value_L)])
+            self.max_k = max_Lk[1]
+        return max_Lk
 
     def update_status(self):
         self.add_cut_scen.append(self.max_k)
@@ -847,7 +788,7 @@ class rflp:
         #m1.params.Presolve = 0
         # tune parameters to avoid numerical issues for subproblem
         # wrong optimal solutions appear for both sub&dual_sub
-        self.master_model.params.OutputFlag = 1
+        self.master_model.params.OutputFlag = 0
         self.sub_model.params.OutputFlag = 0
         self.sub_dual.params.OutputFlag = 0
         self.sub_cover.params.OutputFlag = 0
@@ -878,12 +819,12 @@ class rflp:
                   '   Wrong dual problem solution.')
         return self.error
 
-    def update_multiple_scenario(self,SP_Qk,save=0):
+    def update_multiple_scenario(self):
         # print('===============sorting==================')
         # extract omega and Q(k)
         # Verify cut improvement #LB
         violation_now = [
-            x - self.value_omega for x in SP_Qk]
+            x.x - self.value_omega for x in self.sub_dual.getVars()[-self.nk:]]
 
         # for k in range(self.nk):
         #     if violation_now[k] > 0:
@@ -895,20 +836,17 @@ class rflp:
         rank = sorted(range(len(violation_now)), reverse=True,
                       key=violation_now.__getitem__)
         # print(rank[0])
-        # odd_1 = 0
-        # odd_2 = 0
-        # for n in range(round(self.nk / 4 + 1)): #!!!fewer cuts
+        odd_1 = 0
+        odd_2 = 0
+        # for n in range(round(self.nk / 4 + 1)):
         for n in range(round(self.nk)):
             # for n in range(1):
             if violation_now[rank[n]] > 0:
-                if save == 0:
-                    self.update_cut(rank[n], self.lift)
-                else:
-                    self.update_cut(rank[n], self.lift,save)
+                self.update_cut(rank[n], self.lift)
                 if self.zero_half == 0:
                     self.master_model.cbLazy(self.omega >= self.constr_y)
                     self.LB_cuts.append(self.constr_y)
-                    # self.LB_cuts_y.append(self.value_y)
+                    self.LB_cuts_y.append(self.value_y)
                     self.Benders_cut += 1
                 # elif self.zero_half == 1:
                 #     if n == 0:

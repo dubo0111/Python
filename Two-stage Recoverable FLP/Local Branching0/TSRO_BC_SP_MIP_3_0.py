@@ -32,51 +32,26 @@ def bra_cut(p,cd,cdk,sk,a1):
                 if TSRFLP.warm == 'over':
                     TSRFLP.value_y = [round(x) for x in TSRFLP.value_y] # make sure y are binary
                 TSRFLP.value_omega = vals[-1]
-                if TSRFLP.value_y not in TSRFLP.save_y and TSRFLP.value_y not in TSRFLP.save_y_int:
+                # if TSRFLP.value_y not in TSRFLP.LB_cuts_y:
+                if 1 == 1:
                     TSRFLP.update_sub_dual(callback=1)
                     TSRFLP.sub_dual.optimize()
                     max_Lk = TSRFLP.worst_scenario()
-                    SP_Qk = [i.x for i in TSRFLP.sub_dual.getVars()[-TSRFLP.nk:]]
-                    save_sub = TSRFLP.get_subdual_vals()
-                    TSRFLP.save_max_Lk_DualLP.append([TSRFLP.value_y,TSRFLP.max_Lk,SP_Qk,save_sub])
-                    TSRFLP.save_y.append(TSRFLP.value_y)
                     if max_Lk[0] - TSRFLP.value_omega >=1e-4: # ----benders cut----
-                        TSRFLP.update_multiple_scenario(SP_Qk)
+                        TSRFLP.update_multiple_scenario()
                     else: # ----integer cut----
                         TSRFLP.update_sub(callback=1)
                         TSRFLP.sub_model.optimize()
                         TSRFLP.worst_scenario(1) # calculate max L3
-                        TSRFLP.save_max_Lk_SP.append([TSRFLP.value_y,TSRFLP.max_Lk])
-                        TSRFLP.save_y_int.append(TSRFLP.value_y)
                         TSRFLP.gap_calculation(1) # calculate int_gap
                         if TSRFLP.int_gap >= 1e-4:
                             TSRFLP.update_integer_cut()
                             model.cbLazy(TSRFLP.omega >= TSRFLP.integer_cut)
                 else:
-                    save_index = [(i, x.index(TSRFLP.value_y)) for i, x in enumerate(TSRFLP.save_max_Lk_DualLP) if TSRFLP.value_y in x]
-                    if TSRFLP.save_max_Lk_DualLP[save_index[0][0]][1][0] - TSRFLP.value_omega >=1e-4: # ----benders cut----
-                        TSRFLP.update_multiple_scenario(TSRFLP.save_max_Lk_DualLP[save_index[0][0]][2],
-                                                        TSRFLP.save_max_Lk_DualLP[save_index[0][0]][3])
-                    else:
-                        save_index = [(i, x.index(TSRFLP.value_y)) for i, x in enumerate(TSRFLP.save_max_Lk_SP) if TSRFLP.value_y in x]
-                        if save_index != []:
-                            if TSRFLP.save_max_Lk_SP[save_index[0][0]][1][0]-TSRFLP.value_omega >= 1e-4:
-                                TSRFLP.update_integer_cut(0,TSRFLP.save_max_Lk_SP[save_index[0][0]][1])
-                                model.cbLazy(TSRFLP.omega >= TSRFLP.integer_cut)
-                        else:
-                            TSRFLP.update_sub(callback=1)
-                            TSRFLP.sub_model.optimize()
-                            TSRFLP.worst_scenario(1) # calculate max L3
-                            TSRFLP.save_max_Lk_SP.append([TSRFLP.value_y,TSRFLP.max_Lk])
-                            TSRFLP.save_y_int.append(TSRFLP.value_y)
-                            TSRFLP.gap_calculation(1) # calculate int_gap
-                            if TSRFLP.int_gap >= 1e-4:
-                                TSRFLP.update_integer_cut()
-                                model.cbLazy(TSRFLP.omega >= TSRFLP.integer_cut)
-#                    print('sadasdadsasdadasdadsasdadasdadsasd')
-                    # indices = [i for i, x in enumerate(TSRFLP.LB_cuts_y) if x == TSRFLP.value_y]
-                    # for n in indices:
-                    #     model.cbLazy(TSRFLP.omega >= TSRFLP.LB_cuts[n])
+                    print('sadasdadsasdadasdadsasdadasdadsasd')
+                    indices = [i for i, x in enumerate(TSRFLP.LB_cuts_y) if x == TSRFLP.value_y]
+                    for n in indices:
+                        model.cbLazy(TSRFLP.omega >= TSRFLP.LB_cuts[n])
             if where == GRB.Callback.MESSAGE: # lazy constraints
                 # Message callback
                 msg = model.cbGet(GRB.Callback.MSG_STRING)
