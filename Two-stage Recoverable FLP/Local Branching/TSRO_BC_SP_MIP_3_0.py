@@ -34,17 +34,6 @@ def bra_cut(p,cd,cdk,sk,a1):
                 if time.time() - start_time >= 1000:
                     model.terminate()
             if where == GRB.Callback.MIPSOL:
-                # objbst = model.cbGet(GRB.Callback.MIPSOL_OBJBST)
-                # objbnd = model.cbGet(GRB.Callback.MIPSOL_OBJBND)
-                # if objbst < 1e10 and objbnd>0:
-                #     if convergence != []:
-                #         if objbst < convergence[-1][0] :
-                #             convergence.append([convergence[-1][0],convergence[-1][1],time.time()-start_time])
-                #             convergence.append([objbst,objbnd,time.time()-start_time])
-                #         else:
-                #             convergence.append([objbst,objbnd,time.time()-start_time])
-                #     else:
-                #         convergence.append([objbst,objbnd,time.time()-start_time])
                 vals = model.cbGetSolution(model._vars)
                 TSRFLP.value_y = vals[-3 - ni:-3]
                 if TSRFLP.warm == 'over':
@@ -153,11 +142,14 @@ def bra_cut(p,cd,cdk,sk,a1):
     gap= TSRFLP.master_model.MIPGap
     if abs(gap)<=1e-5:
         gap = 0
-
+    for n in range(len(convergence)):
+        if abs(TSRFLP.master_model.Objval - convergence[n][0])<=1e-5:
+            Heu_sol = [round(TSRFLP.master_model.Objval,2),round(convergence[n][2],2)]
+            break
     var_y=[]
     for j in range(TSRFLP.ni):
         y_name = ''.join(['y[', str(j), ']'])
         y_temp = TSRFLP.master_model.getVarByName(y_name)
         var_y.append(y_temp.x)
     convergence = [*zip(*convergence)]
-    return var_y,runtime,TSRFLP.num_cut,TSRFLP.opt,objval,gap,convergence
+    return var_y,runtime,TSRFLP.num_cut,TSRFLP.opt,objval,gap,convergence,Heu_sol

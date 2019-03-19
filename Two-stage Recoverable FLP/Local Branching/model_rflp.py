@@ -1058,7 +1058,7 @@ class rflp:
     def remove_proximity(self):
         self.master_model.setObjective(self.a1*self.L+self.a2*self.omega)
 
-    def record_best_sol(self,Branching_record,start_time):
+    def record_best_sol(self,Branching_record,start_time,convergence):
         best_incumbent = []
         improve = 0
         if self.master_model.Objval < Branching_record[0]:
@@ -1067,6 +1067,6 @@ class rflp:
             for n in Vars:
                 best_incumbent.append(n.x)
             Branching_record = [self.master_model.Objval,best_incumbent,time.time()-start_time]
-        # else:
-        #     Branching_record = Branching_record
-        return Branching_record,improve
+            convergence.append([convergence[-1][0],convergence[-1][1],time.time()-start_time])
+            convergence.append([Branching_record[0],self.bestbound,time.time()-start_time])
+        return Branching_record,improve,convergence
