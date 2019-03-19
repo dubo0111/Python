@@ -23,7 +23,7 @@ ex_k = [10,20,50,100,200,500] # number of scenarios
 ex_all = 5 # number of experiments for each combination
 # problem parameters
 a1 = 0.5
-rnd_seed = 121# starting random seed
+rnd_seed = 100# starting random seed
 # algorithm parameters (LB)
 tl_node = 1000
 #tl_total = 10
@@ -57,7 +57,7 @@ try:
                 Heu_sol12=[0,0,0]
                 Heu_sol13=[0,0,0]
 
-                
+#                if n_k == 20 and n_e == 2:
                 y1,t1, cut1, opt1, val1, gap1, conv1 = bc.bra_cut(
                      p, cd, cdk, sk, a1) # branch and cut
                 y12,t12, cut12, opt12, val12, gap12, conv12, pool12,Heu_sol12 = bc_VN.bra_cut(
@@ -68,7 +68,7 @@ try:
                         p, cd, cdk, sk, a1)
                 y3, t3, opt3, val3, gap3, conv3 = lip.LIP(
                         p, cd, cdk, sk, a1)
-                
+                    
 #                plt.plot(conv12[2],conv12[0],conv12[2],conv12[1])
 #                plt.show()
 
@@ -85,6 +85,15 @@ try:
 #                break
 #            break
 #        break
+            aa = np.array(result_sum).sum(axis=0)/ex_all
+            bb = np.vstack((bb,aa))
+            result_sum = []
+            Final = pd.DataFrame(bb, columns=('|N|', '|k|', 'LIP:time', 'gap', 'BD:time', 'cuts', 'gap',
+                                    'BC:time', 'cuts', 'gap', 'LB:time', 'cuts', 'gap','Heu_sol','time', 'opt_gap',
+                                    'PR:time', 'cuts', 'gap','Heu_sol','time', 'opt_gap','ROOT_val' ))
+            writer1 = pd.ExcelWriter('output_final.xlsx')
+            Final.to_excel(writer1,'Sheet1')
+            writer1.save()
 except:
     a=0
     # em.send(0)

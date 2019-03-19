@@ -122,12 +122,12 @@ def bra_cut(p,cd,cdk,sk,a1, tl_total, tl_node,branch_step):
             LB_time = time.time() # time Limits for one neighbourhood
             TSRFLP.master_model.optimize(mycallback)
             if TSRFLP.master_model.status in [3,4,5]:
-                if TSRFLP.master_model.getConstrs()[-1].rhs >= TSRFLP.p*2:
-                    break
-                if TSRFLP.master_model.getConstrs()[-1].sense == '<':
-                    TSRFLP.master_model.getConstrs()[-1].sense = '>'
-                else:
-                    break
+#                if TSRFLP.master_model.getConstrs()[-1].rhs >= TSRFLP.p*2:
+#                    break
+#                if TSRFLP.master_model.getConstrs()[-1].sense == '<':
+#                    TSRFLP.master_model.getConstrs()[-1].sense = '>'
+#                else:
+                break
             Branching_record,better_sol = TSRFLP.record_best_sol(Branching_record,start_time)
             if better_sol == 1:
                 if TSRFLP.master_model.getConstrs()[-1].sense == '<':
