@@ -1047,7 +1047,7 @@ class rflp:
                 delta_y += 1 - self.y[j]
             else:
                 delta_y += self.y[j]
-        self.master_model.setObjective(delta_y+self.soft*bigM) # set obj
+        self.master_model.setObjective(delta_y+self.soft*bigM+1e-5*(self.a1*self.L+self.a2*self.omega)) # set obj
         self.master_model.addConstr(delta_y>=2)
         self.master_model.addConstr(
             self.a1*self.L+self.a2*self.omega <= rhs+self.soft*((UB-rhs)/2))
