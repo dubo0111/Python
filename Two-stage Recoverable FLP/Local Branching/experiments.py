@@ -26,15 +26,16 @@ a1 = 0.5
 rnd_seed = 100# starting random seed
 # algorithm parameters (LB)
 tl_node = 1000
-tl_total = 20
+tl_total = 30
 tl_node1 = 1000
-tl_total1 = 20
+tl_total1 = 0
 tl_pr_node = 1000
-tl_pr_total = 20
+tl_pr_total = 30
 branch_step = 2
 pr_gap = 0.05
 pr_terminate = 1e5 # hard
-#pr_terminate = 1e6 #soft
+#pr_terminate = 1e6 # soft
+pr_step = [2/3,1/2] # hard,soft
 
 try:
     result = []
@@ -58,35 +59,37 @@ try:
                 Heu_sol12=[0,0,0]
                 Heu_sol13=[0,0,0]
 
-                if n_N == 20 and n_k == 100 and n_e == 0:
+                if n_N == 20 and n_k == 20 and n_e == 1 :
                     y1,t1, cut1, opt1, val1, gap1, conv1, Heu_sol1 = bc.bra_cut(
                          p, cd, cdk, sk, a1) # branch and cut
                     y12,t12, cut12, opt12, val12, gap12, conv12, pool12,Heu_sol12 = bc_VN.bra_cut(
                          p,cd, cdk, sk, a1, tl_total, tl_node,branch_step) # variable neighbourhood branching
                     y13,t13, cut13, opt13, val13, gap13, conv13, pool13,Heu_sol13,rootval = bc_PR.bra_cut(
-                         p, cd, cdk, sk, a1, tl_total1, tl_node1,tl_pr_node,tl_pr_total,branch_step,pr_gap,pr_terminate) # Proximity
+                         p, cd, cdk, sk, a1, tl_total1, tl_node1,tl_pr_node,tl_pr_total,branch_step,pr_gap,pr_terminate,pr_step) # Proximity
                 # t2, cut2, opt2, val2, gap2,conv2 = bd.benders_deco(
                 #         p, cd, cdk, sk, a1)
                 # y3, t3, opt3, val3, gap3, conv3 = lip.LIP(
                 #         p, cd, cdk, sk, a1)
 
-                    plt.plot(conv1[2],conv1[0],conv1[2],conv1[1])
+#                    plt.plot(conv1[2],conv1[0],conv1[2],conv1[1])
 #    #                plt.plot(conv2[2],conv2[0],conv2[2],conv2[1])
 #    #                plt.plot(conv3[2],conv3[0],conv3[2],conv3[1])
                     plt.plot(conv12[2],conv12[0],conv12[2],conv12[1])
                     plt.plot(conv13[2],conv13[0],conv13[2],conv13[1])
                     plt.show()
+                    aaa=1
 
-                result_i = [[n_N, n_k, t3, gap3, t2, cut2, gap2, t1, cut1, gap1, Heu_sol1[0],Heu_sol1[1],t12, cut12, gap12,Heu_sol12[0],Heu_sol12[1],Heu_sol12[2],t13, cut13, gap13,Heu_sol13[0],Heu_sol13[1],Heu_sol13[2],rootval]]
-                result.append(result_i[0])
-                result_sum.append(result_i[0])
-                result_pd = pd.DataFrame(result, columns=('|N|', '|k|', 'LIP:time', 'gap', 'BD:time', 'cuts', 'gap',
-                                        'BC:time', 'cuts', 'gap', 'objval', 'time', 'LB:time', 'cuts', 'gap','Heu_sol','time', 'opt_gap',
-                                        'PR:time', 'cuts', 'gap','Heu_sol','time', 'opt_gap' ,'ROOT_val'))
-                print(result_i)
-                writer = pd.ExcelWriter('output.xlsx')
-                result_pd.to_excel(writer,'Sheet1')
-                writer.save()
+                    result_i = [[n_N, n_k, t3, gap3, t2, cut2, gap2, t1, cut1, gap1, Heu_sol1[0],Heu_sol1[1],t12, cut12, gap12,Heu_sol12[0],Heu_sol12[1],Heu_sol12[2],t13, cut13, gap13,Heu_sol13[0],Heu_sol13[1],Heu_sol13[2],rootval]]
+                    result.append(result_i[0])
+                    result_sum.append(result_i[0])
+                    result_pd = pd.DataFrame(result, columns=('|N|', '|k|', 'LIP:time', 'gap', 'BD:time', 'cuts', 'gap',
+                                            'BC:time', 'cuts', 'gap', 'objval', 'time', 'LB:time', 'cuts', 'gap','Heu_sol','time', 'opt_gap',
+                                            'PR:time', 'cuts', 'gap','Heu_sol','time', 'opt_gap' ,'ROOT_val'))
+                    print(result_i)
+                    break
+                    writer = pd.ExcelWriter('output.xlsx')
+                    result_pd.to_excel(writer,'Sheet1')
+                    writer.save()
 #                break
 #            break
 #        break

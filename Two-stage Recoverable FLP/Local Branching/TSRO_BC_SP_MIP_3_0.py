@@ -142,6 +142,7 @@ def bra_cut(p,cd,cdk,sk,a1):
     gap= TSRFLP.master_model.MIPGap
     if abs(gap)<=1e-5:
         gap = 0
+    gap = round(gap,2)
     for n in range(len(convergence)):
         if abs(TSRFLP.master_model.Objval - convergence[n][0])<=1e-5:
             Heu_sol = [round(TSRFLP.master_model.Objval,2),round(convergence[n][2],2)]

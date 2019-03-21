@@ -26,8 +26,8 @@ class rflp:
     LB = -float('inf')
     y = []
     omega = []
-    L=[]
-    value_L=[]
+    L = []
+    value_L = []
     soft = []
     Qk = []
     beta = 0
@@ -78,7 +78,7 @@ class rflp:
     LB_branch = 0
     LB_cuts = []
     LB_cuts_y = []
-    LB_root = 0 #
+    LB_root = 0
     LB_value_y = []
     LB_omega = []
     tabu = []
@@ -86,8 +86,8 @@ class rflp:
     vn_end = 0
     pr_end = 0
     # Avoid solving identical relaxed dual-sp and sp
-    save_max_Lk_DualLP = [] # for benders cut
-    save_max_Lk_SP = [] # for integer cut
+    save_max_Lk_DualLP = []  # for benders cut
+    save_max_Lk_SP = []  # for integer cut
     save_y = []
     save_y_int = []
 
@@ -121,8 +121,8 @@ class rflp:
         self.UB = float('inf')
         self.LB = -float('inf')
         self.y = []
-        self.L=[]
-        self.value_L=[]
+        self.L = []
+        self.value_L = []
         self.omega = []
         self.soft = []
         self.Qk = []
@@ -181,11 +181,10 @@ class rflp:
         self.vn_end = 0
         self.pr_end = 0
 
-        self.save_max_Lk_DualLP = [] # for benders cut
-        self.save_max_Lk_SP = [] # for integer cut
+        self.save_max_Lk_DualLP = []  # for benders cut
+        self.save_max_Lk_SP = []  # for integer cut
         self.save_y = []
         self.save_y_int = []
-
 
     def master(self, relax=0):
         # Create variables
@@ -198,8 +197,8 @@ class rflp:
         else:
             self.y = self.master_model.addVars(
                 self.ni, vtype=GRB.CONTINUOUS, name="y")
-        self.soft=self.master_model.addVar(
-            vtype=GRB.BINARY, name = "soft")
+        self.soft = self.master_model.addVar(
+            vtype=GRB.BINARY, name="soft")
         self.L = self.master_model.addVar(
             vtype=GRB.CONTINUOUS, obj=self.a1, name="L")
         self.omega = self.master_model.addVar(lb=0, ub=float(
@@ -360,7 +359,7 @@ class rflp:
                     for e in range(self.ne[k]):
                         if self.cdk[k][i][j] <= cd_cover[k][e]:
                             b[k][i][j][e] = 1
-        self.cd_cover = cd_cover #
+        self.cd_cover = cd_cover
         self.bije = b
 
     def cover_sub(self):  # COVER
@@ -372,7 +371,8 @@ class rflp:
             for e in range(self.ne[k]):
                 z_name = ''.join(['z[', str(k), ',', str(e), ']'])
                 z[k][e] = self.sub_cover.addVar(vtype=GRB.BINARY, name=z_name)
-        y = self.sub_cover.addVars(self.nk, self.ni, vtype=GRB.BINARY, name="y")
+        y = self.sub_cover.addVars(
+            self.nk, self.ni, vtype=GRB.BINARY, name="y")
         L = self.sub_cover.addVars(
             self.nk, lb=0, ub=GRB.INFINITY, vtype=GRB.CONTINUOUS, name="L")  # ??
         # Set objective to minimize
@@ -389,21 +389,23 @@ class rflp:
                 (L[k] == sum_cdz),
                 "L(k)=rho*z")
         # (1) \sum_j b_ije[k]*y_j >= z_e \forall nk,i,e
-        for k in range(self.nk): # !
+        for k in range(self.nk):  # !
             for i in range(self.ni):
                 for e in range(self.ne[k]):
                     sum_ay = 0
                     for j in range(self.ni):
-                        sum_ay += self.bije[k][i][j][e] * y[k,j]
+                        sum_ay += self.bije[k][i][j][e] * y[k, j]
                     self.sub_cover.addConstr(
                         (sum_ay >= z[k][e]),
                         'ay>e' + str(k) + str(i) + str(e))
         # (2) \sum y_j[k] = p \forall k
-        self.sub_cover.update() # ?
-        self.sub_cover.addConstrs((y.sum(k,'*') == self.p for k in range(self.nk)),'sump')
+        self.sub_cover.update()  # ?
+        self.sub_cover.addConstrs(
+            (y.sum(k, '*') == self.p for k in range(self.nk)), 'sump')
         # (3) \sum_e z_e[k] = 1 \forall k
-        self.sub_cover.addConstrs((quicksum(z[k]) == 1 for k in range(self.nk)),'sumz')
-        self.sub_cover.update() #
+        self.sub_cover.addConstrs(
+            (quicksum(z[k]) == 1 for k in range(self.nk)), 'sumz')
+        self.sub_cover.update()
         # fix varibale: sk
         # for k in range(self.nk):
         #     for j in range(self.ni):
@@ -412,78 +414,80 @@ class rflp:
         #             self.sub_cover.getVarByName(y_name).lb = 0
         #             self.sub_cover.getVarByName(y_name).ub = 0
 
-    def cover_bound(self): # COVER
+    def cover_bound(self):  # COVER
         # Function for a simple p-center problem
-        def p_center(cd,p=1,LP=0):
+        def p_center(cd, p=1, LP=0):
             m = Model("p-center")
             # Number of nodes
             ni = len(cd)
             # p = 1
             # Create variables
             # x:allocations y:location L:auxiliary variable
-            x = m.addVars(ni,ni,vtype=GRB.CONTINUOUS, name="x")
+            x = m.addVars(ni, ni, vtype=GRB.CONTINUOUS, name="x")
             if LP == 0:
-                y = m.addVars(ni,vtype=GRB.BINARY, name="y")
+                y = m.addVars(ni, vtype=GRB.BINARY, name="y")
             elif LP == 1:
-                y = m.addVars(ni,vtype=GRB.CONTINUOUS, name="y")
-            L = m.addVar(vtype=GRB.CONTINUOUS,obj=1,name="L")
+                y = m.addVars(ni, vtype=GRB.CONTINUOUS, name="y")
+            L = m.addVar(vtype=GRB.CONTINUOUS, obj=1, name="L")
             # Set objective to minimize
             m.modelSense = GRB.MINIMIZE
             # (1) Maximum cost constraints (objective): L>sum(cdx) forall i
             cdx = x.copy()
             for i in range(ni):
                 for j in range(ni):
-                   cdx[i,j]=cd[i][j]
+                    cdx[i, j] = cd[i][j]
             m.addConstrs(
-                    (x.prod(cdx,i,'*') <= L for i in range(ni)),
-                    "epigraph")
+                (x.prod(cdx, i, '*') <= L for i in range(ni)),
+                "epigraph")
             # (2) Constraints sum(y)=p
             m.addConstr(
-                    (y.sum() == p),
-                    "p")
+                (y.sum() == p),
+                "p")
             # (3) x<=y forall i,j
             m.addConstrs(
-                    (x[i,j] <= y[j] for i in range(ni) for j in range(ni)),
-                    "x<y")
+                (x[i, j] <= y[j] for i in range(ni) for j in range(ni)),
+                "x<y")
             # (4) sum(x)=1 forall i
             m.addConstrs(
-                    (x.sum(i,'*') == 1 for i in range(ni)),
-                    "sumx")
+                (x.sum(i, '*') == 1 for i in range(ni)),
+                "sumx")
             m.params.OutputFlag = 0
             m.optimize()
-            return m.objVal,m.Runtime
+            return m.objVal, m.Runtime
         # For each iteration,
         # Input: value_y (variable) & sk(fixed)
         # Find UB1
         # Exclude unavailable nodes and Find 'farthest' nodes (for each k)
-        y_set = [set() for k in range(self.nk)] # Store open facilies
+        y_set = [set() for k in range(self.nk)]  # Store open facilies
         y_now = [0 for k in range(self.nk)]
         cd_matrix = [[] for k in range(self.nk)]
         cd_matrix_1 = [[] for k in range(self.nk)]
-        x = [[[0 for j in range(self.ni)] for i in range(self.ni)] for k in range(self.nk)]
+        x = [[[0 for j in range(self.ni)] for i in range(self.ni)]
+             for k in range(self.nk)]
         # t1 = time.time()
         for k in range(self.nk):
             cd_matrix[k] = np.array(self.cdk[k])
             cd_matrix_1[k] = np.array(self.cdk[k])
             for j in range(self.ni):
-                y_name = ''.join(['y[',str(k),',', str(j), ']']) # Find and fix y
-                if self.value_y[j]-self.sk[k][j] > 0:
+                # Find and fix y
+                y_name = ''.join(['y[', str(k), ',', str(j), ']'])
+                if self.value_y[j] - self.sk[k][j] > 0:
                     self.sub_cover.getVarByName(y_name).lb = 1
                     self.sub_cover.getVarByName(y_name).ub = 1
                     y_set[k].update({j})
-                elif self.sk[k][j]==1:
+                elif self.sk[k][j] == 1:
                     self.sub_cover.getVarByName(y_name).lb = 0
                     self.sub_cover.getVarByName(y_name).ub = 0
                 else:
                     self.sub_cover.getVarByName(y_name).lb = 0
                     self.sub_cover.getVarByName(y_name).ub = 1
                 if self.sk[k][j] == 1:
-                    cd_matrix[k][:,j] = 0
+                    cd_matrix[k][:, j] = 0
             while len(y_set[k]) < self.p:
                 y_curr = list(y_set[k])
-                cd_temp = cd_matrix[k][y_curr,:] #
-                (a,b) = np.unravel_index(cd_temp.argmax(), cd_temp.shape)
-                cd_matrix[k][y_curr[a],b] = 0
+                cd_temp = cd_matrix[k][y_curr, :]
+                (a, b) = np.unravel_index(cd_temp.argmax(), cd_temp.shape)
+                cd_matrix[k][y_curr[a], b] = 0
                 y_set[k].update({b})
             y_now[k] = [0 for j in range(self.ni)]
             for x in y_set[k]:
@@ -491,22 +495,26 @@ class rflp:
             # Find closest facility for each demand
             for j in range(self.ni):
                 if y_now[k][j] == 0:
-                    cd_matrix_1[k][:,j] = 1e8 # set j column to Big M
-            facility = np.argmin(cd_matrix_1[k], axis=1) # index of maximum value in each row
-            cost = cd_matrix_1[k][np.arange(cd_matrix_1[k].shape[0]),facility] # advanced index returning maximum value of each row
-            UB1 = max(cost) # Upper Bound UB1
+                    cd_matrix_1[k][:, j] = 1e8  # set j column to Big M
+            # index of maximum value in each row
+            facility = np.argmin(cd_matrix_1[k], axis=1)
+            # advanced index returning maximum value of each row
+            cost = cd_matrix_1[k][np.arange(cd_matrix_1[k].shape[0]), facility]
+            UB1 = max(cost)  # Upper Bound UB1
             # Find UB2
             cluster = [[] for n in range(self.p)]
             y_idx = list(y_set[k])
             for i in range(self.p):
-                cluster[i] = np.argwhere(facility == y_idx[i]).ravel()#.tolist()
+                cluster[i] = np.argwhere(
+                    facility == y_idx[i]).ravel()  # .tolist()
             cd_array = np.array(self.cdk[k])
             L_cluster = [0 for i in range(self.p)]
             for i in range(self.p):
-                L_cluster[i],_ = p_center(cd_array[cluster[i][:,None],cluster[i]]) #
+                L_cluster[i], _ = p_center(
+                    cd_array[cluster[i][:, None], cluster[i]])
             UB2 = max(L_cluster)
             # LB
-            LB2,_ = p_center(self.cdk[k],self.p,1)
+            LB2, _ = p_center(self.cdk[k], self.p, 1)
             # print('Bounds:',UB1)
             # print(UB2)
             # print(LB2)
@@ -522,7 +530,7 @@ class rflp:
                     self.sub_cover.getVarByName(z_name).ub = 1
         # t2= time.time()-t1
         # print('bound time')
-        #print(round(t2,2))
+        # print(round(t2,2))
 
     def sub_dual_obj(self):  # Caculate objective function
         def c_constr1():
@@ -600,7 +608,7 @@ class rflp:
         # update value of y for subproblem in each iteration
         self.value_y = [round(x) for x in self.value_y]
 
-    def update_cut(self, numk=None, lift=0,save = 0):
+    def update_cut(self, numk=None, lift=0, save=0):
         gamma = []
         delta = []
         epsilon = []
@@ -637,7 +645,8 @@ class rflp:
                 for n in range(self.ni):
                     epsilon_name = ''.join(
                         ['epsilon[', str(numk), ',', str(n), ']'])
-                    lamda_name = ''.join(['lamda[', str(numk), ',', str(n), ']'])
+                    lamda_name = ''.join(
+                        ['lamda[', str(numk), ',', str(n), ']'])
                     mu_name = ''.join(['mu[', str(numk), ',', str(n), ']'])
                     epsilon[n] = dual[epsilon_name]
                     lamda[n] = dual[lamda_name]
@@ -657,7 +666,8 @@ class rflp:
                     beta_name = ''.join(['beta[', str(numk), ',', str(n), ']'])
                     epsilon_name = ''.join(
                         ['epsilon[', str(numk), ',', str(n), ']'])
-                    lamda_name = ''.join(['lamda[', str(numk), ',', str(n), ']'])
+                    lamda_name = ''.join(
+                        ['lamda[', str(numk), ',', str(n), ']'])
                     mu_name = ''.join(['mu[', str(numk), ',', str(n), ']'])
                     beta[n] = self.sub_dual.getVarByName(beta_name).x
                     epsilon[n] = self.sub_dual.getVarByName(epsilon_name).x
@@ -717,11 +727,13 @@ class rflp:
         self.constr_y = c_y + constant
 
     def get_subdual_vals(self):
-        gamma = [[[0 for j in range(self.ni)] for i in range(self.ni)] for k in range(self.nk)]
-        delta = [[[0 for j in range(self.ni)] for i in range(self.ni)] for k in range(self.nk)]
+        gamma = [[[0 for j in range(self.ni)]
+                  for i in range(self.ni)] for k in range(self.nk)]
+        delta = [[[0 for j in range(self.ni)]
+                  for i in range(self.ni)] for k in range(self.nk)]
         epsilon = [[0 for j in range(self.ni)] for k in range(self.nk)]
         lamda = [[0 for j in range(self.ni)] for k in range(self.nk)]
-        mu =[[0 for j in range(self.ni)] for k in range(self.nk)]
+        mu = [[0 for j in range(self.ni)] for k in range(self.nk)]
         beta = [[0 for j in range(self.ni)] for k in range(self.nk)]
         nu = [0 for k in range(self.nk)]
         for numk in range(self.nk):
@@ -731,8 +743,10 @@ class rflp:
                         ['gamma[', str(numk), ',', str(i), ',', str(j), ']'])
                     delta_name = ''.join(
                         ['delta[', str(numk), ',', str(i), ',', str(j), ']'])
-                    gamma[numk][i][j] = self.sub_dual.getVarByName(gamma_name).x
-                    delta[numk][i][j] = self.sub_dual.getVarByName(delta_name).x
+                    gamma[numk][i][j] = self.sub_dual.getVarByName(
+                        gamma_name).x
+                    delta[numk][i][j] = self.sub_dual.getVarByName(
+                        delta_name).x
             for n in range(self.ni):
                 beta_name = ''.join(['beta[', str(numk), ',', str(n), ']'])
                 epsilon_name = ''.join(
@@ -745,10 +759,10 @@ class rflp:
                 mu[numk][n] = self.sub_dual.getVarByName(mu_name).x
             nu_name = ''.join(['nu[', str(numk), ']'])
             nu[numk] = self.sub_dual.getVarByName(nu_name).x
-        save_subdual_vals = [gamma,delta,epsilon,lamda,mu,beta,nu]
+        save_subdual_vals = [gamma, delta, epsilon, lamda, mu, beta, nu]
         return save_subdual_vals
 
-    def update_integer_cut(self,cover=0,save=0):
+    def update_integer_cut(self, cover=0, save=0):
         # simplified cut (use no dual information)
         sum_c_y = LinExpr()
         for i in range(self.ni):
@@ -757,25 +771,25 @@ class rflp:
             elif self.value_y[i] == 0:
                 sum_c_y += -self.y[i]
         sum_c_y += 1
-        if save!=0 and cover==0:
+        if save != 0 and cover == 0:
             self.max_Lk = save
         elif cover == 0 and save == 0:
             self.max_Lk = self.worst_scenario(1)
         else:
-            self.max_Lk = self.worst_scenario(1,1)
+            self.max_Lk = self.worst_scenario(1, 1)
         self.integer_cut = self.max_Lk[0] * sum_c_y
         self.LB_cuts.append(self.integer_cut)
         # print('integer cut')
 
-    def gap_calculation(self, MIP_SP=0, Check_optimal=0,cover=0):
+    def gap_calculation(self, MIP_SP=0, Check_optimal=0, cover=0):
         if MIP_SP == 1:  # in mycallback
             # vals = self.master_model.cbGetSolution(self.master_model._vars)
             # value_L = vals(-2)
             if cover == 0:
                 self.max_Lk = self.worst_scenario(1)
             else:
-                self.max_Lk = self.worst_scenario(1,1)
-            self.int_gap = self.max_Lk[0] - self.value_omega #
+                self.max_Lk = self.worst_scenario(1, 1)
+            self.int_gap = self.max_Lk[0] - self.value_omega
            # print('self.max_Lk:',self.max_Lk[0])
         else:
             # extract L
@@ -789,7 +803,8 @@ class rflp:
             elif Check_optimal == 1:
                 self.max_Lk = self.worst_scenario(1)
             # update UB
-            self.UB = min([self.UB, self.a1 * value_L + self.a2 * self.max_Lk[0]])
+            self.UB = min(
+                [self.UB, self.a1 * value_L + self.a2 * self.max_Lk[0]])
             self.gap = (self.UB - self.LB) / self.LB
         # return self.gap
 
@@ -880,7 +895,7 @@ class rflp:
                   '   Wrong dual problem solution.')
         return self.error
 
-    def update_multiple_scenario(self,SP_Qk,save=0):
+    def update_multiple_scenario(self, SP_Qk, save=0):
         # print('===============sorting==================')
         # extract omega and Q(k)
         # Verify cut improvement #LB
@@ -906,7 +921,7 @@ class rflp:
                 if save == 0:
                     self.update_cut(rank[n], self.lift)
                 else:
-                    self.update_cut(rank[n], self.lift,save)
+                    self.update_cut(rank[n], self.lift, save)
                 if self.zero_half == 0:
                     self.master_model.cbLazy(self.omega >= self.constr_y)
                     self.LB_cuts.append(self.constr_y)
@@ -1008,7 +1023,8 @@ class rflp:
             new_y[rank[j]] = 1
         return new_y
 
-    def add_LB(self, Branching_record,neighbourhood,initial=0): # add Hanmming constraints in master_model
+    # add Hanmming constraints in master_model
+    def add_LB(self, Branching_record, branch_step, initial=0):
         # Input: y(var); value_y
         # Delta(y_new,y_now) = [value_y - y]
         delta_y = 0
@@ -1020,13 +1036,44 @@ class rflp:
                 delta_y += self.y[j]
         if initial == 1:
             self.master_model.addConstr(delta_y >= 2)
-        self.master_model.addConstr(delta_y <= neighbourhood)
-        self.master_model.update() #
+        self.master_model.addConstr(delta_y <= branch_step)
+        self.master_model.update()  # STAY in case of turing off LB for PR
 
-    def add_master_bound(self,UB=0,LB=0):
-        self.master_model.addConstr(self.a1*self.L+self.a2*self.omega <= UB)
+    def reverse_LB(self, Reverse_record, branch_step,better_sol = 0):
+        self.master_model.remove(self.master_model.getConstrs()[-1])
+        if branch_step != 2 and better_sol == 0:
+            self.master_model.remove(self.master_model.getConstrs()[-2])
+        delta_y = 0
+        bst_value_y = Reverse_record[1][-3 - self.ni:-3]
+        for j in range(self.ni):
+            if bst_value_y[j] == 1:
+                delta_y += 1 - self.y[j]
+            else:
+                delta_y += self.y[j]
+        self.master_model.addConstr(delta_y >= branch_step+2)
 
-    def set_initial(self,value):
+    def record_best_sol(self, Branching_record, start_time, convergence):
+        best_incumbent = []
+        improve = 0
+        Reverse_record = copy.deepcopy(Branching_record)
+        if self.master_model.Objval < Branching_record[0]:
+            improve = 1
+            Vars = self.master_model.getVars()
+            for n in Vars:
+                best_incumbent.append(n.x)
+            Branching_record = [self.master_model.Objval,
+                                best_incumbent, time.time() - start_time]
+            convergence.append(
+                [convergence[-1][0], convergence[-1][1], time.time() - start_time])
+            convergence.append(
+                [Branching_record[0], self.bestbound, time.time() - start_time])
+        return Branching_record, improve, convergence, Reverse_record
+
+    def add_master_bound(self, UB=0, LB=0):
+        self.master_model.addConstr(
+            self.a1 * self.L + self.a2 * self.omega <= UB)
+
+    def set_initial(self, value):
         Vars = self.master_model.getVars()
         for n in range(len(Vars)):
             Vars[n].Start = value[n]
@@ -1034,39 +1081,27 @@ class rflp:
         #     y_name = ''.join(['y[', str(j), ']'])
         #     self.master_model.getVarByName(y_name).Start = value[j]
 
-    def add_proximity(self,Branching_record,impro = 0,soft = 0):
-        bigM = 1e5 # soft
+    def add_proximity(self, Branching_record, pr_step):
+        bigM = 1e5  # soft
         delta_y = 0
         bst_value_y = Branching_record[1][-3 - self.ni:-3]
         UB = Branching_record[0]
         LB = self.bestbound
-        rhs = (UB + LB)/2
-        soft_rhs = rhs+(UB-rhs)/2
+        rhs = UB-(UB - LB) * pr_step[0]
+        soft_rhs = UB - (UB-rhs)*pr_step[1]
         for j in range(self.ni):
             if bst_value_y[j] == 1:
                 delta_y += 1 - self.y[j]
             else:
                 delta_y += self.y[j]
-        self.master_model.setObjective(delta_y+self.soft*bigM+1e-5*(self.a1*self.L+self.a2*self.omega)) # set obj
-        self.master_model.addConstr(delta_y>=2)
+        # +1e-5*(self.a1*self.L+self.a2*self.omega)) # set obj
+        self.master_model.setObjective(delta_y + self.soft * bigM)
+        self.master_model.addConstr(delta_y >= 2)
         self.master_model.addConstr(
-            self.a1*self.L+self.a2*self.omega <= rhs+self.soft*((UB-rhs)/2))
-        # print('+++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
-        # print('rhs = ',rhs,' soft rhs= ',rhs+((UB-rhs)/2))
-        return rhs,soft_rhs
+            self.a1 * self.L + self.a2 * self.omega <= rhs + self.soft * (soft_rhs-rhs))
+        print('+++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
+        print('rhs = ', rhs, ' soft rhs= ', rhs + ((UB - rhs) / 2))
+        return rhs, soft_rhs
 
     def remove_proximity(self):
-        self.master_model.setObjective(self.a1*self.L+self.a2*self.omega)
-
-    def record_best_sol(self,Branching_record,start_time,convergence):
-        best_incumbent = []
-        improve = 0
-        if self.master_model.Objval < Branching_record[0]:
-            improve = 1
-            Vars = self.master_model.getVars()
-            for n in Vars:
-                best_incumbent.append(n.x)
-            Branching_record = [self.master_model.Objval,best_incumbent,time.time()-start_time]
-            convergence.append([convergence[-1][0],convergence[-1][1],time.time()-start_time])
-            convergence.append([Branching_record[0],self.bestbound,time.time()-start_time])
-        return Branching_record,improve,convergence
+        self.master_model.setObjective(self.a1 * self.L + self.a2 * self.omega)
