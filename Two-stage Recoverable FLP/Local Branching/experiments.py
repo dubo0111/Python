@@ -26,11 +26,11 @@ a1 = 0.5
 rnd_seed = 100# starting random seed
 # algorithm parameters (LB)
 tl_node = 1000
-# tl_total = 10
+tl_total = 20
 tl_node1 = 1000
-# tl_total1 = 10
+tl_total1 = 20
 tl_pr_node = 1000
-# tl_pr_total = 10
+tl_pr_total = 20
 branch_step = 2
 pr_gap = 0.05
 pr_terminate = 1e5 # hard
@@ -42,10 +42,9 @@ try:
     bb = np.empty((0,25),float)
     for n_N in ex_N:
         for n_k in ex_k:
-            
-            tl_total = n_N*n_k/100+5
-            tl_total1 = n_N*n_k/100+5
-            tl_pr_total = n_N*n_k/100+5
+#            tl_total = n_N*n_k/100+5
+#            tl_total1 = n_N*n_k/100+5
+#            tl_pr_total = n_N*n_k/100+5
             for n_e in range(ex_all):
                 p = round(n_N / 3) #
                 sumk = int(round(p*0.5)) #
@@ -59,7 +58,7 @@ try:
                 Heu_sol12=[0,0,0]
                 Heu_sol13=[0,0,0]
 
-                if n_k >= 20:
+                if n_N == 20 and n_k == 100 and n_e == 0:
                     y1,t1, cut1, opt1, val1, gap1, conv1, Heu_sol1 = bc.bra_cut(
                          p, cd, cdk, sk, a1) # branch and cut
                     y12,t12, cut12, opt12, val12, gap12, conv12, pool12,Heu_sol12 = bc_VN.bra_cut(
@@ -71,12 +70,12 @@ try:
                 # y3, t3, opt3, val3, gap3, conv3 = lip.LIP(
                 #         p, cd, cdk, sk, a1)
 
-#                    plt.plot(conv1[2],conv1[0],conv1[2],conv1[1])
+                    plt.plot(conv1[2],conv1[0],conv1[2],conv1[1])
 #    #                plt.plot(conv2[2],conv2[0],conv2[2],conv2[1])
 #    #                plt.plot(conv3[2],conv3[0],conv3[2],conv3[1])
-#                    plt.plot(conv12[2],conv12[0],conv12[2],conv12[1])
-#                    plt.plot(conv13[2],conv13[0],conv13[2],conv13[1])
-#                    plt.show()
+                    plt.plot(conv12[2],conv12[0],conv12[2],conv12[1])
+                    plt.plot(conv13[2],conv13[0],conv13[2],conv13[1])
+                    plt.show()
 
                 result_i = [[n_N, n_k, t3, gap3, t2, cut2, gap2, t1, cut1, gap1, Heu_sol1[0],Heu_sol1[1],t12, cut12, gap12,Heu_sol12[0],Heu_sol12[1],Heu_sol12[2],t13, cut13, gap13,Heu_sol13[0],Heu_sol13[1],Heu_sol13[2],rootval]]
                 result.append(result_i[0])
@@ -91,15 +90,15 @@ try:
 #                break
 #            break
 #        break
-            aa = np.array(result_sum).sum(axis=0)/ex_all
-            bb = np.vstack((bb,aa))
-            result_sum = []
-            Final = pd.DataFrame(bb, columns=('|N|', '|k|', 'LIP:time', 'gap', 'BD:time', 'cuts', 'gap',
-                                    'BC:time', 'cuts', 'gap', 'objval', 'time', 'LB:time', 'cuts', 'gap','Heu_sol','time', 'opt_gap',
-                                    'PR:time', 'cuts', 'gap','Heu_sol','time', 'opt_gap','ROOT_val' ))
-            writer1 = pd.ExcelWriter('output_final.xlsx')
-            Final.to_excel(writer1,'Sheet1')
-            writer1.save()
+#            aa = np.array(result_sum).sum(axis=0)/ex_all
+#            bb = np.vstack((bb,aa))
+#            result_sum = []
+#            Final = pd.DataFrame(bb, columns=('|N|', '|k|', 'LIP:time', 'gap', 'BD:time', 'cuts', 'gap',
+#                                    'BC:time', 'cuts', 'gap', 'objval', 'time', 'LB:time', 'cuts', 'gap','Heu_sol','time', 'opt_gap',
+#                                    'PR:time', 'cuts', 'gap','Heu_sol','time', 'opt_gap','ROOT_val' ))
+#            writer1 = pd.ExcelWriter('output_final.xlsx')
+#            Final.to_excel(writer1,'Sheet1')
+#            writer1.save()
 except:
     a=0
     # em.send(0)

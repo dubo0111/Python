@@ -269,5 +269,5 @@ def bra_cut(p,cd,cdk,sk,a1, tl_total, tl_node,tl_pr_node,tl_pr_total,branch_step
     if TSRFLP.opt == 1:
         Heu_sol.append(round((Heu_sol[0]-TSRFLP.master_model.Objval)/(1+Heu_sol[0]),2))
     else:
-        Heu_sol.append.append(pr_gap)
+        Heu_sol.append(pr_gap)
     return var_y,runtime,TSRFLP.num_cut,TSRFLP.opt,objval,gap,convergence,len(TSRFLP.LB_cuts),Heu_sol,rootval
