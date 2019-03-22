@@ -1100,7 +1100,7 @@ class rflp:
         self.master_model.addConstr(
             self.a1 * self.L + self.a2 * self.omega <= rhs + self.soft * (soft_rhs-rhs))
         print('+++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
-        print('rhs = ', rhs, ' soft rhs= ', rhs + ((UB - rhs) / 2))
+        print('rhs = ', rhs, ' soft rhs = ', rhs + ((UB - rhs) / 2),'UB = ',UB,'LB = ',LB)
         return rhs, soft_rhs
 
     def remove_proximity(self):

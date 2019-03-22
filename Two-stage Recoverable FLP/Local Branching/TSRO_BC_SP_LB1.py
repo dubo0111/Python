@@ -55,7 +55,8 @@ def bra_cut(p, cd, cdk, sk, a1, tl_total, tl_node, branch_step):
                                 [convergence[-1][0], convergence[-1][1], time.time() - start_time])
                         convergence.append(
                             [objbst, objbnd, time.time() - start_time])
-                if time.time() - start_time >= 1000:  # Stop criteria
+                nodecnt = model.cbGet(GRB.Callback.MIP_NODCNT)
+                if time.time() - start_time >= 1000 and nodecnt > 0:  # Stop criteria
                     model.terminate()
             if where == GRB.Callback.MIPSOL:
                 nodecnt = model.cbGet(GRB.Callback.MIPSOL_NODCNT)
@@ -204,9 +205,15 @@ def bra_cut(p, cd, cdk, sk, a1, tl_total, tl_node, branch_step):
         for n in range(LB_cut):
             TSRFLP.master_model.remove(TSRFLP.master_model.getConstrs()[-n-1])
         TSRFLP.LB_branch = 1
+#        for x in TSRFLP.LB_cuts:
+#            TSRFLP.master_model.addConstr(TSRFLP.omega >= x)
+#            TSRFLP.master_model.getConstrs()[-1].Lazy = 1
         for x in TSRFLP.LB_cuts:
             TSRFLP.master_model.addConstr(TSRFLP.omega >= x)
-            TSRFLP.master_model.getConstrs()[-1].Lazy = 1
+        TSRFLP.master_model.update()
+        for n in range(len(TSRFLP.LB_cuts)):
+            TSRFLP.master_model.getConstrs()[-1-n].Lazy = 1
+        TSRFLP.master_model.update()
         if Branching_record[1] != []:
             TSRFLP.set_initial(Branching_record[1])
         TSRFLP.master_model.addConstr(TSRFLP.a1*TSRFLP.L+TSRFLP.a2*TSRFLP.omega >= TSRFLP.bestbound)

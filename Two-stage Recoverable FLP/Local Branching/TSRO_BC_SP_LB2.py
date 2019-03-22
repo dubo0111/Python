@@ -70,7 +70,8 @@ def bra_cut(p, cd, cdk, sk, a1, tl_total, tl_node, tl_pr_node, tl_pr_total, bran
                                 [convergence[-1][0], convergence[-1][1], time.time() - start_time])
                         convergence.append(
                             [objbst, objbnd, time.time() - start_time])
-                if time.time() - start_time >= 1000:  # Stop criteria
+                nodecnt = model.cbGet(GRB.Callback.MIP_NODCNT)
+                if time.time() - start_time >= 1000 and nodecnt > 0:  # Stop criteria
                     model.terminate()
             if where == GRB.Callback.MIPSOL:
                 nodecnt = model.cbGet(GRB.Callback.MIPSOL_NODCNT)
@@ -290,7 +291,10 @@ def bra_cut(p, cd, cdk, sk, a1, tl_total, tl_node, tl_pr_node, tl_pr_total, bran
         TSRFLP.LB_branch = 1
         for x in TSRFLP.LB_cuts:
             TSRFLP.master_model.addConstr(TSRFLP.omega >= x)
-            TSRFLP.master_model.getConstrs()[-1].Lazy = 1
+        TSRFLP.master_model.update()
+        for n in range(len(TSRFLP.LB_cuts)):
+            TSRFLP.master_model.getConstrs()[-1-n].Lazy = 1
+        TSRFLP.master_model.update()
         if Branching_record[1] != []:
             TSRFLP.set_initial(Branching_record[1])
         TSRFLP.master_model.addConstr(
@@ -308,10 +312,11 @@ def bra_cut(p, cd, cdk, sk, a1, tl_total, tl_node, tl_pr_node, tl_pr_total, bran
     if abs(gap) <= 1e-5:
         gap = 0
     var_y = []
-    for j in range(TSRFLP.ni):
-        y_name = ''.join(['y[', str(j), ']'])
-        y_temp = TSRFLP.master_model.getVarByName(y_name)
-        var_y.append(y_temp.x)
+    if objval < 1e10: # prevent infeasible
+        for j in range(TSRFLP.ni):
+            y_name = ''.join(['y[', str(j), ']'])
+            y_temp = TSRFLP.master_model.getVarByName(y_name)
+            var_y.append(y_temp.x) #
     convergence = [*zip(*convergence)]
     gap = round(gap, 2)
     rootval = round(rootval, 2)
