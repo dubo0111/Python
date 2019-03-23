@@ -864,7 +864,7 @@ class rflp:
         #m1.params.Presolve = 0
         # tune parameters to avoid numerical issues for subproblem
         # wrong optimal solutions appear for both sub&dual_sub
-        self.master_model.params.OutputFlag = 1
+        self.master_model.params.OutputFlag = 0
         self.sub_model.params.OutputFlag = 0
         self.sub_dual.params.OutputFlag = 0
         self.sub_cover.params.OutputFlag = 0
@@ -1095,12 +1095,12 @@ class rflp:
             else:
                 delta_y += self.y[j]
         # +1e-5*(self.a1*self.L+self.a2*self.omega)) # set obj
-        self.master_model.setObjective(delta_y + self.soft * bigM)
+        self.master_model.setObjective(delta_y + self.soft * bigM+1e-5*(self.a1*self.L+self.a2*self.omega))
         self.master_model.addConstr(delta_y >= 2)
         self.master_model.addConstr(
             self.a1 * self.L + self.a2 * self.omega <= rhs + self.soft * (soft_rhs-rhs))
-        print('+++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
-        print('rhs = ', rhs, ' soft rhs = ', rhs + ((UB - rhs) / 2),'UB = ',UB,'LB = ',LB)
+        # print('+++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
+        # print('rhs = ', rhs, ' soft rhs = ', rhs + ((UB - rhs) / 2),'UB = ',UB,'LB = ',LB)
         return rhs, soft_rhs
 
     def remove_proximity(self):

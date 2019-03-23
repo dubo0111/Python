@@ -3,8 +3,9 @@ Benders' Decomposition:
  Branch and cut
  Multiple scenario generation
  Improved Integer cut generation
- Variable Neighbourhood Branching (After Root Nodes) Version 2
+ Local Branching (After Root Nodes) Version 4
  Proximity search
+ Both LB and PR stop when no improvement
 
 Du Bo
 '''
@@ -201,21 +202,8 @@ def bra_cut(Time_Limit, p, cd, cdk, sk, a1, tl_total, tl_node, tl_pr_node, tl_pr
             LB_time = time.time()  # time Limits for one neighbourhood
             TSRFLP.master_model.optimize(mycallback)
             if TSRFLP.master_model.status in [3,4,5]:
-                if branch_step <= TSRFLP.p*2-2:
-                    if branch_step == 2:
-                        TSRFLP.reverse_LB(Branching_record,branch_step)
-                        branch_step += 2
-                        TSRFLP.add_LB(Branching_record,branch_step+2) #
-                        LB_cut += 1
-                        # print('*********************','++first reverse++',branch_step,Branching_record[0],'*********************')
-                    else:
-                        TSRFLP.reverse_LB(Branching_record,branch_step)
-                        branch_step += 2
-                        TSRFLP.add_LB(Branching_record,branch_step+2) #
-                        # print('*********************','++reverse++',branch_step,'incumbent',Branching_record[0],'*********************')
-                else:
-                    TSRFLP.vn_end = 1
-                    break
+                TSRFLP.vn_end = 1
+                break
             if TSRFLP.master_model.status in [2,11]:
                 Branching_record,better_sol,convergence,Reverse_record = TSRFLP.record_best_sol(
                                                         Branching_record,start_time,convergence)
@@ -226,17 +214,8 @@ def bra_cut(Time_Limit, p, cd, cdk, sk, a1, tl_total, tl_node, tl_pr_node, tl_pr
                     LB_cut += 1
                     # print('*********************','++better_sol++',branch_step,'incumbent',Branching_record[0],'last one',Reverse_record[0],'*********************')
                 else:
-                    if branch_step == 2:
-                        TSRFLP.reverse_LB(Branching_record,branch_step)
-                        branch_step += 2
-                        TSRFLP.add_LB(Branching_record,branch_step+2) #
-                        LB_cut += 1
-                        # print('*********************','++first reverse++',branch_step,'incumbent',Branching_record[0],'*********************')
-                    else:
-                        TSRFLP.reverse_LB(Branching_record,branch_step)
-                        branch_step += 2
-                        TSRFLP.add_LB(Branching_record,branch_step+2) #
-                        # print('*********************','++reverse++',branch_step,'incumbent',Branching_record[0],'*********************')
+                    TSRFLP.vn_end = 1
+                    break
         for n in range(LB_cut):
             TSRFLP.master_model.remove(
                 TSRFLP.master_model.getConstrs()[-n - 1])
@@ -259,6 +238,8 @@ def bra_cut(Time_Limit, p, cd, cdk, sk, a1, tl_total, tl_node, tl_pr_node, tl_pr
                             best_incumbent.append(n.x)
                         Branching_record = [
                             obj_now, best_incumbent, time.time() - start_time]
+                    # else:
+                    #     TSRFLP.pr_end = 1 # stop when no improvement
                     if abs(soft_rhs - obj_now) < abs(rhs-obj_now) and TSRFLP.master_model.Status ==2:
                         TSRFLP.bestbound = rhs
                     convergence.append(
@@ -271,6 +252,7 @@ def bra_cut(Time_Limit, p, cd, cdk, sk, a1, tl_total, tl_node, tl_pr_node, tl_pr
                     TSRFLP.pr_end = 1  # stop
             if TSRFLP.master_model.Status in [3, 4, 5]:  # infeasible
                 TSRFLP.bestbound = soft_rhs
+                TSRFLP.pr_end = 1
             pr_gap = (
                 Branching_record[0] - TSRFLP.bestbound) / (1 + Branching_record[0])
             if pr_gap <= stop_gap:
@@ -307,6 +289,8 @@ def bra_cut(Time_Limit, p, cd, cdk, sk, a1, tl_total, tl_node, tl_pr_node, tl_pr
     runtime = round((time.time() - start_time), 2)
     if TSRFLP.master_model.Status == 2:
         TSRFLP.opt = 1
+        convergence.append(convergence[-1])
+        convergence[-1][1] = convergence[-1][0]
     objval = round(TSRFLP.master_model.Objval, 2)
     gap = TSRFLP.master_model.MIPGap
     if abs(gap) <= 1e-5:
@@ -317,6 +301,7 @@ def bra_cut(Time_Limit, p, cd, cdk, sk, a1, tl_total, tl_node, tl_pr_node, tl_pr
             y_name = ''.join(['y[', str(j), ']'])
             y_temp = TSRFLP.master_model.getVarByName(y_name)
             var_y.append(y_temp.x) #
+
     convergence = [*zip(*convergence)]
     gap = round(gap, 2)
     rootval = round(rootval, 2)

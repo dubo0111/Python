@@ -11,7 +11,7 @@ import time
 import data_generator0 as dg0
 from gurobipy import *
 
-def LIP(p,cd,cdk,sk,a1):
+def LIP(Time_Limit,p,cd,cdk,sk,a1):
     convergence = []
     try:
         def mycallback(model, where): # callback fuction: benders cut & integer cut
@@ -120,7 +120,7 @@ def LIP(p,cd,cdk,sk,a1):
 
         start_time = time.time()
         m.params.OutputFlag = 0
-        m.Params.TimeLimit = 1000
+        m.Params.TimeLimit = Time_Limit
         # m.params.Cuts = 0
         # m.params.Presolve = 0
         # m.params.Heuristics = 0

@@ -9,7 +9,7 @@ Du Bo
 import model_rflp as mr
 from gurobipy import *
 import time
-def bra_cut(p,cd,cdk,sk,a1):
+def bra_cut(Time_Limit,p,cd,cdk,sk,a1):
     convergence = []
     # Number of nodes
     ni = len(cd)
@@ -31,7 +31,7 @@ def bra_cut(p,cd,cdk,sk,a1):
                             convergence.append([objbst,objbnd,time.time()-start_time])
                     else:
                         convergence.append([objbst,objbnd,time.time()-start_time])
-                if time.time() - start_time >= 1000:
+                if time.time() - start_time >= Time_Limit:
                     model.terminate()
             if where == GRB.Callback.MIPSOL:
                 vals = model.cbGetSolution(model._vars)

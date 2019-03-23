@@ -14,7 +14,7 @@ import time
 import copy
 
 
-def bra_cut(p, cd, cdk, sk, a1, tl_total, tl_node, branch_step):
+def bra_cut(Time_Limit, p, cd, cdk, sk, a1, tl_total, tl_node, branch_step):
     convergence = []
     # Number of nodes
     ni = len(cd)
@@ -56,7 +56,7 @@ def bra_cut(p, cd, cdk, sk, a1, tl_total, tl_node, branch_step):
                         convergence.append(
                             [objbst, objbnd, time.time() - start_time])
                 nodecnt = model.cbGet(GRB.Callback.MIP_NODCNT)
-                if time.time() - start_time >= 1000 and nodecnt > 0:  # Stop criteria
+                if time.time() - start_time >= Time_Limit and nodecnt > 0:  # Stop criteria
                     model.terminate()
             if where == GRB.Callback.MIPSOL:
                 nodecnt = model.cbGet(GRB.Callback.MIPSOL_NODCNT)
@@ -167,12 +167,12 @@ def bra_cut(p, cd, cdk, sk, a1, tl_total, tl_node, branch_step):
                         branch_step += 2
                         TSRFLP.add_LB(Branching_record,branch_step+2) #
                         LB_cut += 1
-                        print('*********************','++first reverse++',branch_step,Branching_record[0],'*********************')
+                        # print('*********************','++first reverse++',branch_step,Branching_record[0],'*********************')
                     else:
                         TSRFLP.reverse_LB(Branching_record,branch_step)
                         branch_step += 2
                         TSRFLP.add_LB(Branching_record,branch_step+2) #
-                        print('*********************','++reverse++',branch_step,'incumbent',Branching_record[0],'*********************')
+                        # print('*********************','++reverse++',branch_step,'incumbent',Branching_record[0],'*********************')
                 else:
                     TSRFLP.vn_end = 1
                     break
@@ -184,19 +184,19 @@ def bra_cut(p, cd, cdk, sk, a1, tl_total, tl_node, branch_step):
                     branch_step = 2
                     TSRFLP.add_LB(Branching_record,branch_step) #
                     LB_cut += 1
-                    print('*********************','++better_sol++',branch_step,'incumbent',Branching_record[0],'last one',Reverse_record[0],'*********************')
+                    # print('*********************','++better_sol++',branch_step,'incumbent',Branching_record[0],'last one',Reverse_record[0],'*********************')
                 else:
                     if branch_step == 2:
                         TSRFLP.reverse_LB(Branching_record,branch_step)
                         branch_step += 2
                         TSRFLP.add_LB(Branching_record,branch_step+2) #
                         LB_cut += 1
-                        print('*********************','++first reverse++',branch_step,'incumbent',Branching_record[0],'*********************')
+                        # print('*********************','++first reverse++',branch_step,'incumbent',Branching_record[0],'*********************')
                     else:
                         TSRFLP.reverse_LB(Branching_record,branch_step)
                         branch_step += 2
                         TSRFLP.add_LB(Branching_record,branch_step+2) #
-                        print('*********************','++reverse++',branch_step,'incumbent',Branching_record[0],'*********************')
+                        # print('*********************','++reverse++',branch_step,'incumbent',Branching_record[0],'*********************')
         # extract heuristics solution
         for n in range(len(convergence)):
             if abs(Branching_record[0] - convergence[n][0])<=1e-5:
@@ -233,10 +233,11 @@ def bra_cut(p, cd, cdk, sk, a1, tl_total, tl_node, branch_step):
     if abs(gap)<=1e-5:
         gap = 0
     var_y=[]
-    for j in range(TSRFLP.ni):
-        y_name = ''.join(['y[', str(j), ']'])
-        y_temp = TSRFLP.master_model.getVarByName(y_name)
-        var_y.append(y_temp.x)
+    if objval < 1e10:
+        for j in range(TSRFLP.ni):
+            y_name = ''.join(['y[', str(j), ']'])
+            y_temp = TSRFLP.master_model.getVarByName(y_name)
+            var_y.append(y_temp.x)
     convergence = [*zip(*convergence)]
     gap=round(gap,2)
     Heu_sol.append(round(((Heu_sol[0]-TSRFLP.master_model.Objval)/(1+Heu_sol[0])),2))

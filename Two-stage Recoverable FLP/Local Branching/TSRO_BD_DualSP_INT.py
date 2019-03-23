@@ -7,7 +7,7 @@ import data_generator0 as dg0
 from gurobipy import *
 import time
 
-def benders_deco(p,cd,cdk,sk,a1):
+def benders_deco(Time_Limit,p,cd,cdk,sk,a1):
     convergence = []
     # Number of nodes
     ni = len(cd)
@@ -45,7 +45,7 @@ def benders_deco(p,cd,cdk,sk,a1):
             convergence.append([convergence[-1][0],convergence[-1][1],time.time()-start_time])
         convergence.append([TSRFLP.UB,TSRFLP.LB,runtime])
         time_limit = 0
-        if runtime >= 1000:
+        if runtime >= Time_Limit:
             time_limit = 1
             break
     # ------------Integer cut --------------
@@ -79,7 +79,7 @@ def benders_deco(p,cd,cdk,sk,a1):
         runtime = time.time() - start_time
         convergence.append([convergence[-1][0],convergence[-1][1],time.time()-start_time])
         convergence.append([TSRFLP.UB,TSRFLP.LB,runtime])
-        if runtime >= 1000:
+        if runtime >= Time_Limit:
             break
     # print('Optimal Objective Value = ', str(TSRFLP.UB))
     # print("--- %s seconds ---" % runtime)
