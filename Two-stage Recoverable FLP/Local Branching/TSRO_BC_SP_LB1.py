@@ -36,11 +36,13 @@ def bra_cut(Time_Limit, p, cd, cdk, sk, a1, tl_total, tl_node, branch_step):
                 if objbst < 1e10:
                     if TSRFLP.LB_terminate == 1 and TSRFLP.vn_end == 0:
                         # print('22222222222222222')
-                        if convergence != []:
+                        if convergence != [] and objbst <= convergence[-1][0]:
                             convergence.append(
                                 [convergence[-1][0], convergence[-1][1], time.time() - start_time])
-                        convergence.append(
-                            [objbst, TSRFLP.bestbound, time.time() - start_time])
+                            convergence.append(
+                                [objbst, TSRFLP.bestbound, time.time() - start_time])
+                        if convergence[-1][0] == 742.5:
+                            aaa =1
                     if TSRFLP.vn_end == 1 and TSRFLP.LB_branch == 1:
                         # print('3333333333333333')
                         if convergence != [] and objbnd >= TSRFLP.bestbound and objbst <= convergence[-1][0]:
@@ -48,13 +50,17 @@ def bra_cut(Time_Limit, p, cd, cdk, sk, a1, tl_total, tl_node, branch_step):
                                 [convergence[-1][0], convergence[-1][1], time.time() - start_time])
                             convergence.append(
                                 [objbst, objbnd, time.time() - start_time])
+                        if convergence[-1][0] == 742.5:
+                            aaa =1
                     if TSRFLP.LB_terminate == 0:
-#                        print('111111111111111')
+                        # print('111111111111111')
                         if convergence != []:
                             convergence.append(
                                 [convergence[-1][0], convergence[-1][1], time.time() - start_time])
                         convergence.append(
                             [objbst, objbnd, time.time() - start_time])
+                        if convergence[-1][0] == 742.5:
+                            aaa =1
                 nodecnt = model.cbGet(GRB.Callback.MIP_NODCNT)
                 if time.time() - start_time >= Time_Limit and nodecnt > 0:  # Stop criteria
                     model.terminate()
@@ -67,7 +73,7 @@ def bra_cut(Time_Limit, p, cd, cdk, sk, a1, tl_total, tl_node, branch_step):
                     # make sure y are binary
                     TSRFLP.value_y = [round(x) for x in TSRFLP.value_y]
                 TSRFLP.value_omega = vals[-1]
-                if nodecnt > 100 and TSRFLP.LB_terminate == 0:  # LB right after root node
+                if nodecnt > 200 and TSRFLP.LB_terminate == 0:  # LB right after root node
                     TSRFLP.LB_terminate = 1
                     TSRFLP.bestbound = copy.deepcopy(objbnd)
                     model.terminate()
@@ -147,12 +153,14 @@ def bra_cut(Time_Limit, p, cd, cdk, sk, a1, tl_total, tl_node, branch_step):
         TSRFLP.master_model._vars = TSRFLP.master_model.getVars()
         TSRFLP.master_model.Params.lazyConstraints = 1
         TSRFLP.master_model.optimize(mycallback)  # terminate after root node
+        if TSRFLP.master_model.status == 2:
+            TSRFLP.LB_terminate = 1
         TSRFLP.master_model.addConstr(
             TSRFLP.a1 * TSRFLP.L + TSRFLP.a2 * TSRFLP.omega >= TSRFLP.bestbound)
-        Branching_record = [1e6, []]
-        Branching_record, better_sol, convergence, _ = TSRFLP.record_best_sol(
-            Branching_record, start_time, convergence)
-        TSRFLP.add_LB(Branching_record, branch_step, 1)
+        TSRFLP.Branching_record = [1e6, []]
+        TSRFLP.Branching_record, better_sol, convergence, _ = TSRFLP.record_best_sol(
+            TSRFLP.Branching_record, start_time, convergence)
+        TSRFLP.add_LB(TSRFLP.Branching_record, branch_step, 1)
         LB_cut = 2
         VN_time = time.time()
         while TSRFLP.vn_end == 0 and tl_total != 0:
@@ -163,44 +171,44 @@ def bra_cut(Time_Limit, p, cd, cdk, sk, a1, tl_total, tl_node, branch_step):
             if TSRFLP.master_model.status in [3,4,5]:
                 if branch_step <= TSRFLP.p*2-2:
                     if branch_step == 2:
-                        TSRFLP.reverse_LB(Branching_record,branch_step)
+                        TSRFLP.reverse_LB(TSRFLP.Branching_record,branch_step)
                         branch_step += 2
-                        TSRFLP.add_LB(Branching_record,branch_step+2) #
+                        TSRFLP.add_LB(TSRFLP.Branching_record,branch_step+2) #
                         LB_cut += 1
-                        # print('*********************','++first reverse++',branch_step,Branching_record[0],'*********************')
+                        # print('*********************','++first reverse++',branch_step,TSRFLP.Branching_record[0],'*********************')
                     else:
-                        TSRFLP.reverse_LB(Branching_record,branch_step)
+                        TSRFLP.reverse_LB(TSRFLP.Branching_record,branch_step)
                         branch_step += 2
-                        TSRFLP.add_LB(Branching_record,branch_step+2) #
-                        # print('*********************','++reverse++',branch_step,'incumbent',Branching_record[0],'*********************')
+                        TSRFLP.add_LB(TSRFLP.Branching_record,branch_step+2) #
+                        # print('*********************','++reverse++',branch_step,'incumbent',TSRFLP.Branching_record[0],'*********************')
                 else:
                     TSRFLP.vn_end = 1
                     break
             if TSRFLP.master_model.status in [2,11]:
-                Branching_record,better_sol,convergence,Reverse_record = TSRFLP.record_best_sol(
-                                                        Branching_record,start_time,convergence)
+                TSRFLP.Branching_record,better_sol,convergence,Reverse_record = TSRFLP.record_best_sol(
+                                                        TSRFLP.Branching_record,start_time,convergence)
                 if better_sol == 1:
                     TSRFLP.reverse_LB(Reverse_record,branch_step,better_sol=1)
                     branch_step = 2
-                    TSRFLP.add_LB(Branching_record,branch_step) #
+                    TSRFLP.add_LB(TSRFLP.Branching_record,branch_step) #
                     LB_cut += 1
-                    # print('*********************','++better_sol++',branch_step,'incumbent',Branching_record[0],'last one',Reverse_record[0],'*********************')
+                    # print('*********************','++better_sol++',branch_step,'incumbent',TSRFLP.Branching_record[0],'last one',Reverse_record[0],'*********************')
                 else:
                     if branch_step == 2:
-                        TSRFLP.reverse_LB(Branching_record,branch_step)
+                        TSRFLP.reverse_LB(TSRFLP.Branching_record,branch_step)
                         branch_step += 2
-                        TSRFLP.add_LB(Branching_record,branch_step+2) #
+                        TSRFLP.add_LB(TSRFLP.Branching_record,branch_step+2) #
                         LB_cut += 1
-                        # print('*********************','++first reverse++',branch_step,'incumbent',Branching_record[0],'*********************')
+                        # print('*********************','++first reverse++',branch_step,'incumbent',TSRFLP.Branching_record[0],'*********************')
                     else:
-                        TSRFLP.reverse_LB(Branching_record,branch_step)
+                        TSRFLP.reverse_LB(TSRFLP.Branching_record,branch_step)
                         branch_step += 2
-                        TSRFLP.add_LB(Branching_record,branch_step+2) #
-                        # print('*********************','++reverse++',branch_step,'incumbent',Branching_record[0],'*********************')
+                        TSRFLP.add_LB(TSRFLP.Branching_record,branch_step+2) #
+                        # print('*********************','++reverse++',branch_step,'incumbent',TSRFLP.Branching_record[0],'*********************')
         # extract heuristics solution
         for n in range(len(convergence)):
-            if abs(Branching_record[0] - convergence[n][0])<=1e-5:
-                Heu_sol = [round(Branching_record[0],2),round(convergence[n][2],2)]
+            if abs(TSRFLP.Branching_record[0] - convergence[n][0])<=1e-5:
+                Heu_sol = [round(TSRFLP.Branching_record[0],2),round(convergence[n][2],2)]
                 break
         for n in range(LB_cut):
             TSRFLP.master_model.remove(TSRFLP.master_model.getConstrs()[-n-1])
@@ -214,8 +222,8 @@ def bra_cut(Time_Limit, p, cd, cdk, sk, a1, tl_total, tl_node, branch_step):
         for n in range(len(TSRFLP.LB_cuts)):
             TSRFLP.master_model.getConstrs()[-1-n].Lazy = 1
         TSRFLP.master_model.update()
-        if Branching_record[1] != []:
-            TSRFLP.set_initial(Branching_record[1])
+        if TSRFLP.Branching_record[1] != []:
+            TSRFLP.set_initial(TSRFLP.Branching_record[1])
         TSRFLP.master_model.addConstr(TSRFLP.a1*TSRFLP.L+TSRFLP.a2*TSRFLP.omega >= TSRFLP.bestbound)
         TSRFLP.master_model.optimize(mycallback) # final optimization
 

@@ -18,25 +18,25 @@ import data_generator0 as dg0
 # import email_self as em
 
 # experiments parameters
-ex_N = [10, 20, 30]  # number of vertexes
+ex_N = [50]  # number of vertexes
 #ex_k = [10,20,30,40,50,100,200,500]
-ex_k = [10, 20, 50, 100, 200, 500]  # number of scenarios
-ex_all = 5  # number of experiments for each combination
+ex_k = [50,100]  # number of scenarios
+ex_all = 1 # number of experiments for each combination
 # problem parameters
-Time_Limit = 1000
+Time_Limit = 3600
 a1 = 0.5
-rnd_seed = 100  # starting random seed
+rnd_seed = 200  # starting random seed
 # algorithm parameters
 # LB
-tl_node = 60
-# tl_total = 300
+tl_node = 1000
+tl_total = 300
 # PR solo (13)
 tl_node1 = 100
 tl_total1 = 0
-tl_pr_node1 = 1000
-tl_pr_total1 = 1000
+tl_pr_node1 = 3600
+tl_pr_total1 = 3600
 # LB+PR (14) : abort when no improve
-tl_node2 = 60
+tl_node2 = 1000
 tl_total2 = 200
 tl_pr_node2 = 1000
 tl_pr_total2 = 200
@@ -54,10 +54,10 @@ try:
     bb = np.empty((0, 26), float)
     for n_N in ex_N:
         for n_k in ex_k:
-            if n_N == 20:
-                tl_total = n_N*n_k/100+5 #
-            else:
-                tl_total = 200
+#            if n_N == 20:
+#                tl_total = n_N*n_k/100+5 #
+#            else:
+#                tl_total = 200
             # tl_total1 = n_N*n_k/100+5
             # tl_pr_total = n_N*n_k/100+5
             for n_e in range(ex_all):
@@ -75,15 +75,15 @@ try:
                 Heu_sol13 = [0, 0, 0]
                 Heu_sol14 = [0, 0, 0]
 
-                if n_N >= 20:
-                    # y1,t1, cut1, opt1, val1, gap1, conv1, Heu_sol1 = bc.bra_cut(
-                    #      Time_Limit,p, cd, cdk, sk, a1) # branch and cut
-                    y12, t12, cut12, opt12, val12, gap12, conv12, pool12, Heu_sol12 = bc_VN.bra_cut(
-                         Time_Limit, p, cd, cdk, sk, a1, tl_total, tl_node, branch_step)
-                    y13, t13, cut13, opt13, val13, gap13, conv13, pool13, Heu_sol13, rootval = bc_PR.bra_cut(
-                         Time_Limit, p, cd, cdk, sk, a1, tl_total1, tl_node1, tl_pr_node1, tl_pr_total1, branch_step, pr_gap, pr_terminate, pr_step)
-                    y14, t14, cut14, opt14, val14, gap14, conv14, pool14, Heu_sol14, rootval = bc_Hybrid.bra_cut(
-                         Time_Limit, p, cd, cdk, sk, a1, tl_total2, tl_node2, tl_pr_node2, tl_pr_total2, branch_step, pr_gap, pr_terminate, pr_step)
+#                if n_N >= 20:
+                y1,t1, cut1, opt1, val1, gap1, conv1, Heu_sol1 = bc.bra_cut(
+                      Time_Limit,p, cd, cdk, sk, a1) # branch and cut
+                y12, t12, cut12, opt12, val12, gap12, conv12, pool12, Heu_sol12 = bc_VN.bra_cut(
+                     Time_Limit, p, cd, cdk, sk, a1, tl_total, tl_node, branch_step)
+                y13, t13, cut13, opt13, val13, gap13, conv13, pool13, Heu_sol13, rootval = bc_PR.bra_cut(
+                     Time_Limit, p, cd, cdk, sk, a1, tl_total1, tl_node1, tl_pr_node1, tl_pr_total1, branch_step, pr_gap, pr_terminate, pr_step)
+                y14, t14, cut14, opt14, val14, gap14, conv14, pool14, Heu_sol14, rootval = bc_Hybrid.bra_cut(
+                     Time_Limit, p, cd, cdk, sk, a1, tl_total2, tl_node2, tl_pr_node2, tl_pr_total2, branch_step, pr_gap, pr_terminate, pr_step)
                 # t2, cut2, opt2, val2, gap2,conv2 = bd.benders_deco(
                 #         Time_Limit,p, cd, cdk, sk, a1)
                 # y3, t3, opt3, val3, gap3, conv3 = lip.LIP(

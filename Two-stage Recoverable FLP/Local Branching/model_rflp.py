@@ -85,6 +85,7 @@ class rflp:
     bestbound = 0
     vn_end = 0
     pr_end = 0
+    Branching_record = []
     # Avoid solving identical relaxed dual-sp and sp
     save_max_Lk_DualLP = []  # for benders cut
     save_max_Lk_SP = []  # for integer cut
@@ -180,6 +181,7 @@ class rflp:
         self.bestbound = 0
         self.vn_end = 0
         self.pr_end = 0
+        self.Branching_record = []
 
         self.save_max_Lk_DualLP = []  # for benders cut
         self.save_max_Lk_SP = []  # for integer cut
@@ -1063,10 +1065,11 @@ class rflp:
                 best_incumbent.append(n.x)
             Branching_record = [self.master_model.Objval,
                                 best_incumbent, time.time() - start_time]
-            convergence.append(
-                [convergence[-1][0], convergence[-1][1], time.time() - start_time])
-            convergence.append(
-                [Branching_record[0], self.bestbound, time.time() - start_time])
+            if Branching_record[0] <= convergence[-1][0]:
+                convergence.append(
+                    [convergence[-1][0], convergence[-1][1], time.time() - start_time])
+                convergence.append(
+                    [Branching_record[0], self.bestbound, time.time() - start_time])
         return Branching_record, improve, convergence, Reverse_record
 
     def add_master_bound(self, UB=0, LB=0):
