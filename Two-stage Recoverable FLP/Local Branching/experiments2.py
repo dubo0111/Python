@@ -90,21 +90,19 @@ try:
                     y14, t14, cut14, opt14, val14, gap14, conv14, pool14, Heu_sol14, rootval = bc_Hybrid.bra_cut(
                          Time_Limit, p, cd, cdk, sk, a1, tl_total2, tl_node2, tl_pr_node2, tl_pr_total2, branch_step, pr_gap, pr_terminate, pr_step)
                     # compute Primal Integral
-                   
-                    pi_all=pi.primal_integral(conv1,conv12,conv13,conv14,timeline)
+                    # plt.plot(conv1[2],conv1[0],conv1[2],conv1[1])
+                    # plt.plot(conv12[2], conv12[0], conv12[2], conv12[1])
+                    # plt.plot(conv13[2], conv13[0], conv13[2], conv13[1])
+                    # plt.plot(conv14[2], conv14[0], conv14[2], conv14[1])
+                    # plt.show()
+                    pi_all,best=pi.primal_integral(conv1,conv12,conv13,conv14,timeline)
                     pi_fname = 'data/'+str(n_N)+'_'+str(n_k)+'_'+str(n_e)+'_'+str(rnd_seed)
+                    conv_name = 'data/'+str(n_N)+'_'+str(n_k)+'_'+str(n_e)+'_'+str(rnd_seed)+'conver'
                     with open(pi_fname, 'wb') as f:
                        pickle.dump(pi_all, f)
                     pi_final.append(pi_all)
-
-#                    plt.plot(timeline,pi_all[0],timeline,pi_all[1],
-#                             timeline,pi_all[2],timeline,pi_all[3])
-
-#plt.plot(conv1[2],conv1[0],conv1[2],conv1[1])
-#plt.plot(conv12[2], conv12[0], conv12[2], conv12[1])
-#plt.plot(conv13[2], conv13[0], conv13[2], conv13[1])
-#plt.plot(conv14[2], conv14[0], conv14[2], conv14[1])
-#plt.show()
+                    with open(conv_name, 'wb') as f1:
+                       pickle.dump([conv1,conv12,conv13,conv14], f1)
 
                 result_i = [[n_N, n_k, t1, cut1, gap1, Heu_sol1[0], Heu_sol1[1], t12, cut12, gap12,
                              Heu_sol12[0], Heu_sol12[1], Heu_sol12[2], t13, cut13, gap13, Heu_sol13[0], Heu_sol13[1], Heu_sol13[2],
@@ -142,6 +140,8 @@ try:
         for t in range(len(timeline)): # 时间点
             temp = []
             for n in range(len(pi_final)): # 实验
+                if pi_final[n][i][t] < 1:
+                    pi_final[n][i][t] = 1 ##
                 temp.append(pi_final[n][i][t])
             a = np.log(temp)
             pi_report[i][t] = np.exp(a.sum()/len(a))
