@@ -866,7 +866,7 @@ class rflp:
         #m1.params.Presolve = 0
         # tune parameters to avoid numerical issues for subproblem
         # wrong optimal solutions appear for both sub&dual_sub
-        self.master_model.params.OutputFlag = 1
+        self.master_model.params.OutputFlag = 0
         self.sub_model.params.OutputFlag = 0
         self.sub_dual.params.OutputFlag = 0
         self.sub_cover.params.OutputFlag = 0

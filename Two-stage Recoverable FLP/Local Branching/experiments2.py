@@ -79,8 +79,29 @@ try:
                 Heu_sol12 = [0, 0, 0]
                 Heu_sol13 = [0, 0, 0]
                 Heu_sol14 = [0, 0, 0]
+                conv1=[]
 
                 if n_N >= 40:
+                    if n_k == 100 and n_e==4:
+                        y1,t1, cut1, opt1, val1, gap1, conv1, Heu_sol1 = bc.bra_cut(
+                             Time_Limit,p, cd, cdk, sk, a1) # branch and cut
+                        y12, t12, cut12, opt12, val12, gap12, conv12, pool12, Heu_sol12 = bc_VN.bra_cut(
+                             Time_Limit, p, cd, cdk, sk, a1, tl_total, tl_node, branch_step)
+                        y13, t13, cut13, opt13, val13, gap13, conv13, pool13, Heu_sol13, rootval = bc_PR.bra_cut(
+                             Time_Limit, p, cd, cdk, sk, a1, tl_total1, tl_node1, tl_pr_node1, tl_pr_total1, branch_step, pr_gap, pr_terminate, pr_step)
+                        y14, t14, cut14, opt14, val14, gap14, conv14, pool14, Heu_sol14, rootval = bc_Hybrid.bra_cut(
+                             Time_Limit, p, cd, cdk, sk, a1, tl_total2, tl_node2, tl_pr_node2, tl_pr_total2, branch_step, pr_gap, pr_terminate, pr_step)
+                if n_N >= 40:
+                    if n_k >=200:
+                        y1,t1, cut1, opt1, val1, gap1, conv1, Heu_sol1 = bc.bra_cut(
+                             Time_Limit,p, cd, cdk, sk, a1) # branch and cut
+                        y12, t12, cut12, opt12, val12, gap12, conv12, pool12, Heu_sol12 = bc_VN.bra_cut(
+                             Time_Limit, p, cd, cdk, sk, a1, tl_total, tl_node, branch_step)
+                        y13, t13, cut13, opt13, val13, gap13, conv13, pool13, Heu_sol13, rootval = bc_PR.bra_cut(
+                             Time_Limit, p, cd, cdk, sk, a1, tl_total1, tl_node1, tl_pr_node1, tl_pr_total1, branch_step, pr_gap, pr_terminate, pr_step)
+                        y14, t14, cut14, opt14, val14, gap14, conv14, pool14, Heu_sol14, rootval = bc_Hybrid.bra_cut(
+                             Time_Limit, p, cd, cdk, sk, a1, tl_total2, tl_node2, tl_pr_node2, tl_pr_total2, branch_step, pr_gap, pr_terminate, pr_step)
+                if n_N >= 50:
                     y1,t1, cut1, opt1, val1, gap1, conv1, Heu_sol1 = bc.bra_cut(
                          Time_Limit,p, cd, cdk, sk, a1) # branch and cut
                     y12, t12, cut12, opt12, val12, gap12, conv12, pool12, Heu_sol12 = bc_VN.bra_cut(
@@ -89,12 +110,14 @@ try:
                          Time_Limit, p, cd, cdk, sk, a1, tl_total1, tl_node1, tl_pr_node1, tl_pr_total1, branch_step, pr_gap, pr_terminate, pr_step)
                     y14, t14, cut14, opt14, val14, gap14, conv14, pool14, Heu_sol14, rootval = bc_Hybrid.bra_cut(
                          Time_Limit, p, cd, cdk, sk, a1, tl_total2, tl_node2, tl_pr_node2, tl_pr_total2, branch_step, pr_gap, pr_terminate, pr_step)
-                    # compute Primal Integral
+
+                                                # compute Primal Integral
                     # plt.plot(conv1[2],conv1[0],conv1[2],conv1[1])
                     # plt.plot(conv12[2], conv12[0], conv12[2], conv12[1])
                     # plt.plot(conv13[2], conv13[0], conv13[2], conv13[1])
                     # plt.plot(conv14[2], conv14[0], conv14[2], conv14[1])
                     # plt.show()
+                if conv1 != []:
                     pi_all,best=pi.primal_integral(conv1,conv12,conv13,conv14,timeline)
                     pi_fname = 'data/'+str(n_N)+'_'+str(n_k)+'_'+str(n_e)+'_'+str(rnd_seed)
                     conv_name = 'data/'+str(n_N)+'_'+str(n_k)+'_'+str(n_e)+'_'+str(rnd_seed)+'conver'
