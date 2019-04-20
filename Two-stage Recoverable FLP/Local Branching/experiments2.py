@@ -35,12 +35,12 @@ tl_total = 300
 # PR solo (13)
 tl_node1 = 100
 tl_total1 = 0
-tl_pr_node1 = 1000
+tl_pr_node1 = 300
 tl_pr_total1 = 1000
 # LB+PR (14) : abort when no improve
 tl_node2 = 60
 tl_total2 = 200
-tl_pr_node2 = 1000
+tl_pr_node2 = 300
 tl_pr_total2 = 200
 # REMARK: tl_pr_total
 # PR parameters
@@ -81,27 +81,16 @@ try:
                 Heu_sol14 = [0, 0, 0]
                 conv1=[]
 
-                if n_N >= 40:
-                    if n_k == 100 and n_e==4:
-                        y1,t1, cut1, opt1, val1, gap1, conv1, Heu_sol1 = bc.bra_cut(
-                             Time_Limit,p, cd, cdk, sk, a1) # branch and cut
-                        y12, t12, cut12, opt12, val12, gap12, conv12, pool12, Heu_sol12 = bc_VN.bra_cut(
-                             Time_Limit, p, cd, cdk, sk, a1, tl_total, tl_node, branch_step)
-                        y13, t13, cut13, opt13, val13, gap13, conv13, pool13, Heu_sol13, rootval = bc_PR.bra_cut(
-                             Time_Limit, p, cd, cdk, sk, a1, tl_total1, tl_node1, tl_pr_node1, tl_pr_total1, branch_step, pr_gap, pr_terminate, pr_step)
-                        y14, t14, cut14, opt14, val14, gap14, conv14, pool14, Heu_sol14, rootval = bc_Hybrid.bra_cut(
-                             Time_Limit, p, cd, cdk, sk, a1, tl_total2, tl_node2, tl_pr_node2, tl_pr_total2, branch_step, pr_gap, pr_terminate, pr_step)
-                if n_N >= 40:
-                    if n_k >=200:
-                        y1,t1, cut1, opt1, val1, gap1, conv1, Heu_sol1 = bc.bra_cut(
-                             Time_Limit,p, cd, cdk, sk, a1) # branch and cut
-                        y12, t12, cut12, opt12, val12, gap12, conv12, pool12, Heu_sol12 = bc_VN.bra_cut(
-                             Time_Limit, p, cd, cdk, sk, a1, tl_total, tl_node, branch_step)
-                        y13, t13, cut13, opt13, val13, gap13, conv13, pool13, Heu_sol13, rootval = bc_PR.bra_cut(
-                             Time_Limit, p, cd, cdk, sk, a1, tl_total1, tl_node1, tl_pr_node1, tl_pr_total1, branch_step, pr_gap, pr_terminate, pr_step)
-                        y14, t14, cut14, opt14, val14, gap14, conv14, pool14, Heu_sol14, rootval = bc_Hybrid.bra_cut(
-                             Time_Limit, p, cd, cdk, sk, a1, tl_total2, tl_node2, tl_pr_node2, tl_pr_total2, branch_step, pr_gap, pr_terminate, pr_step)
-                if n_N >= 50:
+                if n_N == 40 and n_k == 500:
+                    y1,t1, cut1, opt1, val1, gap1, conv1, Heu_sol1 = bc.bra_cut(
+                         Time_Limit,p, cd, cdk, sk, a1) # branch and cut
+                    y12, t12, cut12, opt12, val12, gap12, conv12, pool12, Heu_sol12 = bc_VN.bra_cut(
+                         Time_Limit, p, cd, cdk, sk, a1, tl_total, tl_node, branch_step)
+                    y13, t13, cut13, opt13, val13, gap13, conv13, pool13, Heu_sol13, rootval = bc_PR.bra_cut(
+                         Time_Limit, p, cd, cdk, sk, a1, tl_total1, tl_node1, tl_pr_node1, tl_pr_total1, branch_step, pr_gap, pr_terminate, pr_step)
+                    y14, t14, cut14, opt14, val14, gap14, conv14, pool14, Heu_sol14, rootval = bc_Hybrid.bra_cut(
+                         Time_Limit, p, cd, cdk, sk, a1, tl_total2, tl_node2, tl_pr_node2, tl_pr_total2, branch_step, pr_gap, pr_terminate, pr_step)
+                if n_N == 50:
                     y1,t1, cut1, opt1, val1, gap1, conv1, Heu_sol1 = bc.bra_cut(
                          Time_Limit,p, cd, cdk, sk, a1) # branch and cut
                     y12, t12, cut12, opt12, val12, gap12, conv12, pool12, Heu_sol12 = bc_VN.bra_cut(

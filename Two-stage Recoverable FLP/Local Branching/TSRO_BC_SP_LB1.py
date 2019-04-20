@@ -28,7 +28,7 @@ def bra_cut(Time_Limit, p, cd, cdk, sk, a1, tl_total, tl_node, branch_step):
                     if time.time() - LB_time >= tl_node:
                         model.terminate()
                     if time.time() - VN_time >= tl_total:
-                        # model.terminate()
+                        model.terminate()
                         TSRFLP.vn_end = 1
                 # if TSRFLP.LB_branch == 1:
                 objbst = model.cbGet(GRB.Callback.MIP_OBJBST)
