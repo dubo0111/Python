@@ -29,7 +29,7 @@ def bra_cut(Time_Limit, p, cd, cdk, sk, a1, tl_total, tl_node, tl_pr_node, tl_pr
                         if time.time() - pr_node_time >= tl_pr_node:
                             model.terminate()
                         if time.time() - pr_time >= tl_pr_total:
-                            # model.terminate()
+                            model.terminate()
                             TSRFLP.pr_end = 1
                     else:
                         if time.time() - LB_time >= tl_node:
