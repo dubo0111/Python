@@ -4,11 +4,16 @@ def primal_integral(conv1,conv12,conv13,conv14,timeline = 0):
     #
     def integral_compute(t,time,gap):
         pi = 0
-        time_count = [x for x in time if x <= t]
-        for n in range(len(time_count)-1):
-            pi += (gap[n] + gap[n+1])*(time_count[n+1]-time_count[n])/2
-        if pi == 0:
-            pi = 1
+        # time_count = [x for x in time if x <= t]
+        for n in range(t-1):
+            time = np.array(time)
+            a = np.argmax(time>n)
+            b = np.argmax(time>n+1)
+            if a == 0:
+                a = 1
+            if b == 0:
+                b = 1
+            pi += (gap[a-1]+gap[b-1])/2
         return pi
     # get optimality
     best = [conv1[0][-1],conv12[0][-1],conv13[0][-1],conv14[0][-1]]
