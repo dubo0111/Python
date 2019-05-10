@@ -79,10 +79,8 @@ for n_N in ex_N:
             Heu_sol14 = [0, 0, 0]
             conv1=[]
 
-<<<<<<< HEAD
             if n_N >= 40:
-                if n_k == 100 and n_e==3:
-=======
+                # if n_k == 100 and n_e==3:
                 if n_N == 40 and n_k == 500:
                     y1,t1, cut1, opt1, val1, gap1, conv1, Heu_sol1 = bc.bra_cut(
                          Time_Limit,p, cd, cdk, sk, a1) # branch and cut
@@ -93,7 +91,6 @@ for n_N in ex_N:
                     y14, t14, cut14, opt14, val14, gap14, conv14, pool14, Heu_sol14, rootval = bc_Hybrid.bra_cut(
                          Time_Limit, p, cd, cdk, sk, a1, tl_total2, tl_node2, tl_pr_node2, tl_pr_total2, branch_step, pr_gap, pr_terminate, pr_step)
                 if n_N == 50:
->>>>>>> 5c5fb1a3db6d894d6367f34c6b51f8b303cbd5cd
                     y1,t1, cut1, opt1, val1, gap1, conv1, Heu_sol1 = bc.bra_cut(
                          Time_Limit,p, cd, cdk, sk, a1) # branch and cut
                     y12, t12, cut12, opt12, val12, gap12, conv12, pool12, Heu_sol12 = bc_VN.bra_cut(
@@ -190,4 +187,3 @@ for n_N in ex_N:
 #             timeline,pi_report[2],
 #             timeline,pi_report[3])
 #    plt.show()
-
