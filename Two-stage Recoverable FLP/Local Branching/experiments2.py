@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 import TSRO_BC_SP_MIP_3_0 as bc  # B&C
 # import TSRO_BC_SP_LB as bc_LB # LB
 import TSRO_BC_SP_LB1 as bc_VN  # LB
-import TSRO_BC_SP_LB2 as bc_PR  # hybrid of LB & PR with time Limits
+import TSRO_BC_SP_LB2 as bc_PR  # PR
 import TSRO_BC_SP_LB3 as bc_Hybrid  # hybrid of LB & PR when no improvement
 import TSRO_BD_DualSP_INT as bd  # BD
 import TSRO_LIP as lip  # LIP
